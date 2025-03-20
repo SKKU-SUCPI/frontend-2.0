@@ -20,7 +20,7 @@ import {
 
 const sidebarStyle = css`
   width: 250px;
-  height: 100vh;
+  height: 100%;
   background-color: #f4f4f4;
   color: black;
   display: flex;
