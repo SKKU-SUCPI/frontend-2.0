@@ -8,7 +8,7 @@ const wrapperStyle = css`
   height: 100%;
 `;
 
-const Home: React.FC = () => {
+const Score: React.FC = () => {
   return (
     <div css={wrapperStyle}>
       <div
@@ -17,10 +17,10 @@ const Home: React.FC = () => {
           font-size: 24px;
         `}
       >
-        홈 페이지 (SCUPI 서비스 소개?)
+        통계 페이지
       </div>
     </div>
   );
 };
 
-export default Home;
+export default Score;

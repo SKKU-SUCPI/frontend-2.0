@@ -8,7 +8,7 @@ const wrapperStyle = css`
   height: 100%;
 `;
 
-const Home: React.FC = () => {
+const Activity: React.FC = () => {
   return (
     <div css={wrapperStyle}>
       <div
@@ -17,10 +17,10 @@ const Home: React.FC = () => {
           font-size: 24px;
         `}
       >
-        홈 페이지 (SCUPI 서비스 소개?)
+        활동 페이지 (활동 제출, 활동 승인/거부)
       </div>
     </div>
   );
 };
 
-export default Home;
+export default Activity;
