@@ -2,6 +2,7 @@
 import { css } from "@emotion/react";
 import { IconButton, Typography, Paper } from "@mui/material";
 import LogoutIcon from "@mui/icons-material/Logout";
+import FlexBox from "@/styles/components/common/FlexBox";
 
 const topBarStyle = css`
   width: 100%;
@@ -15,8 +16,6 @@ const topBarStyle = css`
 `;
 
 const userInfoWrapperStyle = css`
-  display: flex;
-  align-items: center;
   margin: 0 30px;
   gap: 16px;
 `;
@@ -39,7 +38,7 @@ const data = {
 const TopBar: React.FC = () => {
   return (
     <Paper elevation={1} css={topBarStyle}>
-      <div css={userInfoWrapperStyle}>
+      <FlexBox css={userInfoWrapperStyle}>
         <div css={userInfoStyle}>
           <Typography variant="body1" fontWeight="bold">
             {data.user_name}
@@ -61,7 +60,7 @@ const TopBar: React.FC = () => {
         >
           <LogoutIcon />
         </IconButton>
-      </div>
+      </FlexBox>
     </Paper>
   );
 };

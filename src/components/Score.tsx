@@ -1,16 +1,16 @@
-import { css } from "@emotion/react";
+import FlexBox from "@/styles/components/common/FlexBox";
+import { css, useTheme } from "@emotion/react";
 import React from "react";
 
-const wrapperStyle = css`
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  height: 100%;
-`;
-
-const Score: React.FC = () => {
+const Activity: React.FC = () => {
+  const theme = useTheme();
   return (
-    <div css={wrapperStyle}>
+    <FlexBox
+      css={css`
+        ${theme.mixins.widthHeight()}
+      `}
+    >
+      {" "}
       <div
         css={css`
           color: black;
@@ -19,8 +19,8 @@ const Score: React.FC = () => {
       >
         통계 페이지
       </div>
-    </div>
+    </FlexBox>
   );
 };
 
-export default Score;
+export default Activity;

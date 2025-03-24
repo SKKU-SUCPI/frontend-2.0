@@ -3,6 +3,7 @@ import { Outlet } from "react-router-dom";
 import { css } from "@emotion/react";
 import NavBar from "@/layouts/NavBar";
 import TopBar from "@/layouts/TopBar";
+import FlexBox from "@/styles/components/common/FlexBox";
 
 const layoutStyle = css`
   display: flex;
@@ -11,9 +12,7 @@ const layoutStyle = css`
 
 const contentWrapperStyle = css`
   flex-grow: 1;
-  display: flex;
   flex-direction: column;
-  align-items: center;
   padding: 16px;
 `;
 
@@ -32,12 +31,12 @@ const MainLayout: React.FC = () => {
   return (
     <div css={layoutStyle}>
       <NavBar />
-      <div css={contentWrapperStyle}>
+      <FlexBox css={contentWrapperStyle}>
         <div css={contentStyle}>
           <TopBar />
           <Outlet />
         </div>
-      </div>
+      </FlexBox>
     </div>
   );
 };

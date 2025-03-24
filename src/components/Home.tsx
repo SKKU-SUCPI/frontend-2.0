@@ -1,26 +1,26 @@
-import { css } from "@emotion/react";
+import FlexBox from "@/styles/components/common/FlexBox";
+import { css, useTheme } from "@emotion/react";
 import React from "react";
 
-const wrapperStyle = css`
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  height: 100%;
-`;
-
-const Home: React.FC = () => {
+const Activity: React.FC = () => {
+  const theme = useTheme();
   return (
-    <div css={wrapperStyle}>
+    <FlexBox
+      css={css`
+        ${theme.mixins.widthHeight()}
+      `}
+    >
+      {" "}
       <div
         css={css`
           color: black;
           font-size: 24px;
         `}
       >
-        홈 페이지 (SCUPI 서비스 소개?)
+        홈 화면(서비스 소개 등등)
       </div>
-    </div>
+    </FlexBox>
   );
 };
 
-export default Home;
+export default Activity;
