@@ -17,7 +17,7 @@ const Activity: React.FC = () => {
           font-size: 24px;
         `}
       >
-        홈 화면(서비스 소개 등등)
+        통계 페이지
       </div>
     </FlexBox>
   );
