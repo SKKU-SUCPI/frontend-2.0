@@ -1,4 +1,4 @@
-import FlexBox from "@/styles/components/common/FlexBox";
+import FlexBox from "@/styles/common/FlexBox";
 import { css, useTheme } from "@emotion/react";
 import React from "react";
 

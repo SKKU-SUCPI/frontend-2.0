@@ -1,4 +1,4 @@
-import FlexBox from "@/styles/components/common/FlexBox";
+import FlexBox from "@/styles/common/FlexBox";
 import { css, useTheme } from "@emotion/react";
 import React from "react";
 
@@ -17,7 +17,7 @@ const Activity: React.FC = () => {
           font-size: 24px;
         `}
       >
-        통계 페이지
+        홈 화면(서비스 소개 등등)
       </div>
     </FlexBox>
   );

@@ -1,9 +1,9 @@
 import React from "react";
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
-import MainLayout from "@/layouts/MainLayout";
-import Home from "@/components/Home";
-import Score from "@/components/Score";
-import Activity from "@/components/Activity";
+import MainLayout from "@/components/layouts/MainLayout";
+import Home from "@/pages/home";
+import Score from "@/pages/score";
+import Activity from "@/pages/activity";
 import { ThemeProvider as MuiThemeProvider } from "@mui/material/styles";
 import { ThemeProvider as EmotionThemeProvider } from "@emotion/react";
 import { theme } from "@/styles/theme";

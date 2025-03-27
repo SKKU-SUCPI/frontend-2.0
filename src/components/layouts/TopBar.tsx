@@ -2,7 +2,7 @@
 import { css } from "@emotion/react";
 import { IconButton, Typography, Paper } from "@mui/material";
 import LogoutIcon from "@mui/icons-material/Logout";
-import FlexBox from "@/styles/components/common/FlexBox";
+import FlexBox from "@/styles/common/FlexBox";
 
 const topBarStyle = css`
   width: 100%;

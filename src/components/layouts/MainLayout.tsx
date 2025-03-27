@@ -1,9 +1,9 @@
 /** @jsxImportSource @emotion/react */
 import { Outlet } from "react-router-dom";
 import { css } from "@emotion/react";
-import NavBar from "@/layouts/NavBar";
-import TopBar from "@/layouts/TopBar";
-import FlexBox from "@/styles/components/common/FlexBox";
+import NavBar from "@/components/layouts/NavBar";
+import TopBar from "@/components/layouts/TopBar";
+import FlexBox from "@/styles/common/FlexBox";
 
 const layoutStyle = css`
   display: flex;
