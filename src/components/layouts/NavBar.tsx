@@ -1,6 +1,6 @@
 /** @jsxImportSource @emotion/react */
 import { css } from "@emotion/react";
-import { NavLink, useLocation, useNavigate } from "react-router-dom";
+import { NavLink, useNavigate } from "react-router-dom";
 import useNavigationStore from "@/stores/navigationStore";
 import { Switch } from "@mui/material";
 import { Typography } from "@mui/material";
