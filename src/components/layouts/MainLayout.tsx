@@ -14,7 +14,7 @@ const contentStyle = css`
   width: 100%;
   height: 100%;
   // TODO: 정확한 기준으로 다시 설정할 것
-  max-width: 1300px;
+  max-width: 1100px;
   margin-top: 20px;
 `;
 

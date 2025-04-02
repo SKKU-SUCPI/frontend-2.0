@@ -14,8 +14,7 @@ const navBarStyle = css`
 `;
 
 const navBarInnerStyle = css`
-  /* 내부 컨테이너: 가운데 정렬, 좌우 여백 등 */
-  max-width: 1200px; /* 원하는 너비로 조절 */
+  max-width: 1200px;
 `;
 
 const logoStyle = css`
