@@ -1,5 +1,4 @@
 // theme.ts
-import { mixins } from "./mixins";
 import { createTheme } from "@mui/material";
 
 const customTheme = {
@@ -19,7 +18,6 @@ const customTheme = {
     medium: "8px",
     large: "16px",
   },
-  mixins,
 };
 
 const muiTheme = createTheme();
