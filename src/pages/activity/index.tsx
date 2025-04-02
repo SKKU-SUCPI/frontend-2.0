@@ -1,15 +1,10 @@
-import FlexBox from "@/styles/common/FlexBox";
 import { css, useTheme } from "@emotion/react";
 import React from "react";
+import FlexBox from "@/styles/components/Flexbox";
 
 const Activity: React.FC = () => {
-  const theme = useTheme();
   return (
-    <FlexBox
-      css={css`
-        ${theme.mixins.widthHeight()}
-      `}
-    >
+    <FlexBox>
       {" "}
       <div
         css={css`
