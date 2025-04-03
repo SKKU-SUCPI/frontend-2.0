@@ -111,7 +111,7 @@ const StatisticsDashboard: React.FC = () => {
               onClick={() => setViewMode("quotient")}
               css={toggleButtonStyle(viewMode === "quotient")}
             >
-              지수별 보기
+              영역별 보기
             </button>
             <button
               onClick={() => setViewMode("department")}
