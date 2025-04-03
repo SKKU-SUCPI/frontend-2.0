@@ -1,23 +1,43 @@
 import React from "react";
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
-import MainLayout from "@/components/layouts/MainLayout";
-import Home from "@/pages/home";
-import Score from "@/pages/score";
-import Activity from "@/pages/activity";
 import { ThemeProvider as MuiThemeProvider } from "@mui/material/styles";
 import { ThemeProvider as EmotionThemeProvider } from "@emotion/react";
 import { theme } from "@/styles/theme";
 
-// TODO
-// 라우팅 경로 설정
+// Pages
+import StatisticsDashboard from "@/pages/statistics/dashboard";
+import StatisticsGroup from "@/pages/statistics/group";
+import StatisticsIndividual from "@/pages/statistics/individual";
+import ActivitiesDashboard from "@/pages/activities/dashboard";
+import ActivitiesSubmit from "@/pages/activities/submit";
+import MainLayout from "@/components/layouts/MainLayout";
+
 const router = createBrowserRouter([
   {
     path: "/",
     element: <MainLayout />,
     children: [
-      { path: "/", element: <Home /> },
-      { path: "/score", element: <Score /> },
-      { path: "/activity", element: <Activity /> },
+      {
+        path: "statistics",
+        children: [
+          { path: "", element: <StatisticsDashboard /> },
+          { path: "dashboard", element: <StatisticsDashboard /> },
+          { path: "group", element: <StatisticsGroup /> },
+          { path: "individual", element: <StatisticsIndividual /> },
+        ],
+      },
+      {
+        path: "activities",
+        children: [
+          { path: "", element: <ActivitiesDashboard /> },
+          { path: "dashboard", element: <ActivitiesDashboard /> },
+          { path: "submit", element: <ActivitiesSubmit /> },
+        ],
+      },
+      {
+        path: "",
+        element: <StatisticsDashboard />,
+      },
     ],
   },
 ]);

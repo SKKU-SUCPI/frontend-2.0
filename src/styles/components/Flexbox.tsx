@@ -12,6 +12,7 @@ interface FlexBoxProps {
     | "space-evenly";
   width?: string;
   height?: string;
+  gap?: string;
 }
 
 const FlexBox = styled.div<FlexBoxProps>`
@@ -21,6 +22,7 @@ const FlexBox = styled.div<FlexBoxProps>`
   justify-content: ${({ justify = "center" }) => justify};
   width: ${({ width = "100%" }) => width};
   height: ${({ height = "100%" }) => height};
+  gap: ${({ gap }) => gap};
 `;
 
 export default FlexBox;
