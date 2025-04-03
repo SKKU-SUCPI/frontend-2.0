@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useMemo } from "react";
 import {
   BarChart,
   Bar,
@@ -11,42 +11,71 @@ import {
 import { css } from "@emotion/react";
 import FlexBox from "@/styles/components/Flexbox";
 
-interface QuotientChartProps {
-  totalData: {
-    RQ: { name: string; score: number }[];
-    LQ: { name: string; score: number }[];
-    CQ: { name: string; score: number }[];
-  };
+interface QuotientData {
+  name: string;
+  score: number;
 }
 
-const QuotientChart: React.FC<QuotientChartProps> = ({ totalData }) => {
-  const data = [
+interface QuotientChartProps {
+  data: {
+    RQ: QuotientData[];
+    LQ: QuotientData[];
+    CQ: QuotientData[];
+  };
+  width?: number;
+  height?: number;
+  barSize?: number;
+  maxDomain?: number;
+}
+
+const QuotientChart: React.FC<QuotientChartProps> = ({
+  data,
+  width = 1000,
+  height = 400,
+  barSize,
+  maxDomain = 33,
+}) => {
+  const transformedData = [
     {
       name: "RQ",
-      SW: totalData.RQ[0].score,
-      EE: totalData.RQ[1].score,
-      CSE: totalData.RQ[2].score,
+      ...Object.fromEntries(data.RQ.map((item) => [item.name, item.score])),
     },
     {
       name: "LQ",
-      SW: totalData.LQ[0].score,
-      EE: totalData.LQ[1].score,
-      CSE: totalData.LQ[2].score,
+      ...Object.fromEntries(data.LQ.map((item) => [item.name, item.score])),
     },
     {
       name: "CQ",
-      SW: totalData.CQ[0].score,
-      EE: totalData.CQ[1].score,
-      CSE: totalData.CQ[2].score,
+      ...Object.fromEntries(data.CQ.map((item) => [item.name, item.score])),
     },
   ];
 
+  const barColors = ["#7B8BA3", "#9BA6BC", "#B8C2D4"];
+
+  // 데이터 개수에 따라 동적으로 바 크기 조정
+  const dynamicBarSize = useMemo(() => {
+    const dataCount = data.RQ.length;
+    if (barSize) return barSize; // props로 전달된 경우 우선 사용
+
+    // 데이터 개수에 따라 바 크기 동적 계산
+    if (dataCount <= 3) return 50;
+    if (dataCount <= 5) return 40;
+    if (dataCount <= 8) return 30;
+    if (dataCount <= 12) return 20;
+    return 15; // 12개 초과일 경우
+  }, [data.RQ.length, barSize]);
+
   return (
     <FlexBox direction="column" gap="20px">
-      <BarChart width={1000} height={400} data={data} barSize={50}>
+      <BarChart
+        width={width}
+        height={height}
+        data={transformedData}
+        barSize={dynamicBarSize}
+      >
         <CartesianGrid strokeDasharray="3 3" />
         <XAxis dataKey="name" />
-        <YAxis domain={[0, 33]} />
+        <YAxis domain={[0, maxDomain]} />
         <Tooltip
           content={({ active, payload, label }) => {
             if (active && payload && payload.length) {
@@ -85,9 +114,14 @@ const QuotientChart: React.FC<QuotientChartProps> = ({ totalData }) => {
           }}
         />
         <Legend />
-        <Bar dataKey="SW" name="Software" fill="#7B8BA3" />
-        <Bar dataKey="EE" name="Electrical Engineering" fill="#9BA6BC" />
-        <Bar dataKey="CSE" name="Computer Science" fill="#B8C2D4" />
+        {data.RQ.map((item, index) => (
+          <Bar
+            key={item.name}
+            dataKey={item.name}
+            name={item.name}
+            fill={barColors[index % barColors.length]}
+          />
+        ))}
       </BarChart>
     </FlexBox>
   );
