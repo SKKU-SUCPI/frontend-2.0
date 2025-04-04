@@ -58,11 +58,16 @@ const QuotientChart: React.FC<QuotientChartProps> = ({
     if (barSize) return barSize; // props로 전달된 경우 우선 사용
 
     // 데이터 개수에 따라 바 크기 동적 계산
-    if (dataCount <= 3) return 50;
-    if (dataCount <= 5) return 40;
-    if (dataCount <= 8) return 30;
-    if (dataCount <= 12) return 20;
-    return 15; // 12개 초과일 경우
+    const sizeByDataCount = [
+      { maxCount: 3, size: 50 },
+      { maxCount: 5, size: 40 },
+      { maxCount: 8, size: 30 },
+      { maxCount: 12, size: 20 },
+    ];
+    const findMatchedCount = sizeByDataCount.find(
+      ({ maxCount }) => dataCount <= maxCount
+    );
+    return findMatchedCount ? findMatchedCount.size : 15;
   }, [data.RQ.length, barSize]);
 
   return (
