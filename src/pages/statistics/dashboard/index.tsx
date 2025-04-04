@@ -3,8 +3,8 @@ import { css } from "@emotion/react";
 import Card from "@/styles/components/Card";
 import QCard from "./components/QCard";
 import FlexBox from "@/styles/components/Flexbox";
-import QuotientChart from "./components/QuotientChart";
-import DepartmentChart from "./components/DepartmentChart";
+import QuotientChart from "@/components/graphs/QuotientChart";
+import StackedBarChart from "@/components/graphs/StackedBarChart";
 
 const titleStyle = css`
   font-size: 2.5rem;
@@ -36,7 +36,6 @@ const toggleButtonStyle = (isActive: boolean) => css`
 
 const chartCardStyle = css`
   padding: 24px;
-  width: 100%;
 `;
 
 const summaryData = [
@@ -66,16 +65,19 @@ const totalData = {
     { name: "SW", score: 28 },
     { name: "EE", score: 25 },
     { name: "CSE", score: 27 },
+    { name: "ME", score: 26 },
   ],
   LQ: [
     { name: "SW", score: 30 },
     { name: "EE", score: 29 },
     { name: "CSE", score: 31 },
+    { name: "ME", score: 32 },
   ],
   CQ: [
     { name: "SW", score: 22 },
     { name: "EE", score: 19 },
     { name: "CSE", score: 23 },
+    { name: "ME", score: 24 },
   ],
 };
 
@@ -123,9 +125,9 @@ const StatisticsDashboard: React.FC = () => {
         </FlexBox>
         <Card css={chartCardStyle}>
           {viewMode === "quotient" ? (
-            <QuotientChart totalData={totalData} />
+            <QuotientChart data={totalData} />
           ) : (
-            <DepartmentChart totalData={totalData} />
+            <StackedBarChart data={totalData} />
           )}
         </Card>
       </div>

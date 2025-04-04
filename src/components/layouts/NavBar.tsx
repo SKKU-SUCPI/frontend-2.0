@@ -74,7 +74,7 @@ const NavBar: React.FC = () => {
             gap="8px"
             css={logoStyle}
           >
-            SCUPI
+            SUCPI
           </FlexBox>
 
           {/* 통계 / 활동 토글 부분 */}
