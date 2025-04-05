@@ -1,22 +1,7 @@
 import React, { useState } from "react";
 import { css } from "@emotion/react";
 import { useSelectedUserStore } from "@/stores/selectedUserStore";
-
-const sidebarStyle = (isOpen: boolean) => css`
-  position: fixed;
-  top: 0;
-  right: ${isOpen ? "0" : "-400px"};
-  width: 400px;
-  height: 100vh;
-  background: white;
-  box-shadow: -2px 0 5px rgba(0, 0, 0, 0.1);
-  padding: 20px;
-  z-index: 1000;
-  transition: all 0.3s ease-in-out;
-  opacity: ${isOpen ? "1" : "0"};
-  transform: translateX(${isOpen ? "0" : "100px"});
-  pointer-events: ${isOpen ? "all" : "none"};
-`;
+import SideOverRight from "@/components/overlays/SideOverRight";
 
 const headerStyle = css`
   display: flex;
@@ -166,7 +151,7 @@ const UserListSideBar: React.FC<UserListSideBarProps> = ({
   );
 
   return (
-    <div css={sidebarStyle(isOpen)}>
+    <SideOverRight isOpen={isOpen}>
       <div css={headerStyle}>
         <h2 css={headerTitleStyle}>유저 선택</h2>
         <div css={buttonsContainerStyle}>
@@ -221,7 +206,7 @@ const UserListSideBar: React.FC<UserListSideBarProps> = ({
           ))}
         </tbody>
       </table>
-    </div>
+    </SideOverRight>
   );
 };
 
