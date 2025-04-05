@@ -1,17 +1,8 @@
 import React, { useState } from "react";
 import { css } from "@emotion/react";
 import { useSelectedUserStore } from "@/stores/selectedUserStore";
-import SideOverRight from "@/components/overlays/SideOverRight";
-
-const headerStyle = css`
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-`;
-
-const headerTitleStyle = css`
-  font-size: 1.2rem;
-`;
+import SideOver from "@/components/overlays/SideOver";
+import FlexBox from "@/styles/components/Flexbox";
 
 const buttonsContainerStyle = css`
   display: flex;
@@ -29,19 +20,14 @@ const clearButtonStyle = css`
   }
 `;
 
-const closeButtonStyle = css`
-  background: none;
-  border: none;
-  font-size: 1.2rem;
-  cursor: pointer;
-`;
-
 const searchStyle = css`
   width: 90%;
   padding: 8px 12px;
   border: 1px solid #e0e0e0;
   border-radius: 4px;
-  margin-bottom: 20px;
+  flex: 1;
+  text-align: left;
+  margin: 0 auto;
 `;
 
 const tableStyle = css`
@@ -151,26 +137,28 @@ const UserListSideBar: React.FC<UserListSideBarProps> = ({
   );
 
   return (
-    <SideOverRight isOpen={isOpen}>
-      <div css={headerStyle}>
-        <h2 css={headerTitleStyle}>유저 선택</h2>
+    <SideOver isOpen={isOpen} onClose={onClose} title="유저 선택">
+      <FlexBox
+        css={css`
+          justify-content: space-between;
+          align-items: center;
+          margin-bottom: 16px;
+          height: auto;
+        `}
+      >
+        <input
+          type="text"
+          placeholder="이름, 학번 또는 학과로 검색..."
+          value={searchTerm}
+          onChange={(e) => setSearchTerm(e.target.value)}
+          css={searchStyle}
+        />
         <div css={buttonsContainerStyle}>
           <button css={clearButtonStyle} onClick={clearSelectedUsers}>
             전체 해제
           </button>
-          <button css={closeButtonStyle} onClick={onClose}>
-            ×
-          </button>
         </div>
-      </div>
-
-      <input
-        type="text"
-        placeholder="이름, 학번 또는 학과로 검색..."
-        value={searchTerm}
-        onChange={(e) => setSearchTerm(e.target.value)}
-        css={searchStyle}
-      />
+      </FlexBox>
 
       <table css={tableStyle}>
         <thead>
@@ -206,7 +194,7 @@ const UserListSideBar: React.FC<UserListSideBarProps> = ({
           ))}
         </tbody>
       </table>
-    </SideOverRight>
+    </SideOver>
   );
 };
 

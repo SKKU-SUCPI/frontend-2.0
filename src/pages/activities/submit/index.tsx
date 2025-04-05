@@ -18,9 +18,9 @@ const ActivitiesSubmit: React.FC = () => {
       <Modal
         isOpen={isModalOpen}
         onClose={() => setIsModalOpen(false)}
-        title="modal wrapper test"
+        title="modal wrapper test title"
       >
-        <h1>modal wrapper test</h1>
+        <h1>modal wrapper test content</h1>
       </Modal>
     </>
   );
