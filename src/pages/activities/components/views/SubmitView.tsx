@@ -1,6 +1,7 @@
 import { css } from "@emotion/react";
 import styled from "@emotion/styled";
 import { useForm } from "react-hook-form";
+import { useState, useRef } from "react";
 
 const titleStyle = css`
   font-size: 1.5rem;
@@ -50,38 +51,101 @@ const selectStyle = css`
   ${inputStyle};
 `;
 
-const buttonStyle = css`
+const submitButtonStyle = css`
   padding: 0.75rem 1.5rem;
-  background-color: #10b981;
+  margin-top: 1rem;
+  background-color: #333333;
   color: white;
   border: none;
   border-radius: 0.25rem;
   font-weight: 600;
   cursor: pointer;
   transition: all 0.2s ease-in-out;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
   letter-spacing: 0.025em;
 
   &:hover {
-    background-color: #059669;
-    transform: translateY(-1px);
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    background-color: #4b5563;
   }
 
   &:active {
-    background-color: #047857;
-    transform: translateY(0);
+    background-color: #1f2937;
   }
 
   &:focus {
     outline: none;
-    box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.3);
+    box-shadow: 0 0 0 3px rgba(75, 85, 99, 0.3);
   }
 `;
 
 const errorStyle = css`
   color: #dc2626;
   font-size: 0.875rem;
+`;
+
+const fileListStyle = css`
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  margin-top: 1rem;
+`;
+
+const fileItemStyle = css`
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1rem;
+  background-color: #f9fafb;
+  border-radius: 0.5rem;
+`;
+
+const fileNameStyle = css`
+  font-size: 0.875rem;
+  color: #111827;
+  font-weight: 500;
+`;
+
+const fileSizeStyle = css`
+  font-size: 0.75rem;
+  color: #6b7280;
+  margin-left: 0.5rem;
+`;
+
+const deleteButtonStyle = css`
+  padding: 0.375rem 0.75rem;
+  background-color: #333333;
+  color: white;
+  border: none;
+  border-radius: 0.375rem;
+  font-size: 0.875rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s;
+
+  &:hover {
+    background-color: #4b5563;
+  }
+`;
+
+const addFileButtonStyle = css`
+  width: 100%;
+  padding: 0.75rem;
+  background-color: #f3f4f6;
+  border: 1px dashed #d1d5db;
+  border-radius: 0.5rem;
+  color: #4b5563;
+  font-size: 0.875rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+
+  &:hover {
+    background-color: #e5e7eb;
+    border-color: #9ca3af;
+  }
 `;
 
 interface FormData {
@@ -95,11 +159,33 @@ interface FormData {
 }
 
 const SubmitView = () => {
+  const [files, setFiles] = useState<File[]>([]);
+  const fileInputRef = useRef<HTMLInputElement>(null);
+
   const {
     register,
     handleSubmit,
     formState: { errors },
   } = useForm<FormData>();
+
+  const handleFileAdd = (event: React.ChangeEvent<HTMLInputElement>) => {
+    if (event.target.files) {
+      const newFiles = Array.from(event.target.files);
+      setFiles((prev) => [...prev, ...newFiles]);
+    }
+  };
+
+  const handleFileDelete = (index: number) => {
+    setFiles((prev) => prev.filter((_, i) => i !== index));
+  };
+
+  const formatFileSize = (bytes: number) => {
+    if (bytes === 0) return "0 Bytes";
+    const k = 1024;
+    const sizes = ["Bytes", "KB", "MB", "GB"];
+    const i = Math.floor(Math.log(bytes) / Math.log(k));
+    return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + " " + sizes[i];
+  };
 
   const onSubmit = (data: FormData) => {
     console.log(data);
@@ -210,12 +296,53 @@ const SubmitView = () => {
 
         <div>
           <h2 css={titleStyle}>첨부파일</h2>
-          <div css={formGroupStyle}>
-            <input type="file" multiple {...register("files")} />
+          <div css={fileListStyle}>
+            {files.map((file, index) => (
+              <div key={index} css={fileItemStyle}>
+                <div
+                  css={css`
+                    display: flex;
+                    align-items: center;
+                  `}
+                >
+                  <span css={fileNameStyle}>{file.name}</span>
+                  <span css={fileSizeStyle}>({formatFileSize(file.size)})</span>
+                </div>
+                <button
+                  type="button"
+                  css={deleteButtonStyle}
+                  onClick={() => handleFileDelete(index)}
+                >
+                  삭제
+                </button>
+              </div>
+            ))}
+            <input
+              type="file"
+              ref={fileInputRef}
+              onChange={handleFileAdd}
+              multiple
+              style={{ display: "none" }}
+            />
+            <button
+              type="button"
+              css={addFileButtonStyle}
+              onClick={() => fileInputRef.current?.click()}
+            >
+              <span
+                css={css`
+                  font-size: 1.25rem;
+                  line-height: 1;
+                `}
+              >
+                +
+              </span>
+              첨부파일 추가
+            </button>
           </div>
         </div>
 
-        <button type="submit" css={buttonStyle}>
+        <button type="submit" css={submitButtonStyle}>
           활동 제출하기
         </button>
       </form>

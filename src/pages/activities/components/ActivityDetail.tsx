@@ -42,18 +42,6 @@ const statusButtonsStyle = css`
   gap: 0.5rem;
 `;
 
-const buttonStyle = css`
-  flex: 1;
-  padding: 0.5rem;
-  border: 1px solid #e5e7eb;
-  border-radius: 0.25rem;
-  background-color: white;
-  cursor: pointer;
-  &:hover {
-    background-color: #f3f4f6;
-  }
-`;
-
 const studentInfoStyle = css`
   display: flex;
   flex-direction: column;
@@ -105,6 +93,33 @@ const statusTextStyle = css`
   font-weight: 500;
   padding: 0.5rem 1rem;
   border-radius: 0.375rem;
+`;
+
+const rejectButtonStyle = css`
+  flex: 1;
+  padding: 0.5rem;
+  border: 1px solid #e5e7eb;
+  border-radius: 0.25rem;
+  background-color: white;
+  font-weight: 600;
+  cursor: pointer;
+  &:hover {
+    background-color: #f3f4f6;
+  }
+`;
+
+const approveButtonStyle = css`
+  flex: 1;
+  padding: 0.5rem;
+  border: 1px solid #e5e7eb;
+  border-radius: 0.25rem;
+  background-color: black;
+  color: white;
+  font-weight: 600;
+  cursor: pointer;
+  &:hover {
+    background-color: #333333;
+  }
 `;
 
 const getData = (activity_id: number) => {
@@ -216,10 +231,11 @@ const ActivityDetail: React.FC<ActivityDetailProps> = ({
               <textarea
                 css={css`
                   width: 100%;
-                  padding: 0.5rem;
                   border: 1px solid #e5e7eb;
                   border-radius: 0.375rem;
+                  box-sizing: border-box;
                   min-height: 60px;
+                  padding: 0.5rem;
                   resize: vertical;
                   font-size: 0.9rem;
                   &:focus {
@@ -231,8 +247,8 @@ const ActivityDetail: React.FC<ActivityDetailProps> = ({
               />
             </div>
             <div css={statusButtonsStyle}>
-              <button css={buttonStyle}>거절</button>
-              <button css={buttonStyle}>승인</button>
+              <button css={rejectButtonStyle}>거절</button>
+              <button css={approveButtonStyle}>승인</button>
             </div>
           </Card>
         )}
