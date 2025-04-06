@@ -7,7 +7,7 @@ body:
     attributes:
       label: 🐞 버그 설명
       description: 어떤 문제가 발생했는지 구체적으로 작성해주세요.
-      placeholder: 예: 로그인 버튼을 눌러도 아무 반응이 없습니다.
+      placeholder: 예) 로그인 버튼을 눌러도 아무 반응이 없습니다.
     validations:
       required: true
 
@@ -27,7 +27,7 @@ body:
     attributes:
       label: 🖥 환경 정보
       description: 브라우저, OS 등의 환경 정보를 적어주세요
-      placeholder: 예: macOS 14.3, Chrome 122.0
+      placeholder: 예) macOS 14.3, Chrome 122.0
 
   - type: textarea
     attributes:
