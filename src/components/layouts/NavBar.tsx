@@ -2,9 +2,12 @@
 import { css } from "@emotion/react";
 import { NavLink, useNavigate } from "react-router-dom";
 import useNavigationStore from "@/stores/navigationStore";
-import { Switch } from "@mui/material";
+import { Switch, Menu, MenuItem, IconButton } from "@mui/material";
 import { Typography } from "@mui/material";
 import FlexBox from "@/styles/components/Flexbox";
+import useUserStore from "@/stores/auth/userStore";
+import { useState } from "react";
+import AccountCircleIcon from "@mui/icons-material/AccountCircle";
 
 const navBarStyle = css`
   /* 전체 상단 바 영역 */
@@ -51,6 +54,8 @@ const linkStyle = css`
 const NavBar: React.FC = () => {
   const { selectedTab, toggleTab } = useNavigationStore();
   const navigate = useNavigate();
+  const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
+  const user_role = useUserStore().user_role;
 
   // 토글 시 자동으로 default 페이지로 이동
   const handleToggle = () => {
@@ -161,6 +166,34 @@ const NavBar: React.FC = () => {
         <FlexBox justify="flex-end" gap="16px">
           <span>2020123456</span>
           <span>홍길동</span>
+          <IconButton
+            onClick={(e) => setAnchorEl(e.currentTarget)}
+            size="small"
+          >
+            <AccountCircleIcon />
+          </IconButton>
+          <Menu
+            anchorEl={anchorEl}
+            open={Boolean(anchorEl)}
+            onClose={() => setAnchorEl(null)}
+          >
+            {[
+              { role: 0 as const, label: "학생" },
+              { role: 1 as const, label: "관리자" },
+              { role: 2 as const, label: "슈퍼 관리자" },
+            ].map(({ role, label }) => (
+              <MenuItem
+                key={role}
+                onClick={() => {
+                  useUserStore.setState({ user_role: role });
+                  setAnchorEl(null);
+                }}
+                selected={user_role === role}
+              >
+                {label}
+              </MenuItem>
+            ))}
+          </Menu>
         </FlexBox>
       </FlexBox>
     </FlexBox>
