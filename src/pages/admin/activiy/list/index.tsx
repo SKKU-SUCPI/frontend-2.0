@@ -338,7 +338,7 @@ const data = [
   },
 ] as const;
 
-const ActivitiesSubmit: React.FC = () => {
+const AdminActivityList: React.FC = () => {
   // zustand로 다 빼버릴지 고민중
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedActivityId, setSelectedActivityId] = useState<number | null>(
@@ -408,4 +408,4 @@ const ActivitiesSubmit: React.FC = () => {
   );
 };
 
-export default ActivitiesSubmit;
+export default AdminActivityList;

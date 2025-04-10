@@ -1,16 +1,15 @@
 import { create } from "zustand";
 
 interface NavigationState {
-  selectedTab: "statistics" | "activities";
+  selectedTab: "statistic" | "activity";
   toggleTab: () => void;
 }
 
 const useNavigationStore = create<NavigationState>((set) => ({
-  selectedTab: "statistics",
+  selectedTab: "statistic",
   toggleTab: () =>
     set((state) => ({
-      selectedTab:
-        state.selectedTab === "statistics" ? "activities" : "statistics",
+      selectedTab: state.selectedTab === "statistic" ? "activity" : "statistic",
     })),
 }));
 

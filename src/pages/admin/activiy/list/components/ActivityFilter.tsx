@@ -1,7 +1,7 @@
 /** @jsxImportSource @emotion/react */
 import { css } from "@emotion/react";
 import Badge from "./Badge";
-import { useFilterStore } from "../../../../stores/filterStore";
+import { useFilterStore } from "../../../../../stores/filterStore";
 
 const filterContainer = css`
   display: flex;
