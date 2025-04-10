@@ -7,10 +7,10 @@ interface ProtectedRouteProps {
 const ProtectedRoute = ({ allowedRoles }: ProtectedRouteProps) => {
   const { user_id, user_role, clearUser } = useUserStore();
 
+  console.log(`protected route: ${user_id}, ${user_role}`);
   if (!user_id) {
     // 알림 띄우고 로그인 페이지로 리다이렉트
     alert("로그인이 필요합니다. 로그인 페이지로 이동합니다.");
-    clearUser(); // 유저 정보 초기화
     return <Navigate to="/login" replace />;
   }
 

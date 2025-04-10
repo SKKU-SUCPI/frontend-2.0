@@ -1,5 +1,9 @@
 import React from "react";
-import { createBrowserRouter, RouterProvider } from "react-router-dom";
+import {
+  createBrowserRouter,
+  Navigate,
+  RouterProvider,
+} from "react-router-dom";
 import { ThemeProvider as MuiThemeProvider } from "@mui/material/styles";
 import { ThemeProvider as EmotionThemeProvider } from "@emotion/react";
 import { theme } from "@/styles/theme";
@@ -35,7 +39,7 @@ const router = createBrowserRouter([
         path: "student",
         element: <ProtectedRoute allowedRoles={[0]} />, // 학생만 접근 가능
         children: [
-          { path: "", element: <StudentDashboard /> },
+          { path: "", element: <Navigate to="/student/dashboard" replace /> },
           { path: "dashboard", element: <StudentDashboard /> },
           {
             path: "activity",
@@ -52,7 +56,10 @@ const router = createBrowserRouter([
         path: "admin",
         element: <ProtectedRoute allowedRoles={[1, 2]} />, // 관리자, 슈퍼관리자 접근 가능
         children: [
-          { path: "", element: <AdminStatisticDashboard /> },
+          {
+            path: "",
+            element: <Navigate to="/admin/statistic/dashboard" replace />,
+          },
           {
             path: "statistic",
             children: [
