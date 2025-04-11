@@ -81,7 +81,7 @@ const totalData = {
   ],
 };
 
-const StatisticsDashboard: React.FC = () => {
+const AdminStatisticDashboard: React.FC = () => {
   const [viewMode, setViewMode] = React.useState<"quotient" | "department">(
     "quotient"
   );
@@ -135,4 +135,4 @@ const StatisticsDashboard: React.FC = () => {
   );
 };
 
-export default StatisticsDashboard;
+export default AdminStatisticDashboard;

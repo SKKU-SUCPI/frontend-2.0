@@ -1,16 +1,16 @@
 import React from "react";
 import { css } from "@emotion/react";
 
-const ActivitiesDashboard: React.FC = () => {
+const NotFound: React.FC = () => {
   return (
     <div
       css={css`
         padding: 20px;
       `}
     >
-      <h1>Activities Dashboard</h1>
+      <h1>Not Found</h1>
     </div>
   );
 };
 
-export default ActivitiesDashboard;
+export default NotFound;

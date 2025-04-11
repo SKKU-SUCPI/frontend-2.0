@@ -1,4 +1,5 @@
 import { create } from "zustand";
+import { persist, createJSONStorage } from "zustand/middleware";
 
 interface UserStore {
   user_id: number | null;
@@ -14,23 +15,31 @@ interface UserStoreActions {
   clearUser: () => void;
 }
 
-const useUserStore = create<UserStore & UserStoreActions>((set) => ({
-  user_id: null,
-  user_role: null,
-  user_name: null,
-  user_hakbun: null,
-  user_hakgwa_cd: null,
-  user_year: null,
-  setUser: (user: UserStore) => set(user),
-  clearUser: () =>
-    set({
+const useUserStore = create<UserStore & UserStoreActions>()(
+  persist(
+    (set) => ({
       user_id: null,
       user_role: null,
       user_name: null,
       user_hakbun: null,
       user_hakgwa_cd: null,
       user_year: null,
+      setUser: (user) => set(user),
+      clearUser: () =>
+        set({
+          user_id: null,
+          user_role: null,
+          user_name: null,
+          user_hakbun: null,
+          user_hakgwa_cd: null,
+          user_year: null,
+        }),
     }),
-}));
+    {
+      name: "user-storage", // localStorage key 이름
+      storage: createJSONStorage(() => localStorage),
+    }
+  )
+);
 
 export default useUserStore;

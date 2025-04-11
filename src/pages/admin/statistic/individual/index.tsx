@@ -125,7 +125,7 @@ const toggleButtonStyle = (isActive: boolean) => css`
   box-shadow: ${isActive ? "0 2px 4px rgba(0,0,0,0.1)" : "none"};
 `;
 
-const StatisticsIndividual: React.FC = () => {
+const AdminStatisticIndividual: React.FC = () => {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const { selectedUsers } = useSelectedUserStore();
   const [viewMode, setViewMode] = useState<"quotient" | "department" | "table">(
@@ -219,4 +219,4 @@ const StatisticsIndividual: React.FC = () => {
   );
 };
 
-export default StatisticsIndividual;
+export default AdminStatisticIndividual;

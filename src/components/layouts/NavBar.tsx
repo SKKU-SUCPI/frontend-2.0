@@ -51,10 +51,41 @@ const linkStyle = css`
   }
 `;
 
+const studentRoute = [
+  { path: "/student/dashboard", label: "대시보드" },
+  { path: "/student/activity", label: "활동 내역" },
+];
+
+const adminRouteMap = {
+  // 관리자 라우트
+  1: [
+    [
+      { path: "/admin/statistic/dashboard", label: "대시보드" },
+      { path: "/admin/statistic/individual", label: "개인별 통계" },
+    ],
+    [
+      { path: "/admin/activity/dashboard", label: "대시보드" },
+      { path: "/admin/activity/list", label: "활동 목록" },
+    ],
+  ],
+  // 슈퍼 관리자 라우트
+  2: [
+    [
+      { path: "/admin/statistic/dashboard", label: "대시보드" },
+      { path: "/admin/statistic/individual", label: "개인별 통계" },
+      { path: "/admin/statistic/parameter", label: "파라미터 설정" },
+    ],
+    [
+      { path: "/admin/activity/dashboard", label: "대시보드" },
+      { path: "/admin/activity/list", label: "활동 목록" },
+    ],
+  ],
+};
+
 const NavBar: React.FC = () => {
   const { selectedTab, toggleTab } = useNavigationStore();
   const navigate = useNavigate();
-  const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
+  const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null); // 테스트용 코드
   const { user_hakbun, user_name, user_role, setUser, clearUser } =
     useUserStore();
 
@@ -62,9 +93,9 @@ const NavBar: React.FC = () => {
   const handleToggle = () => {
     toggleTab();
     navigate(
-      selectedTab === "statistics"
-        ? "/activities/dashboard"
-        : "/statistics/dashboard"
+      selectedTab === "statistic"
+        ? "admin/activity/dashboard"
+        : "admin/statistic/dashboard"
     );
   };
 
@@ -85,6 +116,7 @@ const NavBar: React.FC = () => {
     setAnchorEl(null);
   };
 
+  console.log(`user_role: ${user_role}`);
   return (
     <FlexBox css={navBarStyle}>
       <FlexBox align="center" justify="space-between" css={navBarInnerStyle}>
@@ -101,83 +133,77 @@ const NavBar: React.FC = () => {
           </FlexBox>
 
           {/* 통계 / 활동 토글 부분 */}
-          <FlexBox
-            align="center"
-            justify="flex-start"
-            gap="8px"
-            css={css`
-              margin-left: 16px;
-            `}
-          >
-            <Typography
-              variant="body1"
-              sx={{
-                fontWeight: selectedTab === "statistics" ? "bold" : "normal",
-              }}
+          {user_role !== 0 && (
+            <FlexBox
+              align="center"
+              justify="flex-start"
+              gap="8px"
+              css={css`
+                margin-left: 16px;
+              `}
             >
-              통계
-            </Typography>
-            <Switch
-              checked={selectedTab === "activities"}
-              onChange={handleToggle}
-              color="primary"
-              size="small"
-              sx={{
-                "& .MuiSwitch-switchBase.Mui-checked": {
-                  color: "#4CAF50",
-                },
-                "& .MuiSwitch-track": {
-                  backgroundColor: "#bbdefb",
-                },
-              }}
-            />
-            <Typography
-              variant="body1"
-              sx={{
-                fontWeight: selectedTab === "activities" ? "bold" : "normal",
-              }}
-            >
-              활동
-            </Typography>
-          </FlexBox>
+              <Typography
+                variant="body1"
+                sx={{
+                  fontWeight: selectedTab === "statistic" ? "bold" : "normal",
+                }}
+              >
+                통계
+              </Typography>
+              <Switch
+                checked={selectedTab === "activity"}
+                onChange={handleToggle}
+                color="primary"
+                size="small"
+                sx={{
+                  "& .MuiSwitch-switchBase.Mui-checked": {
+                    color: "#4CAF50",
+                  },
+                  "& .MuiSwitch-track": {
+                    backgroundColor: "#bbdefb",
+                  },
+                }}
+              />
+              <Typography
+                variant="body1"
+                sx={{
+                  fontWeight: selectedTab === "activity" ? "bold" : "normal",
+                }}
+              >
+                활동
+              </Typography>
+            </FlexBox>
+          )}
         </FlexBox>
 
         {/* 네비게이션 메뉴 부분 */}
-        <FlexBox as="nav" align="center" gap="24px">
-          {selectedTab === "statistics" ? (
+        <FlexBox as="nav" align="center" gap="32px">
+          {/* 학생 라우트 */}
+          {user_role === 0 && (
             <>
-              {[
-                { path: "/statistics/dashboard", label: "대시보드" },
-                { path: "/statistics/group", label: "단체별 비교" },
-                { path: "/statistics/individual", label: "개인별 비교" },
-              ].map((item) => (
-                <NavLink
-                  key={item.path}
-                  to={item.path}
-                  className={({ isActive }) => (isActive ? "active" : "")}
-                  css={linkStyle}
-                >
-                  {item.label}
-                </NavLink>
-              ))}
-            </>
-          ) : (
-            <>
-              {[
-                { path: "/activities/dashboard", label: "대시보드" },
-                { path: "/activities/submit", label: "활동 제출" },
-              ].map((item) => (
-                <NavLink
-                  key={item.path}
-                  to={item.path}
-                  className={({ isActive }) => (isActive ? "active" : "")}
-                  css={linkStyle}
-                >
+              {studentRoute.map((item) => (
+                <NavLink key={item.path} to={item.path} css={linkStyle}>
                   {item.label}
                 </NavLink>
               ))}
             </>
           )}
+          {/* 관리자 라우트 */}
+          {(user_role == 1 || user_role == 2) &&
+            (() => {
+              const roleRoute = adminRouteMap[user_role];
+              const selectedRoute =
+                roleRoute[selectedTab === "statistic" ? 0 : 1];
+              return (
+                <>
+                  {selectedRoute.map((item) => (
+                    <NavLink key={item.path} to={item.path} css={linkStyle}>
+                      {item.label}
+                    </NavLink>
+                  ))}
+                </>
+              );
+            })()}
         </FlexBox>
 
         {/* 프로필 부분 */}
@@ -199,6 +225,7 @@ const NavBar: React.FC = () => {
           >
             <AccountCircleIcon />
           </IconButton>
+          {/* 테스트용 코드 */}
           <Menu
             anchorEl={anchorEl}
             open={Boolean(anchorEl)}
@@ -212,7 +239,14 @@ const NavBar: React.FC = () => {
               <MenuItem
                 key={role}
                 onClick={() => {
-                  useUserStore.setState({ user_role: role });
+                  setUser({
+                    user_id: 1,
+                    user_role: role,
+                    user_name: "홍길동",
+                    user_hakbun: "2020123456",
+                    user_hakgwa_cd: "CS",
+                    user_year: 2020,
+                  });
                   setAnchorEl(null);
                 }}
                 selected={user_role === role}

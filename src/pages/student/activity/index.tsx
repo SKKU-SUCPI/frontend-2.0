@@ -1,16 +1,16 @@
 import React from "react";
 import { css } from "@emotion/react";
 
-const StatisticsGroup: React.FC = () => {
+const StudentActivityList: React.FC = () => {
   return (
     <div
       css={css`
         padding: 20px;
       `}
     >
-      <h1>Statistics Group Comparison</h1>
+      <h1>Student Activity List</h1>
     </div>
   );
 };
 
-export default StatisticsGroup;
+export default StudentActivityList;
