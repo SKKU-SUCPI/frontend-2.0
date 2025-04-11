@@ -67,6 +67,18 @@ const adminRoute = [
   ],
 ];
 
+const superAdminRoute = [
+  [
+    { path: "/admin/statistic/dashboard", label: "대시보드" },
+    { path: "/admin/statistic/individual", label: "개인별 통계" },
+    { path: "/admin/statistic/parameter", label: "파라미터 설정" },
+  ],
+  [
+    { path: "/admin/activity/dashboard", label: "대시보드" },
+    { path: "/admin/activity/list", label: "활동 목록" },
+  ],
+];
+
 const NavBar: React.FC = () => {
   const { selectedTab, toggleTab } = useNavigationStore();
   const navigate = useNavigate();
@@ -185,6 +197,27 @@ const NavBar: React.FC = () => {
               ) : (
                 <>
                   {adminRoute[1].map((item) => (
+                    <NavLink key={item.path} to={item.path} css={linkStyle}>
+                      {item.label}
+                    </NavLink>
+                  ))}
+                </>
+              )}
+            </>
+          )}
+          {user_role === 2 && (
+            <>
+              {selectedTab === "statistic" ? (
+                <>
+                  {superAdminRoute[0].map((item) => (
+                    <NavLink key={item.path} to={item.path} css={linkStyle}>
+                      {item.label}
+                    </NavLink>
+                  ))}
+                </>
+              ) : (
+                <>
+                  {superAdminRoute[1].map((item) => (
                     <NavLink key={item.path} to={item.path} css={linkStyle}>
                       {item.label}
                     </NavLink>

@@ -65,6 +65,11 @@ const router = createBrowserRouter([
             children: [
               { path: "dashboard", element: <AdminStatisticDashboard /> },
               { path: "individual", element: <AdminStatisticIndividual /> },
+              {
+                path: "parameter",
+                element: <ProtectedRoute allowedRoles={[2]} />,
+                children: [{ path: "", element: <SuperAdminParameter /> }],
+              },
             ],
           },
           {
@@ -83,12 +88,6 @@ const router = createBrowserRouter([
             ],
           },
         ],
-      },
-      // 슈퍼관리자
-      {
-        path: "super",
-        element: <ProtectedRoute allowedRoles={[2]} />,
-        children: [{ path: "", element: <SuperAdminParameter /> }],
       },
     ],
   },
