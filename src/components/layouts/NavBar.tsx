@@ -55,7 +55,8 @@ const NavBar: React.FC = () => {
   const { selectedTab, toggleTab } = useNavigationStore();
   const navigate = useNavigate();
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
-  const user_role = useUserStore().user_role;
+  const { user_hakbun, user_name, user_role, setUser, clearUser } =
+    useUserStore();
 
   // 토글 시 자동으로 default 페이지로 이동
   const handleToggle = () => {
@@ -65,6 +66,23 @@ const NavBar: React.FC = () => {
         ? "/activities/dashboard"
         : "/statistics/dashboard"
     );
+  };
+
+  const handleLogin = () => {
+    setUser({
+      user_id: 1,
+      user_role: 0,
+      user_name: "홍길동",
+      user_hakbun: "2020123456",
+      user_hakgwa_cd: "CS",
+      user_year: 2020,
+    });
+    setAnchorEl(null);
+  };
+
+  const handleLogout = () => {
+    clearUser();
+    setAnchorEl(null);
   };
 
   return (
@@ -164,8 +182,17 @@ const NavBar: React.FC = () => {
 
         {/* 프로필 부분 */}
         <FlexBox justify="flex-end" gap="16px">
-          <span>2020123456</span>
-          <span>홍길동</span>
+          <span>{user_hakbun}</span>
+          <span>{user_name}</span>
+          <span>
+            {user_role === null
+              ? "로그인전"
+              : user_role === 0
+              ? "학생"
+              : user_role === 1
+              ? "관리자"
+              : "슈퍼관리자"}
+          </span>
           <IconButton
             onClick={(e) => setAnchorEl(e.currentTarget)}
             size="small"
@@ -193,6 +220,8 @@ const NavBar: React.FC = () => {
                 {label}
               </MenuItem>
             ))}
+            <MenuItem onClick={handleLogin}>로그인</MenuItem>
+            <MenuItem onClick={handleLogout}>로그아웃</MenuItem>
           </Menu>
         </FlexBox>
       </FlexBox>
