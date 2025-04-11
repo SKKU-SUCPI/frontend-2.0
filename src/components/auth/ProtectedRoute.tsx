@@ -5,7 +5,7 @@ interface ProtectedRouteProps {
   allowedRoles: number[];
 }
 const ProtectedRoute = ({ allowedRoles }: ProtectedRouteProps) => {
-  const { user_id, user_role, clearUser } = useUserStore();
+  const { user_id, user_role } = useUserStore();
 
   console.log(`protected route: ${user_id}, ${user_role}`);
   if (!user_id) {

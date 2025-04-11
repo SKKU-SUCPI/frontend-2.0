@@ -56,28 +56,31 @@ const studentRoute = [
   { path: "/student/activity", label: "활동 내역" },
 ];
 
-const adminRoute = [
-  [
-    { path: "/admin/statistic/dashboard", label: "대시보드" },
-    { path: "/admin/statistic/individual", label: "개인별 통계" },
+const adminRouteMap = {
+  // 관리자 라우트
+  1: [
+    [
+      { path: "/admin/statistic/dashboard", label: "대시보드" },
+      { path: "/admin/statistic/individual", label: "개인별 통계" },
+    ],
+    [
+      { path: "/admin/activity/dashboard", label: "대시보드" },
+      { path: "/admin/activity/list", label: "활동 목록" },
+    ],
   ],
-  [
-    { path: "/admin/activity/dashboard", label: "대시보드" },
-    { path: "/admin/activity/list", label: "활동 목록" },
+  // 슈퍼 관리자 라우트
+  2: [
+    [
+      { path: "/admin/statistic/dashboard", label: "대시보드" },
+      { path: "/admin/statistic/individual", label: "개인별 통계" },
+      { path: "/admin/statistic/parameter", label: "파라미터 설정" },
+    ],
+    [
+      { path: "/admin/activity/dashboard", label: "대시보드" },
+      { path: "/admin/activity/list", label: "활동 목록" },
+    ],
   ],
-];
-
-const superAdminRoute = [
-  [
-    { path: "/admin/statistic/dashboard", label: "대시보드" },
-    { path: "/admin/statistic/individual", label: "개인별 통계" },
-    { path: "/admin/statistic/parameter", label: "파라미터 설정" },
-  ],
-  [
-    { path: "/admin/activity/dashboard", label: "대시보드" },
-    { path: "/admin/activity/list", label: "활동 목록" },
-  ],
-];
+};
 
 const NavBar: React.FC = () => {
   const { selectedTab, toggleTab } = useNavigationStore();
@@ -175,6 +178,7 @@ const NavBar: React.FC = () => {
 
         {/* 네비게이션 메뉴 부분 */}
         <FlexBox as="nav" align="center" gap="32px">
+          {/* 학생 라우트 */}
           {user_role === 0 && (
             <>
               {studentRoute.map((item) => (
@@ -184,48 +188,22 @@ const NavBar: React.FC = () => {
               ))}
             </>
           )}
-          {user_role === 1 && (
-            <>
-              {selectedTab === "statistic" ? (
+          {/* 관리자 라우트 */}
+          {(user_role == 1 || user_role == 2) &&
+            (() => {
+              const roleRoute = adminRouteMap[user_role];
+              const selectedRoute =
+                roleRoute[selectedTab === "statistic" ? 0 : 1];
+              return (
                 <>
-                  {adminRoute[0].map((item) => (
+                  {selectedRoute.map((item) => (
                     <NavLink key={item.path} to={item.path} css={linkStyle}>
                       {item.label}
                     </NavLink>
                   ))}
                 </>
-              ) : (
-                <>
-                  {adminRoute[1].map((item) => (
-                    <NavLink key={item.path} to={item.path} css={linkStyle}>
-                      {item.label}
-                    </NavLink>
-                  ))}
-                </>
-              )}
-            </>
-          )}
-          {user_role === 2 && (
-            <>
-              {selectedTab === "statistic" ? (
-                <>
-                  {superAdminRoute[0].map((item) => (
-                    <NavLink key={item.path} to={item.path} css={linkStyle}>
-                      {item.label}
-                    </NavLink>
-                  ))}
-                </>
-              ) : (
-                <>
-                  {superAdminRoute[1].map((item) => (
-                    <NavLink key={item.path} to={item.path} css={linkStyle}>
-                      {item.label}
-                    </NavLink>
-                  ))}
-                </>
-              )}
-            </>
-          )}
+              );
+            })()}
         </FlexBox>
 
         {/* 프로필 부분 */}
