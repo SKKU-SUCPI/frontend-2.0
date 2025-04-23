@@ -4,9 +4,11 @@ import ReadView from "./views/ReadView";
 import SubmitView from "./views/SubmitView";
 import Card from "@/styles/components/Card";
 import FlexBox from "@/styles/components/Flexbox";
+import Badge from "../list/components/Badge";
 interface ActivityDetailProps {
   activity_id: number;
   view_type: "submit" | "review" | "history";
+  status: "승인" | "반려" | "대기";
 }
 
 const containerStyle = css`
@@ -32,6 +34,7 @@ const sideBarStyle = css`
 `;
 
 const sideBarTitleStyle = css`
+  margin-bottom: 0.5rem;
   font-size: 1rem;
   margin-bottom: 0.5rem;
 `;
@@ -121,6 +124,31 @@ const approveButtonStyle = css`
   }
 `;
 
+const getStatusColors = (status: string) => {
+  switch (status) {
+    case "승인":
+      return {
+        background: "#dcfce7",
+        font: "#166534",
+      };
+    case "반려":
+      return {
+        background: "#fee2e2",
+        font: "#991b1b",
+      };
+    case "대기":
+      return {
+        background: "#fef9c3",
+        font: "#854d0e",
+      };
+    default:
+      return {
+        background: "#f3f4f6",
+        font: "#374151",
+      };
+  }
+};
+
 const getData = (activity_id: number) => {
   return {
     activity_id: activity_id,
@@ -158,6 +186,7 @@ const getData = (activity_id: number) => {
 const ActivityDetail: React.FC<ActivityDetailProps> = ({
   activity_id,
   view_type,
+  status,
 }) => {
   const {
     user_name,
@@ -167,7 +196,6 @@ const ActivityDetail: React.FC<ActivityDetailProps> = ({
     activity_date,
     activity_title,
     activity_content,
-    status,
     files,
     reviews,
   } = getData(activity_id);
@@ -215,7 +243,9 @@ const ActivityDetail: React.FC<ActivityDetailProps> = ({
           <Card flex={false} width="100%">
             <h3 css={sideBarTitleStyle}>승인 상태</h3>
             <FlexBox height="auto">
-              <span css={statusTextStyle}>{status}</span>
+              <span css={statusTextStyle}>
+                <Badge label={status} colors={getStatusColors(status)} />
+              </span>
             </FlexBox>
           </Card>
         )}

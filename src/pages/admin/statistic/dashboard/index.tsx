@@ -62,22 +62,19 @@ const summaryData = [
 // 각 Quotient별 학과 데이터
 const totalData = {
   RQ: [
-    { name: "SW", score: 28 },
-    { name: "EE", score: 25 },
-    { name: "CSE", score: 27 },
-    { name: "ME", score: 26 },
+    { name: "소프트웨어", score: 28 },
+    { name: "지능형소프트웨어", score: 25 },
+    { name: "글로벌융합", score: 27 },
   ],
   LQ: [
-    { name: "SW", score: 30 },
-    { name: "EE", score: 29 },
-    { name: "CSE", score: 31 },
-    { name: "ME", score: 32 },
+    { name: "소프트웨어", score: 30 },
+    { name: "지능형소프트웨어", score: 29 },
+    { name: "글로벌융합", score: 31 },
   ],
   CQ: [
-    { name: "SW", score: 22 },
-    { name: "EE", score: 19 },
-    { name: "CSE", score: 23 },
-    { name: "ME", score: 24 },
+    { name: "소프트웨어", score: 22 },
+    { name: "지능형소프트웨어", score: 19 },
+    { name: "글로벌융합", score: 23 },
   ],
 };
 

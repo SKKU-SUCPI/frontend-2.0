@@ -16,7 +16,10 @@ interface ListItemProps {
     department: string;
     student_id: string;
   };
-  onDetailClick: (activity_id: number) => void;
+  onDetailClick: (
+    activity_id: number,
+    status: "승인" | "반려" | "대기"
+  ) => void;
 }
 
 // 스타일들 (컴포넌트 밖에 선언)
@@ -112,7 +115,7 @@ function ListItem({
       {/* 오른쪽: 상세보기 버튼 */}
       <button
         css={detailButtonStyle}
-        onClick={() => onDetailClick(activity_id)}
+        onClick={() => onDetailClick(activity_id, status)}
       >
         상세보기
       </button>

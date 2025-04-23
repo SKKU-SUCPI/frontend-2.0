@@ -1,5 +1,5 @@
 import React from "react";
-import { css } from "@emotion/react";
+import { css, keyframes } from "@emotion/react";
 import Table from "@mui/material/Table";
 import TableBody from "@mui/material/TableBody";
 import TableCell from "@mui/material/TableCell";
@@ -24,11 +24,37 @@ interface UserData {
 
 interface Props {
   data: {
-    RQ: Array<{ name: string; score: number }>;
-    LQ: Array<{ name: string; score: number }>;
-    CQ: Array<{ name: string; score: number }>;
+    RQ: Array<{
+      name: string;
+      score: number;
+      studentId: string;
+      department: string;
+    }>;
+    LQ: Array<{
+      name: string;
+      score: number;
+      studentId: string;
+      department: string;
+    }>;
+    CQ: Array<{
+      name: string;
+      score: number;
+      studentId: string;
+      department: string;
+    }>;
   };
 }
+
+const fadeIn = keyframes`
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+`;
 
 const tableStyles = css`
   th {
@@ -45,6 +71,9 @@ const tableStyles = css`
   th {
     text-align: center !important;
   }
+  tr {
+    animation: ${fadeIn} 0.3s ease-out;
+  }
 `;
 
 const UserListTable: React.FC<Props> = ({ data }) => {
@@ -53,8 +82,8 @@ const UserListTable: React.FC<Props> = ({ data }) => {
   // 데이터 가공
   const processedData: UserData[] = data.RQ.map((rq, index) => ({
     name: rq.name,
-    studentId: "2020XXXXX",
-    department: "컴퓨터공학과",
+    studentId: rq.studentId,
+    department: rq.department,
     RQ: rq.score,
     LQ: data.LQ[index].score,
     CQ: data.CQ[index].score,

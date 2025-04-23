@@ -60,7 +60,7 @@ const data = [
     activity_class: "학술지 논문게재",
     activity_detail: "(인문사회계) KCI 등재",
     title: "인공지능을 활용한 학습 효율성 연구",
-    status: "승인" as const,
+    status: "대기" as const,
     date: "2023-10-15",
     user: {
       name: "김철수",
@@ -75,7 +75,7 @@ const data = [
     activity_detail:
       "교내외의 교육 활동(초/중/고/대멘토링, 동료 티칭 등 학과장 승인건)",
     title: "블록체인 기술 세미나 참여",
-    status: "대기" as const,
+    status: "반려" as const,
     date: "2023-10-20",
     user: {
       name: "이영희",
@@ -89,7 +89,7 @@ const data = [
     activity_class: "학생회",
     activity_detail: "임원진",
     title: "학과 홍보 영상 제작 프로젝트",
-    status: "반려" as const,
+    status: "대기" as const,
     date: "2023-09-28",
     user: {
       name: "박지민",
@@ -103,7 +103,7 @@ const data = [
     activity_class: "공모전/ICPC",
     activity_detail: "(과학기술계) 대상/입상, 참여",
     title: "사용자 경험 개선을 위한 UI/UX 실험",
-    status: "승인" as const,
+    status: "대기" as const,
     date: "2023-10-05",
     user: {
       name: "정민준",
@@ -117,7 +117,7 @@ const data = [
     activity_class: "교육 성취도",
     activity_detail: "학점 4.0 이상 ~ 4.5 이하",
     title: "데이터 분석 워크숍 참가",
-    status: "대기" as const,
+    status: "승인" as const,
     date: "2023-10-22",
     user: {
       name: "최수진",
@@ -187,7 +187,7 @@ const data = [
     activity_class: "학술지 논문게재",
     activity_detail: "(과학기술계) JCR 상위 20% 이내 학술지(주저/공저)",
     title: "머신러닝 알고리즘 비교 연구",
-    status: "대기" as const,
+    status: "반려" as const,
     date: "2023-10-25",
     user: {
       name: "오준호",
@@ -229,7 +229,7 @@ const data = [
     activity_class: "공모전/ICPC",
     activity_detail: "(인문사회계) 국제/대규모 공모전(ICPC, 공개SW개발자대회)",
     title: "블록체인 기반 학생증 시스템 특허 출원",
-    status: "대기" as const,
+    status: "승인" as const,
     date: "2023-11-05",
     user: {
       name: "박서현",
@@ -285,7 +285,7 @@ const data = [
     activity_class: "오픈소스 SW활동",
     activity_detail: "OS커뮤니티 생성 및 활성도(5/4/3) - 운영위 심사",
     title: "AWS 클라우드 자격증 온라인 강의 수강",
-    status: "대기" as const,
+    status: "반려" as const,
     date: "2023-11-08",
     user: {
       name: "김태호",
@@ -313,7 +313,7 @@ const data = [
     activity_class: "공모전/ICPC",
     activity_detail: "(과학기술계) 대상/입상, 참여",
     title: "전국 대학생 소프트웨어 경진대회 참가",
-    status: "대기" as const,
+    status: "승인" as const,
     date: "2023-11-10",
     user: {
       name: "장민호",
@@ -345,9 +345,16 @@ const AdminActivityList: React.FC = () => {
     null
   );
   const [isSideOverOpen, setIsSideOverOpen] = useState(false);
+  const [viewType, setViewType] = useState<"submit" | "review" | "history">(
+    "submit"
+  );
 
-  const handleDetailClick = (activity_id: number) => {
+  const handleDetailClick = (
+    activity_id: number,
+    status: "승인" | "반려" | "대기"
+  ) => {
     setSelectedActivityId(activity_id);
+    setViewType(status === "대기" ? "review" : "history");
     setIsModalOpen(true);
   };
 
@@ -400,7 +407,11 @@ const AdminActivityList: React.FC = () => {
         {selectedActivityId && (
           <ActivityDetail
             activity_id={selectedActivityId}
-            view_type="history"
+            view_type={viewType}
+            status={
+              data.find((item) => item.activity_id === selectedActivityId)
+                ?.status as "대기" | "반려" | "승인"
+            }
           />
         )}
       </Modal>
