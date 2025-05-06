@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useRef, useEffect } from "react";
 import { css } from "@emotion/react";
 import Card from "@/styles/components/Card";
 import FlexBox from "@/styles/components/Flexbox";
@@ -95,6 +95,24 @@ const GraphWrapper: React.FC<GraphWrapperProps> = ({
 }) => {
   const [selectedLabel, setSelectedLabel] = React.useState(options.labels[0]);
   const [isDropdownOpen, setIsDropdownOpen] = React.useState(false);
+  const dropdownRef = useRef<HTMLDivElement>(null);
+
+  // 외부 클릭 시 드롭다운 닫기
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (
+        dropdownRef.current &&
+        !dropdownRef.current.contains(event.target as Node)
+      ) {
+        setIsDropdownOpen(false);
+      }
+    };
+
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, []);
 
   const handleDropdownToggle = () => {
     setIsDropdownOpen(!isDropdownOpen);
@@ -122,7 +140,7 @@ const GraphWrapper: React.FC<GraphWrapperProps> = ({
             ))}
           </div>
         ) : (
-          <div css={dropdownContainerStyle}>
+          <div css={dropdownContainerStyle} ref={dropdownRef}>
             <button onClick={handleDropdownToggle} css={dropdownButtonStyle}>
               {selectedLabel}
               <span>▼</span>
