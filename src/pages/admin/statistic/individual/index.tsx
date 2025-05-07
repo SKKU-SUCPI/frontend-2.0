@@ -1,14 +1,14 @@
 import React, { useState } from "react";
 import { css } from "@emotion/react";
 import FlexBox from "@/styles/components/Flexbox";
-import Card from "@/styles/components/Card";
 import UserListSideBar from "./components/UserListSideBar";
 import { useSelectedUserStore } from "@/stores/selectedUserStore";
 import PersonIcon from "@mui/icons-material/Person";
 import TopThreeCard from "./components/TopThreeCard";
 import QuotientChart from "@/components/graphs/QuotientChart";
 import StackedBarChart from "@/components/graphs/StackedBarChart";
-import UserListTable from "./components/UserListTable";
+import UserListTable from "../../../../components/table/UserListTable";
+import GraphWrapper from "@/components/graphs/GraphWrapper";
 
 const data = {
   RQ: [
@@ -128,9 +128,6 @@ const toggleButtonStyle = (isActive: boolean) => css`
 const AdminStatisticIndividual: React.FC = () => {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const { selectedUsers } = useSelectedUserStore();
-  const [viewMode, setViewMode] = useState<"quotient" | "department" | "table">(
-    "quotient"
-  );
 
   const toggleSidebar = () => {
     setIsSidebarOpen(!isSidebarOpen);
@@ -179,39 +176,18 @@ const AdminStatisticIndividual: React.FC = () => {
         />
       </FlexBox>
       {/* 선택 유저 3Q 점수 차트 */}
-      <FlexBox justify="space-between" align="center">
-        <h2 css={subtitleStyle}>선택 유저 통계량 확인</h2>
-        <div css={toggleContainerStyle}>
-          <button
-            onClick={() => setViewMode("quotient")}
-            css={toggleButtonStyle(viewMode === "quotient")}
-          >
-            영역별 그래프
-          </button>
-          <button
-            onClick={() => setViewMode("department")}
-            css={toggleButtonStyle(viewMode === "department")}
-          >
-            유저별 그래프
-          </button>
-          <button
-            onClick={() => setViewMode("table")}
-            css={toggleButtonStyle(viewMode === "table")}
-          >
-            테이블 보기
-          </button>
-        </div>
-      </FlexBox>
-      {/* 선택 유저 통계량 확인 차트 */}
-      <Card>
-        {viewMode === "quotient" ? (
-          <QuotientChart data={data} />
-        ) : viewMode === "department" ? (
-          <StackedBarChart data={data} />
-        ) : (
-          <UserListTable data={data} />
-        )}
-      </Card>
+      <GraphWrapper
+        title="선택 유저 통계량 확인"
+        type="dropdown"
+        options={{
+          labels: ["영역별 그래프", "유저별 그래프", "테이블 보기"],
+          datasets: {
+            "영역별 그래프": <QuotientChart data={data} />,
+            "유저별 그래프": <StackedBarChart data={data} />,
+            "테이블 보기": <UserListTable data={data} />,
+          },
+        }}
+      />
 
       {/* 유저 선택 사이드바 */}
       <UserListSideBar isOpen={isSidebarOpen} onClose={toggleSidebar} />

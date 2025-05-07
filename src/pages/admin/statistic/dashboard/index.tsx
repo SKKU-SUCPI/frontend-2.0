@@ -1,10 +1,10 @@
 import React from "react";
 import { css } from "@emotion/react";
-import Card from "@/styles/components/Card";
 import QCard from "./components/QCard";
 import FlexBox from "@/styles/components/Flexbox";
 import QuotientChart from "@/components/graphs/QuotientChart";
 import StackedBarChart from "@/components/graphs/StackedBarChart";
+import GraphWrapper from "@/components/graphs/GraphWrapper";
 
 const titleStyle = css`
   font-size: 2.5rem;
@@ -13,29 +13,6 @@ const titleStyle = css`
 
 const subtitleStyle = css`
   font-size: 1.8rem;
-`;
-
-const toggleContainerStyle = css`
-  display: flex;
-  gap: 10px;
-  background: #f5f5f5;
-  padding: 4px;
-  border-radius: 8px;
-`;
-
-const toggleButtonStyle = (isActive: boolean) => css`
-  padding: 8px 16px;
-  border: none;
-  border-radius: 6px;
-  background: ${isActive ? "white" : "transparent"};
-  font-weight: 600;
-  cursor: pointer;
-  transition: all 0.2s;
-  box-shadow: ${isActive ? "0 2px 4px rgba(0,0,0,0.1)" : "none"};
-`;
-
-const chartCardStyle = css`
-  padding: 24px;
 `;
 
 const summaryData = [
@@ -82,10 +59,6 @@ const totalData = {
 };
 
 const AdminStatisticDashboard: React.FC = () => {
-  const [viewMode, setViewMode] = React.useState<"quotient" | "department">(
-    "quotient"
-  );
-
   return (
     <div>
       <h1 css={titleStyle}>대시보드</h1>
@@ -103,34 +76,18 @@ const AdminStatisticDashboard: React.FC = () => {
           ))}
         </FlexBox>
       </div>
-      <div>
-        <FlexBox justify="space-between" align="center">
-          <h2 css={subtitleStyle}>
-            {viewMode === "quotient" ? "지수별 비교" : "학과별 비교"}
-          </h2>
-          <div css={toggleContainerStyle}>
-            <button
-              onClick={() => setViewMode("quotient")}
-              css={toggleButtonStyle(viewMode === "quotient")}
-            >
-              영역별 보기
-            </button>
-            <button
-              onClick={() => setViewMode("department")}
-              css={toggleButtonStyle(viewMode === "department")}
-            >
-              학과별 보기
-            </button>
-          </div>
-        </FlexBox>
-        <Card css={chartCardStyle}>
-          {viewMode === "quotient" ? (
-            <QuotientChart data={totalData} />
-          ) : (
-            <StackedBarChart data={totalData} />
-          )}
-        </Card>
-      </div>
+
+      <GraphWrapper
+        title="지수별/학과별 비교"
+        type="block"
+        options={{
+          labels: ["영역별 보기", "학과별 보기"],
+          datasets: {
+            "영역별 보기": <QuotientChart data={totalData} />,
+            "학과별 보기": <StackedBarChart data={totalData} />,
+          },
+        }}
+      />
     </div>
   );
 };
