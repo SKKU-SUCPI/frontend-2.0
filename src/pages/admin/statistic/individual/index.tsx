@@ -178,7 +178,7 @@ const AdminStatisticIndividual: React.FC = () => {
       {/* 선택 유저 3Q 점수 차트 */}
       <GraphWrapper
         title="선택 유저 통계량 확인"
-        type="dropdown"
+        type="block"
         options={{
           labels: ["영역별 그래프", "유저별 그래프", "테이블 보기"],
           datasets: {
