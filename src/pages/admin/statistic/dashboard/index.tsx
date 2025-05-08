@@ -61,7 +61,7 @@ const totalData = {
 const AdminStatisticDashboard: React.FC = () => {
   return (
     <div>
-      <h1 css={titleStyle}>대시보드</h1>
+      <h1 css={titleStyle}>통계 대시보드</h1>
 
       <div>
         <h2 css={subtitleStyle}>3Q 전체 통계</h2>
