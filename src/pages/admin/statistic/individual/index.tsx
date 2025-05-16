@@ -106,25 +106,6 @@ const titleContainerStyle = css`
   margin-bottom: 20px;
 `;
 
-const toggleContainerStyle = css`
-  display: flex;
-  gap: 10px;
-  background: #f5f5f5;
-  padding: 4px;
-  border-radius: 8px;
-`;
-
-const toggleButtonStyle = (isActive: boolean) => css`
-  padding: 8px 16px;
-  border: none;
-  border-radius: 6px;
-  background: ${isActive ? "white" : "transparent"};
-  font-weight: 600;
-  cursor: pointer;
-  transition: all 0.2s;
-  box-shadow: ${isActive ? "0 2px 4px rgba(0,0,0,0.1)" : "none"};
-`;
-
 const AdminStatisticIndividual: React.FC = () => {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const { selectedUsers } = useSelectedUserStore();
