@@ -1,5 +1,5 @@
 import React from "react";
-import ActivitySubmit from "@/components/activity/activitySubmit";
+import ActivitySubmit from "@/components/activity/ActivitySubmit";
 
 const StudentActivitySubmit: React.FC = () => {
   return <ActivitySubmit />;

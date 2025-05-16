@@ -3,7 +3,6 @@ import ActivityListItem from "../../admin/activiy/list/components/ActivityListIt
 import { css } from "@emotion/react";
 import Card from "@/styles/components/Card";
 import FlexBox from "@/styles/components/Flexbox";
-import Modal from "@/components/overlays/Modal";
 import SideOver from "@/components/overlays/SideOver";
 import ActivityFilter from "../../admin/activiy/list/components/ActivityFilter";
 import styled from "@emotion/styled";
@@ -339,21 +338,8 @@ const data = [
 
 const StudentActivityList: React.FC = () => {
   // zustand로 다 빼버릴지 고민중
-  const [isModalOpen, setIsModalOpen] = useState(false);
-  const [selectedActivityId, setSelectedActivityId] = useState<number | null>(
-    null
-  );
+
   const [isSideOverOpen, setIsSideOverOpen] = useState(false);
-
-  const handleDetailClick = (activity_id: number) => {
-    setSelectedActivityId(activity_id);
-    setIsModalOpen(true);
-  };
-
-  const handleModalClose = () => {
-    setIsModalOpen(false);
-    setSelectedActivityId(null);
-  };
 
   return (
     <div>
@@ -373,7 +359,7 @@ const StudentActivityList: React.FC = () => {
         <FlexBox direction="column" gap="12px">
           {data.map((item) => (
             <React.Fragment key={item.activity_id}>
-              <ActivityListItem {...item} onDetailClick={handleDetailClick} />
+              <ActivityListItem {...item} onDetailClick={() => {}} />
               <Divider />
             </React.Fragment>
           ))}
