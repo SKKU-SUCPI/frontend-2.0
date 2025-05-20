@@ -15,7 +15,7 @@ export default defineConfig({
   },
   server: {
     host: true,
-    allowedHosts: ["siop-dev.skku.edu"],
+    allowedHosts: ["siop-dev.skku.edu", "sucpi.skku.edu"],
     port: 5173,
   },
 });
