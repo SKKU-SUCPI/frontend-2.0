@@ -13,4 +13,9 @@ export default defineConfig({
       "@": "/src",
     },
   },
+  server: {
+    host: true,
+    allowedHosts: ["siop-dev.skku.edu"],
+    port: 5173,
+  },
 });
