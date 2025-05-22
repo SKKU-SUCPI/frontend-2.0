@@ -4,6 +4,7 @@ import {
   Navigate,
   RouterProvider,
 } from "react-router-dom";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { ThemeProvider as MuiThemeProvider } from "@mui/material/styles";
 import { ThemeProvider as EmotionThemeProvider } from "@emotion/react";
 import { theme } from "@/styles/theme";
@@ -26,7 +27,7 @@ import AdminActivityView from "@/pages/admin/activiy/list/view";
 import AdminActivityReview from "@/pages/admin/activiy/list/review";
 
 import SuperAdminParameter from "./pages/superAdmin";
-
+import TestPage from "./pages/test"; // 임시 테스트용
 const router = createBrowserRouter([
   { path: "/login", element: <Login /> },
   {
@@ -93,11 +94,15 @@ const router = createBrowserRouter([
   },
 ]);
 
+const queryClient = new QueryClient();
+
 const App: React.FC = () => {
   return (
     <MuiThemeProvider theme={theme}>
       <EmotionThemeProvider theme={theme}>
-        <RouterProvider router={router} />
+        <QueryClientProvider client={queryClient}>
+          <RouterProvider router={router} />
+        </QueryClientProvider>
       </EmotionThemeProvider>
     </MuiThemeProvider>
   );
