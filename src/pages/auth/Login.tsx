@@ -20,9 +20,9 @@ const HARDCODED_ACCOUNTS = {
     redirect: "/admin",
   },
   superadmin: {
-    id: "superadmin",
+    id: "super",
     password: "1234",
-    redirect: "/admin",
+    redirect: "/superAdmin",
   },
 };
 
@@ -54,7 +54,7 @@ const Login: React.FC = () => {
                 await getStudentLogin();
               } else if (account.id === "admin") {
                 await getAdminLogin();
-              } else if (account.id === "superadmin") {
+              } else if (account.id === "super") {
                 await getSuperAdminLogin();
               }
 

@@ -72,13 +72,13 @@ const adminRouteMap = {
   // 슈퍼 관리자 라우트
   2: [
     [
-      { path: "/admin/statistic/dashboard", label: "대시보드" },
-      { path: "/admin/statistic/individual", label: "개인별 통계" },
-      { path: "/admin/statistic/parameter", label: "파라미터 설정" },
+      { path: "/superAdmin/statistic/dashboard", label: "대시보드" },
+      { path: "/superAdmin/statistic/individual", label: "개인별 통계" },
+      { path: "/superAdmin/statistic/parameter", label: "파라미터 설정" },
     ],
     [
-      { path: "/admin/activity/dashboard", label: "대시보드" },
-      { path: "/admin/activity/list", label: "활동 목록" },
+      { path: "/superAdmin/activity/dashboard", label: "대시보드" },
+      { path: "/superAdmin/activity/list", label: "활동 목록" },
     ],
   ],
 };
@@ -91,10 +91,11 @@ const NavBar: React.FC = () => {
 
   const handleToggle = () => {
     toggleTab();
+    const basePath = user_role === 2 ? "/superAdmin" : "/admin";
     navigate(
       selectedTab === "statistic"
-        ? "/admin/activity/dashboard"
-        : "/admin/statistic/dashboard"
+        ? `${basePath}/activity/dashboard`
+        : `${basePath}/statistic/dashboard`
     );
   };
 
