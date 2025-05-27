@@ -94,8 +94,8 @@ const NavBar: React.FC = () => {
     toggleTab();
     navigate(
       selectedTab === "statistic"
-        ? "admin/activity/dashboard"
-        : "admin/statistic/dashboard"
+        ? "/admin/activity/dashboard"
+        : "/admin/statistic/dashboard"
     );
   };
 
@@ -116,7 +116,6 @@ const NavBar: React.FC = () => {
     setAnchorEl(null);
   };
 
-  console.log(`user_role: ${user_role}`);
   return (
     <FlexBox css={navBarStyle}>
       <FlexBox align="center" justify="space-between" css={navBarInnerStyle}>
