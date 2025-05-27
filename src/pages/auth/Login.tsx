@@ -61,7 +61,7 @@ const Login: React.FC = () => {
               navigate(account.redirect);
             } catch (error) {
               setError("로그인 중 오류가 발생했습니다.");
-              console.log(error);
+              console.error(error);
               setId("");
               setPassword("");
             }

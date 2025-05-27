@@ -1,6 +1,10 @@
-import React from "react";
 import { useNavigate } from "react-router-dom";
-
+import {
+  BarChart,
+  People,
+  TrackChanges,
+  FolderOpen,
+} from "@mui/icons-material";
 const Home = () => {
   const navigate = useNavigate();
   return (
@@ -20,29 +24,9 @@ const Home = () => {
           padding: "32px 40px 0 32px",
         }}
       >
-        <div style={{ display: "flex", alignItems: "center" }}>
-          <div
-            style={{
-              width: 40,
-              height: 40,
-              background: "#1DB954",
-              borderRadius: 8,
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-              marginRight: 12,
-            }}
-          >
-            <span style={{ color: "#fff", fontWeight: 700, fontSize: 24 }}>
-              S
-            </span>
-          </div>
-          <span style={{ fontWeight: 700, fontSize: 28, color: "#222" }}>
-            SUCPI
-          </span>
-        </div>
+        <div style={{ display: "flex", alignItems: "center" }}></div>
         <div style={{ color: "#888", fontSize: 16, display: "flex", gap: 24 }}>
-          <span>서비스 안내</span>
+          <span>도움말</span>
           <span>문의하기</span>
         </div>
       </div>
@@ -68,7 +52,7 @@ const Home = () => {
           >
             학생 역량 관리
             <br />
-            <span style={{ color: "#1DB954" }}>플랫폼 SUCPI</span>
+            <span style={{ color: "#4caf50" }}>플랫폼 SUCPI</span>
           </div>
           <div
             style={{
@@ -78,8 +62,9 @@ const Home = () => {
               lineHeight: 1.6,
             }}
           >
-            SUCPI는 학생들의 Learning, Research, Communication Quotient를
-            체계적으로 관리하고 성장을 지원하는 통합 플랫폼입니다.
+            SUCPI는 학생들의 성균 학생 종합 성과지수를 통해
+            <br />
+            성장을 지원하는 통합 플랫폼입니다.
           </div>
           <div
             style={{
@@ -99,7 +84,7 @@ const Home = () => {
                 gap: 12,
               }}
             >
-              <span style={{ fontSize: 24, color: "#1DB954" }}>📊</span>
+              <BarChart style={{ fontSize: 24, color: "#4caf50" }} />
               <div>
                 <div style={{ fontWeight: 700, color: "#222" }}>
                   실시간 분석
@@ -119,7 +104,7 @@ const Home = () => {
                 gap: 12,
               }}
             >
-              <span style={{ fontSize: 24, color: "#1DB954" }}>👥</span>
+              <People style={{ fontSize: 24, color: "#4caf50" }} />
               <div>
                 <div style={{ fontWeight: 700, color: "#222" }}>
                   학과별 비교
@@ -139,7 +124,7 @@ const Home = () => {
                 gap: 12,
               }}
             >
-              <span style={{ fontSize: 24, color: "#1DB954" }}>🎯</span>
+              <TrackChanges style={{ fontSize: 24, color: "#4caf50" }} />
               <div>
                 <div style={{ fontWeight: 700, color: "#222" }}>성취 추적</div>
                 <div style={{ color: "#888", fontSize: 14 }}>
@@ -157,7 +142,7 @@ const Home = () => {
                 gap: 12,
               }}
             >
-              <span style={{ fontSize: 24, color: "#1DB954" }}>🗂️</span>
+              <FolderOpen style={{ fontSize: 24, color: "#4caf50" }} />
               <div>
                 <div style={{ fontWeight: 700, color: "#222" }}>활동 관리</div>
                 <div style={{ color: "#888", fontSize: 14 }}>
@@ -197,7 +182,7 @@ const Home = () => {
           <button
             style={{
               width: "100%",
-              background: "#1DB954",
+              background: "#4caf50",
               color: "#fff",
               fontWeight: 700,
               fontSize: 18,
@@ -213,14 +198,6 @@ const Home = () => {
           >
             대학교 계정으로 로그인
           </button>
-          <div style={{ color: "#888", fontSize: 15 }}>
-            문제가 있으신가요?{" "}
-            <span
-              style={{ color: "#1DB954", fontWeight: 600, cursor: "pointer" }}
-            >
-              도움말
-            </span>
-          </div>
         </div>
       </div>
     </div>
