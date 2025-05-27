@@ -79,7 +79,7 @@ const Router = createBrowserRouter([
         children: [
           {
             index: true,
-            element: <Navigate to="/admin/statistic/dashboard" replace />,
+            element: <Navigate to="/admin/statistic/dashboard" />,
           },
           {
             path: "statistic",
@@ -117,7 +117,7 @@ const Router = createBrowserRouter([
         children: [
           {
             index: true,
-            element: <Navigate to="/admin/statistic/dashboard" replace />,
+            element: <Navigate to="/superAdmin/statistic/dashboard" />,
           },
           {
             path: "statistic",

@@ -1,7 +1,11 @@
 import React, { useState } from "react";
 import { css } from "@emotion/react";
 import { useNavigate } from "react-router-dom";
-import useUserStore from "@/stores/auth/userStore";
+import {
+  getStudentLogin,
+  getAdminLogin,
+  getSuperAdminLogin,
+} from "@/apis/auth/getLogin";
 
 // 하드코딩된 계정 정보
 const HARDCODED_ACCOUNTS = {
@@ -23,7 +27,6 @@ const HARDCODED_ACCOUNTS = {
 };
 
 const Login: React.FC = () => {
-  console.log("Login");
   return (
     <div
       css={css`
@@ -32,12 +35,11 @@ const Login: React.FC = () => {
     >
       {(() => {
         const navigate = useNavigate();
-        const { setUser } = useUserStore();
         const [id, setId] = useState("");
         const [password, setPassword] = useState("");
         const [error, setError] = useState("");
 
-        const handleLogin = () => {
+        const handleLogin = async () => {
           setError("");
 
           // 입력된 계정 정보로 로그인 시도
@@ -46,18 +48,27 @@ const Login: React.FC = () => {
           );
 
           if (account) {
-            // 임시로 기본 사용자 정보 설정
-            setUser({
-              user_id: 1,
-              user_role: 0,
-              user_name: "테스트 사용자",
-              user_hakbun: "2020123456",
-              user_hakgwa_cd: "CS",
-              user_year: 2020,
-            });
-            navigate(account.redirect);
+            try {
+              // 계정 타입에 따라 적절한 로그인 API 호출
+              if (account.id === "student") {
+                await getStudentLogin();
+              } else if (account.id === "admin") {
+                await getAdminLogin();
+              } else if (account.id === "superadmin") {
+                await getSuperAdminLogin();
+              }
+
+              navigate(account.redirect);
+            } catch (error) {
+              setError("로그인 중 오류가 발생했습니다.");
+              console.log(error);
+              setId("");
+              setPassword("");
+            }
           } else {
             setError("아이디 또는 비밀번호가 올바르지 않습니다.");
+            setId("");
+            setPassword("");
           }
         };
 

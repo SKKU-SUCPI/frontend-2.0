@@ -1,6 +1,6 @@
 import { Navigate, Outlet, useLocation } from "react-router-dom";
 import useUserStore from "@/stores/auth/userStore";
-
+import useAuthStore from "@/stores/auth/authStore";
 interface ProtectedRouteProps {
   allowedRoles: number[];
 }
@@ -12,14 +12,14 @@ const defaultPage: Record<number, string> = {
 };
 
 const ProtectedRoute = ({ allowedRoles }: ProtectedRouteProps) => {
-  const { user_id, user_role } = useUserStore();
+  const { user_role } = useUserStore();
+  const { isAuthenticated } = useAuthStore();
   const location = useLocation();
   const pathname = location.pathname;
 
   // 1. 로그인 안 된 경우
-  if (!user_id || !user_role) {
+  if (!isAuthenticated || user_role === null) {
     if (pathname === "/") return <Outlet />; // Home 허용
-    alert("로그인이 필요합니다.");
     return <Navigate to="/" replace />;
   }
 

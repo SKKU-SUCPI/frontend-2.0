@@ -5,7 +5,6 @@ import useUserStore from "@/stores/auth/userStore";
 export const getStudentLogin = async () => {
   const response = await axiosInstance.get<string>("/auth/login/student");
   const accessToken = response.headers["authorization"];
-  console.log(response.data);
 
   if (accessToken) {
     useAuthStore.getState().setAccessToken(accessToken);
@@ -28,7 +27,6 @@ export const getStudentLogin = async () => {
 export const getAdminLogin = async () => {
   const response = await axiosInstance.get("/auth/login/admin");
   const accessToken = response.headers["authorization"];
-  console.log(response.data);
   if (accessToken) {
     useAuthStore.getState().setAccessToken(accessToken);
   }
@@ -47,7 +45,6 @@ export const getAdminLogin = async () => {
 export const getSuperAdminLogin = async () => {
   const response = await axiosInstance.get("/auth/login/super-admin");
   const accessToken = response.headers["authorization"];
-  console.log(response.data);
   if (accessToken) {
     useAuthStore.getState().setAccessToken(accessToken);
   }
