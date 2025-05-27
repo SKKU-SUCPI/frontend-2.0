@@ -25,7 +25,6 @@ import SuperAdminParameter from "@/pages/superAdmin";
 
 // 임시 로그인
 import Login from "@/pages/auth/Login";
-import Test from "./pages/Test";
 
 const Router = createBrowserRouter([
   // Public root (홈페이지)
@@ -151,11 +150,6 @@ const Router = createBrowserRouter([
     path: "/login",
     element: <Login />,
   },
-  {
-    path: "/test",
-    element: <Test />,
-  },
-
   // Catch-all for 404
   {
     path: "*",
