@@ -18,7 +18,6 @@ export const axiosRawInstance: AxiosInstance = axios.create({
 axiosInstance.interceptors.request.use(
   (config) => {
     const accessToken = useAuthStore.getState().accessToken;
-    console.log("request with token", accessToken);
     if (accessToken) {
       // 이미 Bearer가 포함되어 있는지 확인
       const token = accessToken.startsWith("Bearer ")
