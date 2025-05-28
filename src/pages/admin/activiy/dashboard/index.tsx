@@ -6,6 +6,7 @@ import SimpleChart from "@/components/graphs/SimpleChart";
 import SimplePieChart from "@/components/graphs/SimplePieChart";
 import Card from "@/styles/components/Card";
 import { QuotientCard } from "./components/QuotientCard";
+import { useAdminRatio } from "@/hooks/admin/useAdminRatio";
 const titleStyle = css`
   font-size: 2.5rem;
   font-weight: bold;
@@ -129,12 +130,6 @@ const CQdata = {
   ],
 };
 
-const ratioData = [
-  { name: "LQ", value: 100, color: "#0088FE" },
-  { name: "RQ", value: 150, color: "#00C49F" },
-  { name: "CQ", value: 120, color: "#FFBB28" },
-];
-
 const summaryData = [
   {
     color: "#0088FE",
@@ -160,6 +155,9 @@ const summaryData = [
 ];
 
 const AdminActivityDashboard: React.FC = () => {
+  const { data: { data: chartData } = {}, isLoading } = useAdminRatio();
+  if (isLoading) return <div>Loading...</div>;
+
   return (
     <div css={{ marginBottom: "200px" }}>
       <h1 css={titleStyle}>활동 대시보드</h1>
@@ -168,7 +166,7 @@ const AdminActivityDashboard: React.FC = () => {
         <button css={filterButtonStyle}>검색 필터</button>
       </FlexBox>
       <Card>
-        <SimplePieChart data={ratioData} />
+        <SimplePieChart data={chartData} />
         <FlexBox direction="column" gap="10px">
           {summaryData.map((quotient, index) => (
             <QuotientCard

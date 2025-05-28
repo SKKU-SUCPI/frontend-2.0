@@ -140,6 +140,7 @@ const StudentDashboard: React.FC = () => {
           <h2 css={subtitleStyle}>3Q 지표 요약</h2>
           {QData.map((q) => (
             <QCardVertical
+              key={q.title}
               title={q.title}
               category={q.category}
               description={q.description}
@@ -154,6 +155,7 @@ const StudentDashboard: React.FC = () => {
           <h2 css={subtitleStyle}>최근 활동 내역</h2>
           {activityPreviewData.map((activity) => (
             <ActivityPreviewItem
+              key={activity.title}
               title={activity.title}
               category={activity.category}
               status={activity.status}
