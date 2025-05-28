@@ -2,12 +2,11 @@ import { create } from "zustand";
 import { persist, createJSONStorage } from "zustand/middleware";
 
 interface UserStore {
-  user_id: number | null;
-  user_role: 0 | 1 | 2 | null;
-  user_name: string | null;
-  user_hakbun: string | null;
-  user_hakgwa_cd: string | null;
-  user_year: number | null;
+  id: number | null;
+  name: string | null;
+  department: string | null;
+  studentId: string | null;
+  role: "student" | "admin" | "super-admin" | null;
 }
 
 interface UserStoreActions {
@@ -18,25 +17,23 @@ interface UserStoreActions {
 const useUserStore = create<UserStore & UserStoreActions>()(
   persist(
     (set) => ({
-      user_id: null,
-      user_role: null,
-      user_name: null,
-      user_hakbun: null,
-      user_hakgwa_cd: null,
-      user_year: null,
+      id: null,
+      name: null,
+      department: null,
+      studentId: null,
+      role: null,
       setUser: (user) => set(user),
       clearUser: () =>
         set({
-          user_id: null,
-          user_role: null,
-          user_name: null,
-          user_hakbun: null,
-          user_hakgwa_cd: null,
-          user_year: null,
+          id: null,
+          name: null,
+          department: null,
+          studentId: null,
+          role: null,
         }),
     }),
     {
-      name: "user-storage", // localStorage key 이름
+      name: "user-storage",
       storage: createJSONStorage(() => localStorage),
     }
   )

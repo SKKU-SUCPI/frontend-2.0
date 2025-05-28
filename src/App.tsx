@@ -6,7 +6,10 @@ import { ThemeProvider as EmotionThemeProvider } from "@emotion/react";
 import { theme } from "@/styles/theme";
 
 import Router from "@/Router";
-import getRefresh from "./apis/auth/getRefresh";
+import getRefresh from "@/apis/auth/getRefresh";
+import getProfile from "@/apis/auth/getProfile";
+import useUserStore from "@/stores/auth/userStore";
+
 const queryClient = new QueryClient();
 
 const App: React.FC = () => {
@@ -16,6 +19,8 @@ const App: React.FC = () => {
     const refreshToken = async () => {
       try {
         await getRefresh();
+        const profile = await getProfile();
+        useUserStore.getState().setUser(profile);
       } finally {
         setIsLoading(false);
       }
