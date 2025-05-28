@@ -1,5 +1,9 @@
+/// <reference types="vite/client" />
+
 import { defineConfig } from "vite";
 import react from "@vitejs/plugin-react-swc";
+
+const isProxyOn = import.meta.env.VITE_IS_PROXY_ON === "true";
 
 // https://vite.dev/config/
 export default defineConfig({
@@ -20,11 +24,13 @@ export default defineConfig({
     // 로컬 개발 환경에서 프록시 설정
     // 상용 서버에서는 프록시 설정 필요 없음
     proxy: {
-      "/api": {
-        target: "http://siop-dev.skku.edu:8080",
-        changeOrigin: true,
-        secure: false,
-      },
+      ...(isProxyOn && {
+        "/api": {
+          target: "http://siop-dev.skku.edu:8080",
+          changeOrigin: true,
+          secure: false,
+        },
+      }),
     },
   },
 });
