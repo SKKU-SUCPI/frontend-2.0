@@ -7,6 +7,9 @@ import {
   getSuperAdminLogin,
 } from "@/apis/auth/getLogin";
 
+import useUserStore from "@/stores/auth/userStore";
+import getProfile from "@/apis/auth/getProfile";
+
 // 하드코딩된 계정 정보
 const HARDCODED_ACCOUNTS = {
   student: {
@@ -57,6 +60,9 @@ const Login: React.FC = () => {
               } else if (account.id === "super") {
                 await getSuperAdminLogin();
               }
+
+              const profile = await getProfile();
+              useUserStore.getState().setUser(profile);
 
               navigate(account.redirect);
             } catch (error) {
