@@ -1,6 +1,5 @@
 import axiosInstance from "@/apis/utils/axiosInterceptor";
 import useAuthStore from "@/stores/auth/authStore";
-import useUserStore from "@/stores/auth/userStore";
 
 export const getStudentLogin = async () => {
   const response = await axiosInstance.get<string>("/auth/login/student");
