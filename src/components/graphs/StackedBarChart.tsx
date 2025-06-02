@@ -17,6 +17,7 @@ interface StackedBarChartProps {
     LQ: { name: string; score: number }[];
     CQ: { name: string; score: number }[];
   };
+  maxDomain?: number | undefined;
 }
 
 const tooltipContainerStyle = css`
@@ -44,7 +45,10 @@ const tooltipTotalStyle = css`
   padding-top: 8px;
 `;
 
-const StackedBarChart: React.FC<StackedBarChartProps> = ({ data }) => {
+const StackedBarChart: React.FC<StackedBarChartProps> = ({
+  data,
+  maxDomain,
+}) => {
   // TODO: 백엔드 데이터 형식에 따라 변경할 것
   // 데이터 변환 - 학과별로 RQ, LQ, CQ 점수를 통합
   const transformedData = React.useMemo(() => {
@@ -96,7 +100,7 @@ const StackedBarChart: React.FC<StackedBarChartProps> = ({ data }) => {
         barSize={20}
       >
         <CartesianGrid strokeDasharray="3 3" />
-        <XAxis type="number" domain={[0, 100]} />
+        <XAxis type="number" domain={maxDomain ? [0, maxDomain] : undefined} />
         <YAxis type="category" dataKey="name" />
         <Tooltip
           content={({ active, payload, label }) => {
