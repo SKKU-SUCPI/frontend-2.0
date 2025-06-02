@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect } from "react";
 import { RouterProvider } from "react-router-dom";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { ThemeProvider as MuiThemeProvider } from "@mui/material/styles";
@@ -6,32 +6,39 @@ import { ThemeProvider as EmotionThemeProvider } from "@emotion/react";
 import { theme } from "@/styles/theme";
 
 import Router from "@/Router";
-import getRefresh from "./apis/auth/getRefresh";
+import useRefresh from "@/hooks/auth/useRefresh";
 const queryClient = new QueryClient();
 
-const App: React.FC = () => {
-  const [isLoading, setIsLoading] = useState(true);
+const AppContent = () => {
+  const { run, isLoading } = useRefresh();
 
   useEffect(() => {
-    const refreshToken = async () => {
-      try {
-        await getRefresh();
-      } finally {
-        setIsLoading(false);
-      }
-    };
-    refreshToken();
+    run();
   }, []);
 
   if (isLoading) {
     return <div>Loading...</div>; // 또는 로딩 컴포넌트를 사용
   }
 
+  return <RouterProvider router={Router} />;
+};
+
+const App: React.FC = () => {
+  // const { run, isLoading } = useRefresh();
+
+  // useEffect(() => {
+  //   run();
+  // }, []);
+
+  // if (isLoading) {
+  //   return <div>Loading...</div>; // 또는 로딩 컴포넌트를 사용
+  // }
+
   return (
     <MuiThemeProvider theme={theme}>
       <EmotionThemeProvider theme={theme}>
         <QueryClientProvider client={queryClient}>
-          <RouterProvider router={Router} />
+          <AppContent />
         </QueryClientProvider>
       </EmotionThemeProvider>
     </MuiThemeProvider>
