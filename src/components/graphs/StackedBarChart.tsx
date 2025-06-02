@@ -10,6 +10,7 @@ import {
 } from "recharts";
 import { css } from "@emotion/react";
 import FlexBox from "@/styles/components/Flexbox";
+import { theme } from "@/styles/theme";
 
 interface StackedBarChartProps {
   data: {
@@ -131,19 +132,9 @@ const StackedBarChart: React.FC<StackedBarChartProps> = ({
           }}
         />
         <Legend />
-        <Bar
-          dataKey="RQ"
-          name="Reasoning Quotient"
-          stackId="a"
-          fill="#7B8BA3"
-        />
-        <Bar dataKey="LQ" name="Learning Quotient" stackId="a" fill="#9BA6BC" />
-        <Bar
-          dataKey="CQ"
-          name="Communication Quotient"
-          stackId="a"
-          fill="#B8C2D4"
-        />
+        <Bar dataKey="RQ" name="RQ" stackId="a" fill={theme.customColors.rq} />
+        <Bar dataKey="LQ" name="LQ" stackId="a" fill={theme.customColors.lq} />
+        <Bar dataKey="CQ" name="CQ" stackId="a" fill={theme.customColors.cq} />
       </BarChart>
     </FlexBox>
   );

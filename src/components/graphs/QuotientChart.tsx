@@ -10,6 +10,7 @@ import {
 } from "recharts";
 import { css } from "@emotion/react";
 import FlexBox from "@/styles/components/Flexbox";
+import { theme } from "@/styles/theme";
 
 interface QuotientData {
   name: string;
@@ -39,18 +40,25 @@ const QuotientChart: React.FC<QuotientChartProps> = ({
     {
       name: "RQ",
       ...Object.fromEntries(data.RQ.map((item) => [item.name, item.score])),
+      color: theme.customColors.rq,
     },
     {
       name: "LQ",
       ...Object.fromEntries(data.LQ.map((item) => [item.name, item.score])),
+      color: theme.customColors.lq,
     },
     {
       name: "CQ",
       ...Object.fromEntries(data.CQ.map((item) => [item.name, item.score])),
+      color: theme.customColors.cq,
     },
   ];
 
-  const barColors = ["#7B8BA3", "#9BA6BC", "#B8C2D4"];
+  const departmentColorMap: Record<string, string> = {
+    소프트웨어: theme.customColors.rq,
+    지능형소프트: theme.customColors.lq,
+    글로벌융합: theme.customColors.cq,
+  };
 
   // 데이터 개수에 따라 동적으로 바 크기 조정
   const dynamicBarSize = useMemo(() => {
@@ -119,12 +127,12 @@ const QuotientChart: React.FC<QuotientChartProps> = ({
           }}
         />
         <Legend />
-        {data.RQ.map((item, index) => (
+        {data.RQ.map((item) => (
           <Bar
             key={item.name}
             dataKey={item.name}
             name={item.name}
-            fill={barColors[index % barColors.length]}
+            fill={departmentColorMap[item.name]}
           />
         ))}
       </BarChart>

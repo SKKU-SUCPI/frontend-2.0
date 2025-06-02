@@ -65,10 +65,10 @@ const AdminStatisticDashboard: React.FC = () => {
         title="지수별/학과별 비교"
         type="block"
         options={{
-          labels: ["영역별 보기", "학과별 보기"],
+          labels: ["학과별 보기", "영역별 보기"],
           datasets: {
-            "영역별 보기": <QuotientChart data={departmentData} />,
             "학과별 보기": <StackedBarChart data={departmentData} />,
+            "영역별 보기": <QuotientChart data={departmentData} />,
           },
         }}
       />
