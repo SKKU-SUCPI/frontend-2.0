@@ -5,11 +5,10 @@ import useNavigationStore from "@/stores/navigationStore";
 import { Switch, Menu, MenuItem, IconButton } from "@mui/material";
 import { Typography } from "@mui/material";
 import FlexBox from "@/styles/components/Flexbox";
-import useUserStore from "@/stores/auth/userStore";
 import { useState } from "react";
 import AccountCircleIcon from "@mui/icons-material/AccountCircle";
 import getLogout from "@/apis/auth/getLogout";
-
+import useAuthStore from "@/stores/auth/authStore";
 const navBarStyle = css`
   /* 전체 상단 바 영역 */
   height: 64px;
@@ -59,7 +58,7 @@ const studentRoute = [
 
 const adminRouteMap = {
   // 관리자 라우트
-  1: [
+  admin: [
     [
       { path: "/admin/statistic/dashboard", label: "대시보드" },
       { path: "/admin/statistic/individual", label: "개인별 통계" },
@@ -70,7 +69,7 @@ const adminRouteMap = {
     ],
   ],
   // 슈퍼 관리자 라우트
-  2: [
+  "super-admin": [
     [
       { path: "/superAdmin/statistic/dashboard", label: "대시보드" },
       { path: "/superAdmin/statistic/individual", label: "개인별 통계" },
@@ -87,11 +86,12 @@ const NavBar: React.FC = () => {
   const { selectedTab, toggleTab } = useNavigationStore();
   const navigate = useNavigate();
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
-  const { user_hakbun, user_name, user_role, clearUser } = useUserStore();
+  const { userProfile } = useAuthStore();
 
   const handleToggle = () => {
     toggleTab();
-    const basePath = user_role === 2 ? "/superAdmin" : "/admin";
+    const basePath =
+      userProfile?.role === "super-admin" ? "/superAdmin" : "/admin";
     navigate(
       selectedTab === "statistic"
         ? `${basePath}/activity/dashboard`
@@ -102,7 +102,6 @@ const NavBar: React.FC = () => {
   const handleLogout = async () => {
     try {
       await getLogout();
-      clearUser();
       navigate("/");
     } catch (error) {
       console.error("로그아웃 실패:", error);
@@ -126,7 +125,7 @@ const NavBar: React.FC = () => {
           </FlexBox>
 
           {/* 통계 / 활동 토글 부분 */}
-          {user_role !== 0 && (
+          {userProfile?.role !== "student" && (
             <FlexBox
               align="center"
               justify="flex-start"
@@ -172,7 +171,7 @@ const NavBar: React.FC = () => {
         {/* 네비게이션 메뉴 부분 */}
         <FlexBox as="nav" align="center" gap="32px">
           {/* 학생 라우트 */}
-          {user_role === 0 && (
+          {userProfile?.role === "student" && (
             <>
               {studentRoute.map((item) => (
                 <NavLink key={item.path} to={item.path} css={linkStyle}>
@@ -182,9 +181,10 @@ const NavBar: React.FC = () => {
             </>
           )}
           {/* 관리자 라우트 */}
-          {(user_role == 1 || user_role == 2) &&
+          {(userProfile?.role === "admin" ||
+            userProfile?.role === "super-admin") &&
             (() => {
-              const roleRoute = adminRouteMap[user_role];
+              const roleRoute = adminRouteMap[userProfile?.role];
               const selectedRoute =
                 roleRoute[selectedTab === "statistic" ? 0 : 1];
               return (
@@ -201,14 +201,14 @@ const NavBar: React.FC = () => {
 
         {/* 프로필 부분 */}
         <FlexBox justify="flex-end" gap="16px">
-          <span>{user_hakbun}</span>
-          <span>{user_name}</span>
+          <span>{userProfile?.studentId}</span>
+          <span>{userProfile?.name}</span>
           <span>
-            {user_role === null
+            {userProfile?.role === null
               ? "로그인전"
-              : user_role === 0
+              : userProfile?.role === "student"
               ? "학생"
-              : user_role === 1
+              : userProfile?.role === "admin"
               ? "관리자"
               : "슈퍼관리자"}
           </span>
