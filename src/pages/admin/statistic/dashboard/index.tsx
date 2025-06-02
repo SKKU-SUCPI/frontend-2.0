@@ -13,7 +13,7 @@ import {
   transformTotalAverage,
   transformDepartmentAverage,
 } from "./utils/transform3qAverage";
-
+import Loading from "@/components/layouts/Loading";
 const titleStyle = css`
   font-size: 2.5rem;
   font-weight: bold;
@@ -38,9 +38,7 @@ const AdminStatisticDashboard: React.FC = () => {
     return transformDepartmentAverage(departmentAverage);
   }, [departmentAverage]);
 
-  if (totalLoading) {
-    return <div>Loading...</div>;
-  }
+  if (totalLoading) return <Loading />;
 
   /////////////// component 부분 ///////////////
   return (

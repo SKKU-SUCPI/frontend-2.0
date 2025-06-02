@@ -7,6 +7,7 @@ import { css } from "@emotion/react";
 import Modal from "@mui/material/Modal";
 import IconButton from "@mui/material/IconButton";
 import CloseIcon from "@mui/icons-material/Close";
+import Loading from "@/components/layouts/Loading";
 
 const titleStyle = css`
   font-size: 2.5rem;
@@ -33,9 +34,7 @@ const AdminActivityList = () => {
     sort: "desc",
   });
 
-  console.log(data);
-
-  if (isLoading) return <div>Loading...</div>;
+  if (isLoading) return <Loading />;
 
   const totalPages = data?.totalPage || 1;
 

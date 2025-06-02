@@ -8,7 +8,7 @@ import Card from "@/styles/components/Card";
 import { QuotientCard } from "./components/QuotientCard";
 import { useAdminRatio } from "@/hooks/admin/useAdminRatio";
 import useSubmitSummary from "@/hooks/admin/useSubmitSummary";
-
+import Loading from "@/components/layouts/Loading";
 const titleStyle = css`
   font-size: 2.5rem;
   font-weight: bold;
@@ -140,7 +140,7 @@ const AdminActivityDashboard: React.FC = () => {
     useSubmitSummary();
 
   const isLoading = isLoadingRatio || isLoadingSubmitSummary;
-  if (isLoading) return <div>Loading...</div>;
+  if (isLoading) return <Loading />;
 
   /////////////// component 부분 ///////////////
   return (
