@@ -24,18 +24,16 @@ const subtitleStyle = css`
 `;
 
 const AdminStatisticDashboard: React.FC = () => {
-  // 데이터 fetch
+  /////////////// data fetch ///////////////
   const { data: totalAverage, isLoading: totalAverageLoading } =
     use3qTotalAverage();
   const { data: departmentAverage, isLoading: departmentAverageLoading } =
     use3qDepartmentAverage();
 
   const totalLoading = totalAverageLoading || departmentAverageLoading;
-
   const totalData = useMemo(() => {
     return transformTotalAverage(totalAverage);
   }, [totalAverage]);
-
   const departmentData = useMemo(() => {
     return transformDepartmentAverage(departmentAverage);
   }, [departmentAverage]);
@@ -44,6 +42,7 @@ const AdminStatisticDashboard: React.FC = () => {
     return <div>Loading...</div>;
   }
 
+  /////////////// component 부분 ///////////////
   return (
     <div>
       <h1 css={titleStyle}>통계 대시보드</h1>
