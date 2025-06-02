@@ -1,24 +1,41 @@
-import useUserStore from "@/stores/auth/userStore";
-import { Navigate, Outlet } from "react-router-dom";
-
+import { Navigate, Outlet, useLocation } from "react-router-dom";
+import useAuthStore from "@/stores/auth/authStore";
 interface ProtectedRouteProps {
-  allowedRoles: number[];
+  allowedRoles: string[];
 }
+
+const defaultPage: Record<string, string> = {
+  student: "/student",
+  admin: "/admin",
+  "super-admin": "/superAdmin",
+};
+
 const ProtectedRoute = ({ allowedRoles }: ProtectedRouteProps) => {
-  const { user_id, user_role } = useUserStore();
+  const { accessToken, userProfile } = useAuthStore();
+  const location = useLocation();
+  const pathname = location.pathname;
 
-  console.log(`protected route: ${user_id}, ${user_role}`);
-  if (!user_id) {
-    // 알림 띄우고 로그인 페이지로 리다이렉트
-    alert("로그인이 필요합니다. 로그인 페이지로 이동합니다.");
-    return <Navigate to="/login" replace />;
-  }
-
-  if (user_role !== null && !allowedRoles.includes(user_role)) {
-    // 알림 띄우고 메인으로 리다이렉트
-    alert("권한이 없습니다. 메인 페이지로 이동합니다.");
+  // 1. 로그인 안 된 경우
+  if (!accessToken) {
+    if (pathname === "/") return <Outlet />; // Home 허용
     return <Navigate to="/" replace />;
   }
+  if (!userProfile?.role) {
+    return <Navigate to="/" replace />;
+  }
+
+  // 2. 로그인 되어 있고, "/" 접근 → 자동 리디렉션
+  if (pathname === "/") {
+    return <Navigate to={defaultPage[userProfile.role]} replace />;
+  }
+
+  // 3. 로그인 OK but 권한 없음 → 본인 디폴트 경로로 리디렉션
+  if (!allowedRoles.includes(userProfile.role)) {
+    alert("접근 권한이 없습니다. 본인 권한 페이지로 이동합니다.");
+    return <Navigate to={defaultPage[userProfile.role]} replace />;
+  }
+
+  // 4. 권한 OK → 정상 렌더링
   return <Outlet />;
 };
 

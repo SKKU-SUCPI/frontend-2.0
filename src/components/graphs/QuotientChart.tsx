@@ -25,7 +25,7 @@ interface QuotientChartProps {
   width?: number;
   height?: number;
   barSize?: number;
-  maxDomain?: number;
+  maxDomain?: number | undefined;
 }
 
 const QuotientChart: React.FC<QuotientChartProps> = ({
@@ -33,7 +33,7 @@ const QuotientChart: React.FC<QuotientChartProps> = ({
   width = 1000,
   height = 400,
   barSize,
-  maxDomain = 33,
+  maxDomain,
 }) => {
   const transformedData = [
     {
@@ -80,7 +80,7 @@ const QuotientChart: React.FC<QuotientChartProps> = ({
       >
         <CartesianGrid strokeDasharray="3 3" />
         <XAxis dataKey="name" />
-        <YAxis domain={[0, maxDomain]} />
+        <YAxis domain={maxDomain ? [0, maxDomain] : undefined} />
         <Tooltip
           content={({ active, payload, label }) => {
             if (active && payload && payload.length) {

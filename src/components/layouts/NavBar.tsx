@@ -5,10 +5,10 @@ import useNavigationStore from "@/stores/navigationStore";
 import { Switch, Menu, MenuItem, IconButton } from "@mui/material";
 import { Typography } from "@mui/material";
 import FlexBox from "@/styles/components/Flexbox";
-import useUserStore from "@/stores/auth/userStore";
 import { useState } from "react";
 import AccountCircleIcon from "@mui/icons-material/AccountCircle";
-
+import getLogout from "@/apis/auth/getLogout";
+import useAuthStore from "@/stores/auth/authStore";
 const navBarStyle = css`
   /* 전체 상단 바 영역 */
   height: 64px;
@@ -58,7 +58,7 @@ const studentRoute = [
 
 const adminRouteMap = {
   // 관리자 라우트
-  1: [
+  admin: [
     [
       { path: "/admin/statistic/dashboard", label: "대시보드" },
       { path: "/admin/statistic/individual", label: "개인별 통계" },
@@ -69,15 +69,15 @@ const adminRouteMap = {
     ],
   ],
   // 슈퍼 관리자 라우트
-  2: [
+  "super-admin": [
     [
-      { path: "/admin/statistic/dashboard", label: "대시보드" },
-      { path: "/admin/statistic/individual", label: "개인별 통계" },
-      { path: "/admin/statistic/parameter", label: "파라미터 설정" },
+      { path: "/superAdmin/statistic/dashboard", label: "대시보드" },
+      { path: "/superAdmin/statistic/individual", label: "개인별 통계" },
+      { path: "/superAdmin/statistic/parameter", label: "파라미터 설정" },
     ],
     [
-      { path: "/admin/activity/dashboard", label: "대시보드" },
-      { path: "/admin/activity/list", label: "활동 목록" },
+      { path: "/superAdmin/activity/dashboard", label: "대시보드" },
+      { path: "/superAdmin/activity/list", label: "활동 목록" },
     ],
   ],
 };
@@ -85,38 +85,30 @@ const adminRouteMap = {
 const NavBar: React.FC = () => {
   const { selectedTab, toggleTab } = useNavigationStore();
   const navigate = useNavigate();
-  const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null); // 테스트용 코드
-  const { user_hakbun, user_name, user_role, setUser, clearUser } =
-    useUserStore();
+  const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
+  const { userProfile } = useAuthStore();
 
-  // 토글 시 자동으로 default 페이지로 이동
   const handleToggle = () => {
     toggleTab();
+    const basePath =
+      userProfile?.role === "super-admin" ? "/superAdmin" : "/admin";
     navigate(
       selectedTab === "statistic"
-        ? "admin/activity/dashboard"
-        : "admin/statistic/dashboard"
+        ? `${basePath}/activity/dashboard`
+        : `${basePath}/statistic/dashboard`
     );
   };
 
-  const handleLogin = () => {
-    setUser({
-      user_id: 1,
-      user_role: 0,
-      user_name: "홍길동",
-      user_hakbun: "2020123456",
-      user_hakgwa_cd: "CS",
-      user_year: 2020,
-    });
+  const handleLogout = async () => {
+    try {
+      await getLogout();
+      navigate("/");
+    } catch (error) {
+      console.error("로그아웃 실패:", error);
+    }
     setAnchorEl(null);
   };
 
-  const handleLogout = () => {
-    clearUser();
-    setAnchorEl(null);
-  };
-
-  console.log(`user_role: ${user_role}`);
   return (
     <FlexBox css={navBarStyle}>
       <FlexBox align="center" justify="space-between" css={navBarInnerStyle}>
@@ -133,7 +125,7 @@ const NavBar: React.FC = () => {
           </FlexBox>
 
           {/* 통계 / 활동 토글 부분 */}
-          {user_role !== 0 && (
+          {userProfile?.role !== "student" && (
             <FlexBox
               align="center"
               justify="flex-start"
@@ -179,7 +171,7 @@ const NavBar: React.FC = () => {
         {/* 네비게이션 메뉴 부분 */}
         <FlexBox as="nav" align="center" gap="32px">
           {/* 학생 라우트 */}
-          {user_role === 0 && (
+          {userProfile?.role === "student" && (
             <>
               {studentRoute.map((item) => (
                 <NavLink key={item.path} to={item.path} css={linkStyle}>
@@ -189,9 +181,10 @@ const NavBar: React.FC = () => {
             </>
           )}
           {/* 관리자 라우트 */}
-          {(user_role == 1 || user_role == 2) &&
+          {(userProfile?.role === "admin" ||
+            userProfile?.role === "super-admin") &&
             (() => {
-              const roleRoute = adminRouteMap[user_role];
+              const roleRoute = adminRouteMap[userProfile?.role];
               const selectedRoute =
                 roleRoute[selectedTab === "statistic" ? 0 : 1];
               return (
@@ -208,14 +201,14 @@ const NavBar: React.FC = () => {
 
         {/* 프로필 부분 */}
         <FlexBox justify="flex-end" gap="16px">
-          <span>{user_hakbun}</span>
-          <span>{user_name}</span>
+          <span>{userProfile?.studentId}</span>
+          <span>{userProfile?.name}</span>
           <span>
-            {user_role === null
+            {userProfile?.role === null
               ? "로그인전"
-              : user_role === 0
+              : userProfile?.role === "student"
               ? "학생"
-              : user_role === 1
+              : userProfile?.role === "admin"
               ? "관리자"
               : "슈퍼관리자"}
           </span>
@@ -225,36 +218,11 @@ const NavBar: React.FC = () => {
           >
             <AccountCircleIcon />
           </IconButton>
-          {/* 테스트용 코드 */}
           <Menu
             anchorEl={anchorEl}
             open={Boolean(anchorEl)}
             onClose={() => setAnchorEl(null)}
           >
-            {[
-              { role: 0 as const, label: "학생" },
-              { role: 1 as const, label: "관리자" },
-              { role: 2 as const, label: "슈퍼 관리자" },
-            ].map(({ role, label }) => (
-              <MenuItem
-                key={role}
-                onClick={() => {
-                  setUser({
-                    user_id: 1,
-                    user_role: role,
-                    user_name: "홍길동",
-                    user_hakbun: "2020123456",
-                    user_hakgwa_cd: "CS",
-                    user_year: 2020,
-                  });
-                  setAnchorEl(null);
-                }}
-                selected={user_role === role}
-              >
-                {label}
-              </MenuItem>
-            ))}
-            <MenuItem onClick={handleLogin}>로그인</MenuItem>
             <MenuItem onClick={handleLogout}>로그아웃</MenuItem>
           </Menu>
         </FlexBox>
