@@ -27,6 +27,15 @@ const HARDCODED_ACCOUNTS = {
   },
 };
 
+const postSSOLogin = () => {
+  const form = document.createElement("form");
+  form.method = "POST";
+  form.action = "/api/auth/login"; // 🔁 여기에 로그인 처리 및 SSO 리디렉션 포함
+
+  document.body.appendChild(form);
+  form.submit(); // ✅ 브라우저가 직접 POST → CORS 없음
+};
+
 const Login: React.FC = () => {
   const { run } = useRefresh();
   return (
