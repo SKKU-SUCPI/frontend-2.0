@@ -30,7 +30,9 @@ const Router = createBrowserRouter([
   // Public root (홈페이지)
   {
     path: "/",
-    element: <ProtectedRoute allowedRoles={[0, 1, 2]} />,
+    element: (
+      <ProtectedRoute allowedRoles={["student", "admin", "super-admin"]} />
+    ),
     children: [
       {
         index: true,
@@ -42,7 +44,7 @@ const Router = createBrowserRouter([
   // Student routes
   {
     path: "/student",
-    element: <ProtectedRoute allowedRoles={[0]} />,
+    element: <ProtectedRoute allowedRoles={["student"]} />,
     children: [
       {
         element: <MainLayout />,
@@ -71,7 +73,7 @@ const Router = createBrowserRouter([
   // Admin routes
   {
     path: "/admin",
-    element: <ProtectedRoute allowedRoles={[1]} />,
+    element: <ProtectedRoute allowedRoles={["admin"]} />,
     children: [
       {
         element: <MainLayout />,
@@ -109,7 +111,7 @@ const Router = createBrowserRouter([
   // Super Admin routes
   {
     path: "/superAdmin",
-    element: <ProtectedRoute allowedRoles={[2]} />,
+    element: <ProtectedRoute allowedRoles={["super-admin"]} />,
     children: [
       {
         element: <MainLayout />,
