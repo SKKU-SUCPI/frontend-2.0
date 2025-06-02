@@ -1,12 +1,20 @@
-import { useNavigate } from "react-router-dom";
 import {
   BarChart,
   People,
   TrackChanges,
   FolderOpen,
 } from "@mui/icons-material";
+
+const postSSOLogin = () => {
+  const form = document.createElement("form");
+  form.method = "POST";
+  form.action = "/api/auth/login"; // 여기에 로그인 처리 및 SSO 리디렉션 포함
+
+  document.body.appendChild(form);
+  form.submit(); // 브라우저가 직접 POST → CORS 없음
+};
+
 const Home = () => {
-  const navigate = useNavigate();
   return (
     <div
       style={{
@@ -193,10 +201,10 @@ const Home = () => {
               cursor: "pointer",
             }}
             onClick={() => {
-              navigate("/login");
+              postSSOLogin();
             }}
           >
-            대학교 계정으로 로그인
+            SKKU 계정으로 로그인
           </button>
         </div>
       </div>
