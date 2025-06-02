@@ -26,8 +26,7 @@ const transformTotalAverage = (data: {
 const transformDepartmentAverage = (
   data: Record<string, { lq: number; rq: number; cq: number }>
 ) => {
-  if (!data) return [];
-
+  if (!data) return { RQ: [], LQ: [], CQ: [] };
   const convertName = (name: string) => {
     if (name === "sw") return "소프트웨어";
     if (name === "soc") return "글로벌융합";
