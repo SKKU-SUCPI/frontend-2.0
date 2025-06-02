@@ -1,10 +1,18 @@
-import React from "react";
+import React, { useMemo } from "react";
 import { css } from "@emotion/react";
 import QCard from "./components/QCard";
 import FlexBox from "@/styles/components/Flexbox";
 import QuotientChart from "@/components/graphs/QuotientChart";
 import StackedBarChart from "@/components/graphs/StackedBarChart";
 import GraphWrapper from "@/components/graphs/GraphWrapper";
+import {
+  use3qTotalAverage,
+  use3qDepartmentAverage,
+} from "@/hooks/admin/use3qAverage";
+import {
+  transformTotalAverage,
+  transformDepartmentAverage,
+} from "./utils/transform3qAverage";
 
 const titleStyle = css`
   font-size: 2.5rem;
@@ -15,50 +23,27 @@ const subtitleStyle = css`
   font-size: 1.8rem;
 `;
 
-const summaryData = [
-  {
-    name: "RQ",
-    description: "Research Quotient",
-    score: 26,
-    previousScore: 29,
-  },
-  {
-    name: "LQ",
-    description: "Learning Quotient",
-    score: 31,
-    previousScore: 27,
-  },
-  {
-    name: "CQ",
-    description: "Communication Quotient",
-    score: 21,
-    previousScore: 20,
-  },
-];
-
-// 각 Quotient별 학과 데이터
-const totalData = {
-  RQ: [
-    { name: "SW", score: 28 },
-    { name: "EE", score: 25 },
-    { name: "CSE", score: 27 },
-    { name: "ME", score: 26 },
-  ],
-  LQ: [
-    { name: "SW", score: 30 },
-    { name: "EE", score: 29 },
-    { name: "CSE", score: 31 },
-    { name: "ME", score: 32 },
-  ],
-  CQ: [
-    { name: "SW", score: 22 },
-    { name: "EE", score: 19 },
-    { name: "CSE", score: 23 },
-    { name: "ME", score: 24 },
-  ],
-};
-
 const AdminStatisticDashboard: React.FC = () => {
+  // 데이터 fetch
+  const { data: totalAverage, isLoading: totalAverageLoading } =
+    use3qTotalAverage();
+  const { data: departmentAverage, isLoading: departmentAverageLoading } =
+    use3qDepartmentAverage();
+
+  const totalLoading = totalAverageLoading || departmentAverageLoading;
+
+  const totalData = useMemo(() => {
+    return transformTotalAverage(totalAverage);
+  }, [totalAverage]);
+
+  const departmentData = useMemo(() => {
+    return transformDepartmentAverage(departmentAverage);
+  }, [departmentAverage]);
+
+  if (totalLoading) {
+    return <div>Loading...</div>;
+  }
+
   return (
     <div>
       <h1 css={titleStyle}>통계 대시보드</h1>
@@ -66,7 +51,7 @@ const AdminStatisticDashboard: React.FC = () => {
       <div>
         <h2 css={subtitleStyle}>3Q 전체 통계</h2>
         <FlexBox gap="20px">
-          {summaryData.map((item) => (
+          {totalData.map((item) => (
             <QCard
               key={item.name}
               name={item.name}
@@ -83,8 +68,8 @@ const AdminStatisticDashboard: React.FC = () => {
         options={{
           labels: ["영역별 보기", "학과별 보기"],
           datasets: {
-            "영역별 보기": <QuotientChart data={totalData} />,
-            "학과별 보기": <StackedBarChart data={totalData} />,
+            "영역별 보기": <QuotientChart data={departmentData} />,
+            "학과별 보기": <StackedBarChart data={departmentData} />,
           },
         }}
       />
