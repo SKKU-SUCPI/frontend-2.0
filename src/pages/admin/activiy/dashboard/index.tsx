@@ -7,6 +7,8 @@ import SimplePieChart from "@/components/graphs/SimplePieChart";
 import Card from "@/styles/components/Card";
 import { QuotientCard } from "./components/QuotientCard";
 import { useAdminRatio } from "@/hooks/admin/useAdminRatio";
+import useSubmitSummary from "@/hooks/admin/useSubmitSummary";
+
 const titleStyle = css`
   font-size: 2.5rem;
   font-weight: bold;
@@ -130,34 +132,17 @@ const CQdata = {
   ],
 };
 
-const summaryData = [
-  {
-    color: "#0088FE",
-    title: "Learning Quotient (LQ)",
-    month: 20,
-    change: 10,
-    total: 100,
-  },
-  {
-    color: "#00C49F",
-    title: "Research Quotient (RQ)",
-    month: 30,
-    change: -5,
-    total: 150,
-  },
-  {
-    color: "#FFBB28",
-    title: "Communication Quotient (CQ)",
-    month: 23,
-    change: 15,
-    total: 120,
-  },
-];
-
 const AdminActivityDashboard: React.FC = () => {
-  const { data: { data: chartData } = {}, isLoading } = useAdminRatio();
+  /////////////// data fetch ///////////////
+  const { data: { data: ratioData } = {}, isLoading: isLoadingRatio } =
+    useAdminRatio();
+  const { data: submitSummary, isLoading: isLoadingSubmitSummary } =
+    useSubmitSummary();
+
+  const isLoading = isLoadingRatio || isLoadingSubmitSummary;
   if (isLoading) return <div>Loading...</div>;
 
+  /////////////// component 부분 ///////////////
   return (
     <div css={{ marginBottom: "200px" }}>
       <h1 css={titleStyle}>활동 대시보드</h1>
@@ -166,9 +151,9 @@ const AdminActivityDashboard: React.FC = () => {
         <button css={filterButtonStyle}>검색 필터</button>
       </FlexBox>
       <Card>
-        <SimplePieChart data={chartData} />
+        <SimplePieChart data={ratioData} />
         <FlexBox direction="column" gap="10px">
-          {summaryData.map((quotient, index) => (
+          {submitSummary?.map((quotient: any, index: number) => (
             <QuotientCard
               key={index}
               color={quotient.color}
