@@ -96,10 +96,6 @@ const Router = createBrowserRouter([
               {
                 path: "list",
                 element: <AdminActivityList />,
-                children: [
-                  { path: "view/:id", element: <AdminActivityView /> },
-                  { path: "review/:id", element: <AdminActivityReview /> },
-                ],
               },
             ],
           },
@@ -135,10 +131,6 @@ const Router = createBrowserRouter([
               {
                 path: "list",
                 element: <AdminActivityList />,
-                children: [
-                  { path: "view/:id", element: <AdminActivityView /> },
-                  { path: "review/:id", element: <AdminActivityReview /> },
-                ],
               },
             ],
           },
