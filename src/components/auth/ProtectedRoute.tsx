@@ -15,16 +15,12 @@ const ProtectedRoute = ({ allowedRoles }: ProtectedRouteProps) => {
   const location = useLocation();
   const pathname = location.pathname;
 
-  console.log(accessToken, userProfile);
-
   // 1. 로그인 안 된 경우
   if (!accessToken) {
-    console.log("토큰이 없음");
     if (pathname === "/") return <Outlet />; // Home 허용
     return <Navigate to="/" replace />;
   }
   if (!userProfile?.role) {
-    console.log("유저 정보가 없음");
     return <Navigate to="/" replace />;
   }
 
