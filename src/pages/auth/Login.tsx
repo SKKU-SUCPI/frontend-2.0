@@ -7,7 +7,8 @@ import {
   getSuperAdminLogin,
 } from "@/apis/auth/getLogin";
 import useRefresh from "@/hooks/auth/useRefresh";
-import postSSOLogin from "@/apis/auth/postSSOLogin";
+
+// 로컬 개발용 로그인 계정
 // 하드코딩된 계정 정보
 const HARDCODED_ACCOUNTS = {
   student: {
@@ -30,10 +31,10 @@ const HARDCODED_ACCOUNTS = {
 const postSSOLogin = () => {
   const form = document.createElement("form");
   form.method = "POST";
-  form.action = "/api/auth/login"; // 🔁 여기에 로그인 처리 및 SSO 리디렉션 포함
+  form.action = "/api/auth/login"; // 여기에 로그인 처리 및 SSO 리디렉션 포함
 
   document.body.appendChild(form);
-  form.submit(); // ✅ 브라우저가 직접 POST → CORS 없음
+  form.submit(); // 브라우저가 직접 POST → CORS 없음
 };
 
 const Login: React.FC = () => {
@@ -189,7 +190,7 @@ const Login: React.FC = () => {
               }}
             >
               SSO 테스트
-            </button>{" "}
+            </button>
           </div>
         );
       })()}

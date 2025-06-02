@@ -148,8 +148,8 @@ const Router = createBrowserRouter([
   },
 
   {
-    // 임시 로그인 창
-    path: "/login",
+    // 개발용 로그인 창
+    path: "/test/login",
     element: <Login />,
   },
   // Catch-all for 404
