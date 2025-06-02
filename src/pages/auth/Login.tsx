@@ -6,7 +6,8 @@ import {
   getAdminLogin,
   getSuperAdminLogin,
 } from "@/apis/auth/getLogin";
-
+import useRefresh from "@/hooks/auth/useRefresh";
+import postSSOLogin from "@/apis/auth/postSSOLogin";
 // 하드코딩된 계정 정보
 const HARDCODED_ACCOUNTS = {
   student: {
@@ -27,6 +28,7 @@ const HARDCODED_ACCOUNTS = {
 };
 
 const Login: React.FC = () => {
+  const { run } = useRefresh();
   return (
     <div
       css={css`
@@ -52,12 +54,14 @@ const Login: React.FC = () => {
               // 계정 타입에 따라 적절한 로그인 API 호출
               if (account.id === "student") {
                 await getStudentLogin();
+                await run();
               } else if (account.id === "admin") {
                 await getAdminLogin();
+                await run();
               } else if (account.id === "super") {
                 await getSuperAdminLogin();
+                await run();
               }
-
               navigate(account.redirect);
             } catch (error) {
               setError("로그인 중 오류가 발생했습니다.");
@@ -92,7 +96,6 @@ const Login: React.FC = () => {
             </h1>
             <p>SSO 도입 전 임시 로그인 페이지</p>
             <p>SSO 도입 시 해당 페이지 삭제</p>
-
             <div
               css={css`
                 display: flex;
@@ -144,7 +147,6 @@ const Login: React.FC = () => {
                 </p>
               )}
             </div>
-
             <button
               css={css`
                 padding: 10px;
@@ -162,6 +164,23 @@ const Login: React.FC = () => {
             >
               로그인
             </button>
+            <button
+              css={css`
+                padding: 10px;
+                background-color: green;
+                color: white;
+                border: none;
+                border-radius: 4px;
+                cursor: pointer;
+                font-size: 16px;
+              `}
+              onClick={() => {
+                postSSOLogin();
+                run();
+              }}
+            >
+              SSO 테스트
+            </button>{" "}
           </div>
         );
       })()}
