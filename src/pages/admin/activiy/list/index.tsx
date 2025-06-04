@@ -8,7 +8,7 @@ import Modal from "@mui/material/Modal";
 import IconButton from "@mui/material/IconButton";
 import CloseIcon from "@mui/icons-material/Close";
 import Loading from "@/components/layouts/Loading";
-
+import ActivityRouter from "@/components/activity/ActivityRouter";
 const titleStyle = css`
   font-size: 2.5rem;
   font-weight: bold;
@@ -127,8 +127,7 @@ const AdminActivityList = () => {
             >
               <CloseIcon />
             </IconButton>
-            <div>활동 상세 정보 (ID: {searchParams.get("id")})</div>
-            {/* 여기에 활동 상세 내용을 추가할 수 있습니다 */}
+            <ActivityRouter id={searchParams.get("id")} />
           </Box>
         </Modal>
       )}
