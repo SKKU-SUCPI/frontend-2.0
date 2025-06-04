@@ -19,12 +19,12 @@ const HARDCODED_ACCOUNTS = {
   admin: {
     id: "admin",
     password: "1234",
-    redirect: "/manager",
+    redirect: "/god",
   },
   superadmin: {
     id: "super",
     password: "1234",
-    redirect: "/superManager",
+    redirect: "/superGod",
   },
 };
 
