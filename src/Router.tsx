@@ -13,8 +13,6 @@ import StudentActivitySubmit from "@/pages/student/activity/submit";
 import StudentActivityView from "@/pages/student/activity/view";
 
 // admin
-import AdminActivityView from "@/pages/admin/activiy/list/view";
-import AdminActivityReview from "@/pages/admin/activiy/list/review";
 import AdminActivityList from "@/pages/admin/activiy/list";
 import AdminActivityDashboard from "@/pages/admin/activiy/dashboard";
 import AdminStatisticDashboard from "@/pages/admin/statistic/dashboard";
@@ -72,7 +70,7 @@ const Router = createBrowserRouter([
 
   // Admin routes
   {
-    path: "/admin",
+    path: "/manager",
     element: <ProtectedRoute allowedRoles={["admin"]} />,
     children: [
       {
@@ -80,7 +78,7 @@ const Router = createBrowserRouter([
         children: [
           {
             index: true,
-            element: <Navigate to="/admin/statistic/dashboard" />,
+            element: <Navigate to="/manager/statistic/dashboard" />,
           },
           {
             path: "statistic",
@@ -106,7 +104,7 @@ const Router = createBrowserRouter([
 
   // Super Admin routes
   {
-    path: "/superAdmin",
+    path: "/superManager",
     element: <ProtectedRoute allowedRoles={["super-admin"]} />,
     children: [
       {
@@ -114,7 +112,7 @@ const Router = createBrowserRouter([
         children: [
           {
             index: true,
-            element: <Navigate to="/superAdmin/statistic/dashboard" />,
+            element: <Navigate to="/superManager/statistic/dashboard" />,
           },
           {
             path: "statistic",
