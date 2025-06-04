@@ -1,123 +1,174 @@
-/** @jsxImportSource @emotion/react */
+import React from "react";
 import { css } from "@emotion/react";
-import Badge from "./Badge";
-import FlexBox from "@/styles/components/Flexbox";
+import { useSearchParams } from "react-router-dom";
+import PersonOutlineOutlinedIcon from "@mui/icons-material/PersonOutlineOutlined";
+import CalendarTodayIcon from "@mui/icons-material/CalendarToday";
+import Tooltip from "@mui/material/Tooltip";
 
-interface ListItemProps {
-  activity_id: number;
-  category: "RQ" | "LQ" | "CQ";
-  activity_class: string;
-  activity_detail: string;
-  title: string;
-  status: "승인" | "반려" | "대기";
-  date: string;
-  user: {
-    name: string;
-    department: string;
-    student_id: string;
-  };
-  onDetailClick: (activity_id: number) => void;
+const categoryColor = {
+  LQ: "#0088FE",
+  RQ: "#00C49F",
+  CQ: "#FFBB28",
+};
+
+const categoryTooltip = {
+  RQ: "RQ: 연구지표",
+  LQ: "LQ: 교육지표",
+  CQ: "CQ: 교류지표",
+};
+
+interface ActivityListItemProps {
+  activityId: number;
+  content: string;
+  categoryName: "LQ" | "RQ" | "CQ";
+  activityClass: string;
+  activityDetail: string;
+  state: 0 | 1 | 2;
+  submitDate: string;
+  departmemt: string;
+  studentId: string;
+  userName: string;
 }
 
-// 스타일들 (컴포넌트 밖에 선언)
-const listItemContainerStyle = css`
-  padding: 8px 12px;
-  width: 100%;
-`;
-
-const bottomRowStyle = css`
-  font-size: 14px;
-  color: #666; /* 코드/날짜/이름 표시 */
-  margin-left: 6px;
-`;
-
-const detailButtonStyle = css`
-  border: 1px solid #ccc;
-  border-radius: 4px;
-  background-color: #fff;
-  padding: 6px 12px;
+const cardStyle = css`
+  display: flex;
+  align-items: center;
+  background: #fff;
+  border-radius: 12px;
+  border: 1px solid #e0e0e0;
+  padding: 18px 20px;
+  margin-bottom: 12px;
+  min-width: 320px;
+  justify-content: space-between;
   cursor: pointer;
-  font-size: 14px;
-  font-weight: 600;
-  width: 80px;
+  transition: all 0.2s ease-in-out;
+
   &:hover {
-    background-color: #f5f5f5;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
   }
+`;
+
+const dotStyle = (color: string) => css`
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  background: ${color};
+  margin-right: 14px;
 `;
 
 const titleStyle = css`
-  font-size: 1.2rem;
+  font-size: 1.3rem;
   font-weight: 600;
-  margin: 0;
+  margin-bottom: 4px;
+  margin-left: 4px;
+  display: flex;
+  flex-direction: row;
+  gap: 16px;
 `;
 
-const getStatusColors = (status: string) => {
-  switch (status) {
-    case "승인":
-      return {
-        background: "#dcfce7",
-        font: "#166534",
-      };
-    case "반려":
-      return {
-        background: "#fee2e2",
-        font: "#991b1b",
-      };
-    case "대기":
-      return {
-        background: "#fef9c3",
-        font: "#854d0e",
-      };
-    default:
-      return {
-        background: "#f3f4f6",
-        font: "#374151",
-      };
-  }
+const statusStyle = (state: number) => {
+  let color = "#888";
+  if (state === 0) color = "#2ecc40"; // 초록
+  else if (state === 1) color = "#ffcc00"; // 노랑
+  else if (state === 2) color = "#ff4d4f"; // 빨강
+  return css`
+    font-size: 1.2rem;
+    font-weight: bold;
+    margin-right: 12px;
+    color: ${color};
+  `;
 };
 
-function ListItem({
-  category,
-  activity_class,
-  activity_detail,
-  title,
-  status,
-  date,
-  user,
-  activity_id,
-  onDetailClick,
-}: ListItemProps) {
+const getState = (state: number) => {
+  if (state === 0) return "승인";
+  else if (state === 1) return "대기";
+  else if (state === 2) return "반려";
+};
+
+const formatDate = (dateString: string) => {
+  const date = new Date(dateString);
+  return `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(
+    2,
+    "0"
+  )}-${String(date.getDate()).padStart(2, "0")}`;
+};
+
+const tagStyle = css`
+  display: inline-block;
+  background: #f8f9fa;
+  color: #333;
+  font-size: 0.95rem;
+  font-weight: 500;
+  border-radius: 16px;
+  padding: 2px 10px;
+`;
+
+const ActivityListItem: React.FC<ActivityListItemProps> = ({
+  activityId,
+  content,
+  categoryName,
+  activityClass,
+  activityDetail,
+  state,
+  submitDate,
+  departmemt,
+  studentId,
+  userName,
+}) => {
+  const [searchParams, setSearchParams] = useSearchParams();
+
+  const handleClick = () => {
+    // id 설정
+    searchParams.set("id", activityId.toString());
+    setSearchParams(searchParams);
+  };
+
   return (
-    <FlexBox
-      direction="row"
-      justify="space-between"
-      css={listItemContainerStyle}
-    >
-      {/* 왼쪽: 상·하 2줄 */}
-      <FlexBox direction="column" align="flex-start" gap="6px">
-        {/* 상단 행: 카테고리, 제목, 상태 */}
-        <FlexBox direction="row" justify="flex-start" align="center" gap="16px">
-          <Badge label={status} colors={getStatusColors(status)} />
-          <h2 css={titleStyle}>{title}</h2>
-          <Badge label={category} />
-          <Badge label={activity_class} />
-          <Badge label={activity_detail} />
-        </FlexBox>
-        {/* 하단 행: 코드, 날짜, 작성자 */}
-        <div css={bottomRowStyle}>
-          {user.name} • {user.department} • {user.student_id} • {date}
+    <div css={cardStyle} onClick={handleClick}>
+      <div style={{ display: "flex", alignItems: "center" }}>
+        <Tooltip
+          title={categoryTooltip[categoryName]}
+          arrow
+          placement="top"
+          componentsProps={{ tooltip: { sx: { fontSize: "1.1rem" } } }}
+        >
+          <div css={dotStyle(categoryColor[categoryName])} />
+        </Tooltip>
+        <div
+          style={{
+            display: "flex",
+            flexDirection: "column",
+            justifyContent: "center",
+          }}
+        >
+          <span css={titleStyle}>
+            {content}
+            <span css={tagStyle}>{activityClass}</span>
+            <span css={tagStyle}>{activityDetail}</span>
+          </span>
+          {submitDate && (
+            <span style={{ color: "#333", fontSize: "1rem", marginTop: 2 }}>
+              <PersonOutlineOutlinedIcon
+                fontSize="small"
+                style={{ marginRight: 4, verticalAlign: "middle" }}
+              />
+              {userName} | {studentId} | {departmemt}
+              <CalendarTodayIcon
+                fontSize="small"
+                style={{
+                  marginLeft: 12,
+                  marginRight: 4,
+                  verticalAlign: "middle",
+                }}
+              />
+              {formatDate(submitDate)}
+            </span>
+          )}
         </div>
-      </FlexBox>
-
-      {/* 오른쪽: 상세보기 버튼 */}
-      <button
-        css={detailButtonStyle}
-        onClick={() => onDetailClick(activity_id)}
-      >
-        상세보기
-      </button>
-    </FlexBox>
+      </div>
+      <span css={statusStyle(state)}>{getState(state)}</span>
+    </div>
   );
-}
+};
 
-export default ListItem;
+export default ActivityListItem;
