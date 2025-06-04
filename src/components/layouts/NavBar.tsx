@@ -60,24 +60,24 @@ const adminRouteMap = {
   // 관리자 라우트
   admin: [
     [
-      { path: "/admin/statistic/dashboard", label: "대시보드" },
-      { path: "/admin/statistic/individual", label: "개인별 통계" },
+      { path: "/manager/statistic/dashboard", label: "대시보드" },
+      { path: "/manager/statistic/individual", label: "개인별 통계" },
     ],
     [
-      { path: "/admin/activity/dashboard", label: "대시보드" },
-      { path: "/admin/activity/list", label: "활동 목록" },
+      { path: "/manager/activity/dashboard", label: "대시보드" },
+      { path: "/manager/activity/list", label: "활동 목록" },
     ],
   ],
   // 슈퍼 관리자 라우트
   "super-admin": [
     [
-      { path: "/superAdmin/statistic/dashboard", label: "대시보드" },
-      { path: "/superAdmin/statistic/individual", label: "개인별 통계" },
-      { path: "/superAdmin/statistic/parameter", label: "파라미터 설정" },
+      { path: "/superManager/statistic/dashboard", label: "대시보드" },
+      { path: "/superManager/statistic/individual", label: "개인별 통계" },
+      { path: "/superManager/statistic/parameter", label: "파라미터 설정" },
     ],
     [
-      { path: "/superAdmin/activity/dashboard", label: "대시보드" },
-      { path: "/superAdmin/activity/list", label: "활동 목록" },
+      { path: "/superManager/activity/dashboard", label: "대시보드" },
+      { path: "/superManager/activity/list", label: "활동 목록" },
     ],
   ],
 };
@@ -91,7 +91,7 @@ const NavBar: React.FC = () => {
   const handleToggle = () => {
     toggleTab();
     const basePath =
-      userProfile?.role === "super-admin" ? "/superAdmin" : "/admin";
+      userProfile?.role === "super-admin" ? "/superManager" : "/manager";
     navigate(
       selectedTab === "statistic"
         ? `${basePath}/activity/dashboard`
