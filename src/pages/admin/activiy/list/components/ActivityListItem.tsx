@@ -68,9 +68,9 @@ const titleStyle = css`
 
 const statusStyle = (state: number) => {
   let color = "#888";
-  if (state === 0) color = "#2ecc40"; // 초록
-  else if (state === 1) color = "#ffcc00"; // 노랑
-  else if (state === 2) color = "#ff4d4f"; // 빨강
+  if (state === 0) color = "#ffcc00"; // 노랑 (대기)
+  else if (state === 1) color = "#2ecc40"; // 초록 (승인)
+  else if (state === 2) color = "#ff4d4f"; // 빨강 (반려)
   return css`
     font-size: 1.2rem;
     font-weight: bold;
@@ -80,8 +80,8 @@ const statusStyle = (state: number) => {
 };
 
 const getState = (state: number) => {
-  if (state === 0) return "승인";
-  else if (state === 1) return "대기";
+  if (state === 0) return "대기";
+  else if (state === 1) return "승인";
   else if (state === 2) return "반려";
 };
 
