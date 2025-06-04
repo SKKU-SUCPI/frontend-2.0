@@ -1,5 +1,3 @@
-const ActivityReview: React.FC = () => {
-  return <div>ActivityReview</div>;
-};
+const ActivityReview: React.FC = () => {};
 
 export default ActivityReview;

@@ -37,6 +37,7 @@ const AdminActivityList = () => {
   if (isLoading) return <Loading />;
 
   const totalPages = data?.totalPage || 1;
+  console.log(data);
 
   ///////////////// render /////////////////
   return (
@@ -48,7 +49,7 @@ const AdminActivityList = () => {
       {data.content.map((item: any, index: number) => (
         <ActivityListItem
           key={index}
-          activityId={item.basicInfo.activityId}
+          activityId={item.basicInfo.id}
           content={item.basicInfo.content}
           categoryName={item.basicInfo.categoryName}
           activityClass={item.basicInfo.activityClass}
@@ -101,8 +102,6 @@ const AdminActivityList = () => {
               top: "50%",
               left: "50%",
               transform: "translate(-50%, -50%)",
-              width: "90%",
-              maxWidth: 800,
               bgcolor: "background.paper",
               border: "2px solid #000",
               boxShadow: 24,
@@ -127,7 +126,7 @@ const AdminActivityList = () => {
             >
               <CloseIcon />
             </IconButton>
-            <ActivityRouter id={searchParams.get("id")} />
+            <ActivityRouter id={id} />
           </Box>
         </Modal>
       )}
