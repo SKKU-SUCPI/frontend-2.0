@@ -7,6 +7,8 @@ import { theme } from "@/styles/theme";
 
 import Router from "@/Router";
 import useRefresh from "@/hooks/auth/useRefresh";
+import Loading from "@/components/layouts/Loading";
+
 const queryClient = new QueryClient();
 
 const AppContent = () => {
@@ -17,23 +19,13 @@ const AppContent = () => {
   }, []);
 
   if (isLoading) {
-    return <div>Loading...</div>; // 또는 로딩 컴포넌트를 사용
+    return <Loading />;
   }
 
   return <RouterProvider router={Router} />;
 };
 
 const App: React.FC = () => {
-  // const { run, isLoading } = useRefresh();
-
-  // useEffect(() => {
-  //   run();
-  // }, []);
-
-  // if (isLoading) {
-  //   return <div>Loading...</div>; // 또는 로딩 컴포넌트를 사용
-  // }
-
   return (
     <MuiThemeProvider theme={theme}>
       <EmotionThemeProvider theme={theme}>
