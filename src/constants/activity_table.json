@@ -1,0 +1,515 @@
+[
+  {
+    "activity_id": 1,
+    "category_id": 1,
+    "activity_class": "education",
+    "activity_name": "campus",
+    "activity_detail": "교내외의의 교육 활동",
+    "activity_weight": 0.2,
+    "activity_domain": 0
+  },
+  {
+    "activity_id": 2,
+    "category_id": 1,
+    "activity_class": "education",
+    "activity_name": "TA",
+    "activity_detail": "교육조교 활동(학부생 TA)",
+    "activity_weight": 0.5,
+    "activity_domain": 0
+  },
+  {
+    "activity_id": 3,
+    "category_id": 1,
+    "activity_class": "achievement",
+    "activity_name": "grade40to45",
+    "activity_detail": "학점 4.0 ~ 4.5",
+    "activity_weight": 3.0,
+    "activity_domain": 0
+  },
+  {
+    "activity_id": 4,
+    "category_id": 1,
+    "activity_class": "achievement",
+    "activity_name": "grade35to40",
+    "activity_detail": "학점 3.5 ~ 4.0",
+    "activity_weight": 2.0,
+    "activity_domain": 0
+  },
+  {
+    "activity_id": 5,
+    "category_id": 1,
+    "activity_class": "achievement",
+    "activity_name": "grade30to35",
+    "activity_detail": "학점 3.0 ~ 3.5",
+    "activity_weight": 1.0,
+    "activity_domain": 0
+  },
+  {
+    "activity_id": 6,
+    "category_id": 1,
+    "activity_class": "achievement",
+    "activity_name": "grade00to30",
+    "activity_detail": "학점 3.0 미만",
+    "activity_weight": 0.0,
+    "activity_domain": 0
+  },
+  {
+    "activity_id": 7,
+    "category_id": 1,
+    "activity_class": "swActivity",
+    "activity_name": "opensourceContribute5",
+    "activity_detail": "OS커뮤니티생성 및 활성도 : 5점",
+    "activity_weight": 5.0,
+    "activity_domain": 0
+  },
+  {
+    "activity_id": 8,
+    "category_id": 1,
+    "activity_class": "swActivity",
+    "activity_name": "opensourceContribute4",
+    "activity_detail": "OS커뮤니티생성 및 활성도 : 4점",
+    "activity_weight": 4.0,
+    "activity_domain": 0
+  },
+  {
+    "activity_id": 9,
+    "category_id": 1,
+    "activity_class": "swActivity",
+    "activity_name": "opensourceContribute3",
+    "activity_detail": "OS커뮤니티생성 및 활성도 : 3점",
+    "activity_weight": 3.0,
+    "activity_domain": 0
+  },
+  {
+    "activity_id": 10,
+    "category_id": 1,
+    "activity_class": "swActivity",
+    "activity_name": "opensourceContribute0",
+    "activity_detail": "OS커뮤니티생성 및 활성도 : 3점미만",
+    "activity_weight": 0.0,
+    "activity_domain": 0
+  },
+  {
+    "activity_id": 11,
+    "category_id": 1,
+    "activity_class": "swActivity",
+    "activity_name": "commitStar5",
+    "activity_detail": "커미터로서의 활동 : 5점",
+    "activity_weight": 5.0,
+    "activity_domain": 0
+  },
+  {
+    "activity_id": 12,
+    "category_id": 1,
+    "activity_class": "swActivity",
+    "activity_name": "commitStar4",
+    "activity_detail": "커미터로서의 활동 : 4점",
+    "activity_weight": 4.0,
+    "activity_domain": 0
+  },
+  {
+    "activity_id": 13,
+    "category_id": 1,
+    "activity_class": "swActivity",
+    "activity_name": "commitStar3",
+    "activity_detail": "커미터로서의 활동 : 3점",
+    "activity_weight": 3.0,
+    "activity_domain": 0
+  },
+  {
+    "activity_id": 14,
+    "category_id": 1,
+    "activity_class": "swActivity",
+    "activity_name": "commitStar0",
+    "activity_detail": "커미터로서의 활동 : 0점",
+    "activity_weight": 0.0,
+    "activity_domain": 0
+  },
+  {
+    "activity_id": 15,
+    "category_id": 2,
+    "activity_class": "journal",
+    "activity_name": "jcr5Main",
+    "activity_detail": "JCR 상위 5% 이내 학술지(주저)",
+    "activity_weight": 5.0,
+    "activity_domain": 1
+  },
+  {
+    "activity_id": 16,
+    "category_id": 2,
+    "activity_class": "journal",
+    "activity_name": "jcr5Part",
+    "activity_detail": "JCR 상위 5% 이내 학술지 (공저)",
+    "activity_weight": 4.0,
+    "activity_domain": 1
+  },
+  {
+    "activity_id": 17,
+    "category_id": 2,
+    "activity_class": "journal",
+    "activity_name": "jcr10Main",
+    "activity_detail": "JCR 상위 10% 이내 학술지 (주저)",
+    "activity_weight": 4.0,
+    "activity_domain": 1
+  },
+  {
+    "activity_id": 18,
+    "category_id": 2,
+    "activity_class": "journal",
+    "activity_name": "jcr10Part",
+    "activity_detail": "JCR 상위 10% 이내 학술지 (공저)",
+    "activity_weight": 3.0,
+    "activity_domain": 1
+  },
+  {
+    "activity_id": 19,
+    "category_id": 2,
+    "activity_class": "journal",
+    "activity_name": "jcr20Main",
+    "activity_detail": "JCR 상위 20% 이내 학술지 (주저)",
+    "activity_weight": 3.0,
+    "activity_domain": 1
+  },
+  {
+    "activity_id": 20,
+    "category_id": 2,
+    "activity_class": "journal",
+    "activity_name": "jcr20Part",
+    "activity_detail": "JCR 상위 20% 이내 학술지 (공저)",
+    "activity_weight": 2.0,
+    "activity_domain": 1
+  },
+  {
+    "activity_id": 21,
+    "category_id": 2,
+    "activity_class": "journal",
+    "activity_name": "kciOver",
+    "activity_detail": "SCI, SSCI, A&HCI 급 학술지",
+    "activity_weight": 5.0,
+    "activity_domain": 2
+  },
+  {
+    "activity_id": 22,
+    "category_id": 2,
+    "activity_class": "journal",
+    "activity_name": "kciExcellent",
+    "activity_detail": "KCI 우수 등재 학술지",
+    "activity_weight": 4.0,
+    "activity_domain": 2
+  },
+  {
+    "activity_id": 23,
+    "category_id": 2,
+    "activity_class": "journal",
+    "activity_name": "kci",
+    "activity_detail": "KCI 등재",
+    "activity_weight": 3.0,
+    "activity_domain": 2
+  },
+  {
+    "activity_id": 24,
+    "category_id": 2,
+    "activity_class": "journal",
+    "activity_name": "kciCandidate",
+    "activity_detail": "KCI 후보, 기타 국제",
+    "activity_weight": 2.0,
+    "activity_domain": 2
+  },
+  {
+    "activity_id": 25,
+    "category_id": 2,
+    "activity_class": "conference",
+    "activity_name": "knownSpeech1",
+    "activity_detail": "저명 국제학술대회 구두 발표",
+    "activity_weight": 4.0,
+    "activity_domain": 1
+  },
+  {
+    "activity_id": 26,
+    "category_id": 2,
+    "activity_class": "conference",
+    "activity_name": "knownPoster",
+    "activity_detail": "저명 국제학술대회 포스터 발표",
+    "activity_weight": 3.0,
+    "activity_domain": 1
+  },
+  {
+    "activity_id": 27,
+    "category_id": 2,
+    "activity_class": "conference",
+    "activity_name": "normalSpeech1",
+    "activity_detail": "일반 국제학술대회 구두 발표",
+    "activity_weight": 3.0,
+    "activity_domain": 1
+  },
+  {
+    "activity_id": 28,
+    "category_id": 2,
+    "activity_class": "conference",
+    "activity_name": "normalPoster",
+    "activity_detail": "일반 국제학술대회 포스터 발표",
+    "activity_weight": 2.0,
+    "activity_domain": 1
+  },
+  {
+    "activity_id": 29,
+    "category_id": 2,
+    "activity_class": "conference",
+    "activity_name": "nationalSpeech1",
+    "activity_detail": "국내학술대회 구두 발표",
+    "activity_weight": 2.0,
+    "activity_domain": 1
+  },
+  {
+    "activity_id": 30,
+    "category_id": 2,
+    "activity_class": "conference",
+    "activity_name": "nationalPoster",
+    "activity_detail": "국내학술대회 포스터 발표",
+    "activity_weight": 1.0,
+    "activity_domain": 1
+  },
+  {
+    "activity_id": 31,
+    "category_id": 2,
+    "activity_class": "conference",
+    "activity_name": "knownSpeech2",
+    "activity_detail": "저명 국제학술대회 발표(BK 기준)",
+    "activity_weight": 4.0,
+    "activity_domain": 2
+  },
+  {
+    "activity_id": 32,
+    "category_id": 2,
+    "activity_class": "conference",
+    "activity_name": "normalSpeech2",
+    "activity_detail": "일반 국제학술대회 발표",
+    "activity_weight": 2.0,
+    "activity_domain": 2
+  },
+  {
+    "activity_id": 33,
+    "category_id": 2,
+    "activity_class": "conference",
+    "activity_name": "nationalSpeech2",
+    "activity_detail": "국내학술대회 발표",
+    "activity_weight": 1.0,
+    "activity_domain": 2
+  },
+  {
+    "activity_id": 34,
+    "category_id": 2,
+    "activity_class": "contest",
+    "activity_name": "bigCompetitionTop",
+    "activity_detail": "국제/대규모 공모전(ICPC, 공개SW개발자대회) 대상",
+    "activity_weight": 10.0,
+    "activity_domain": 0
+  },
+  {
+    "activity_id": 35,
+    "category_id": 2,
+    "activity_class": "contest",
+    "activity_name": "bigCompetitionWin",
+    "activity_detail": "국제/대규모 공모전(ICPC, 공개SW개발자대회) 입상",
+    "activity_weight": 4.0,
+    "activity_domain": 0
+  },
+  {
+    "activity_id": 36,
+    "category_id": 2,
+    "activity_class": "contest",
+    "activity_name": "bigCompetitionPlay",
+    "activity_detail": "국제/대규모 공모전(ICPC, 공개SW개발자대회) 참여",
+    "activity_weight": 2.0,
+    "activity_domain": 0
+  },
+  {
+    "activity_id": 37,
+    "category_id": 2,
+    "activity_class": "contest",
+    "activity_name": "nationalCompetitionTop",
+    "activity_detail": "교내/지역 공모전 대상",
+    "activity_weight": 3.0,
+    "activity_domain": 0
+  },
+  {
+    "activity_id": 38,
+    "category_id": 2,
+    "activity_class": "contest",
+    "activity_name": "nationalCompetitionWin",
+    "activity_detail": "교내/지역 공모전 입상",
+    "activity_weight": 1.0,
+    "activity_domain": 0
+  },
+  {
+    "activity_id": 39,
+    "category_id": 2,
+    "activity_class": "contest",
+    "activity_name": "nationalCompetitionPlay",
+    "activity_detail": "교내/지역 공모전 참여",
+    "activity_weight": 0.5,
+    "activity_domain": 0
+  },
+  {
+    "activity_id": 40,
+    "category_id": 3,
+    "activity_class": "coop",
+    "activity_name": "coop",
+    "activity_detail": "산학프로젝트",
+    "activity_weight": 10.0,
+    "activity_domain": 0
+  },
+  {
+    "activity_id": 41,
+    "category_id": 3,
+    "activity_class": "internship",
+    "activity_name": "internship",
+    "activity_detail": "인턴십",
+    "activity_weight": 10.0,
+    "activity_domain": 0
+  },
+  {
+    "activity_id": 42,
+    "category_id": 3,
+    "activity_class": "startup",
+    "activity_name": "startup",
+    "activity_detail": "창업",
+    "activity_weight": 30.0,
+    "activity_domain": 0
+  },
+  {
+    "activity_id": 43,
+    "category_id": 3,
+    "activity_class": "overseaVolunteer",
+    "activity_name": "overseaVolunteer",
+    "activity_detail": "해외봉사",
+    "activity_weight": 10.0,
+    "activity_domain": 0
+  },
+  {
+    "activity_id": 44,
+    "category_id": 3,
+    "activity_class": "seminar",
+    "activity_name": "seminar",
+    "activity_detail": "화상강연 / 세미나 참여",
+    "activity_weight": 1.0,
+    "activity_domain": 0
+  },
+  {
+    "activity_id": 45,
+    "category_id": 3,
+    "activity_class": "alimi",
+    "activity_name": "alimiLeader",
+    "activity_detail": "알리미-회장",
+    "activity_weight": 5.0,
+    "activity_domain": 0
+  },
+  {
+    "activity_id": 46,
+    "category_id": 3,
+    "activity_class": "alimi",
+    "activity_name": "alimiVice",
+    "activity_detail": "알리미-부회장",
+    "activity_weight": 3.0,
+    "activity_domain": 0
+  },
+  {
+    "activity_id": 47,
+    "category_id": 3,
+    "activity_class": "alimi",
+    "activity_name": "alimiMember",
+    "activity_detail": "알리미-참여",
+    "activity_weight": 2.0,
+    "activity_domain": 0
+  },
+  {
+    "activity_id": 48,
+    "category_id": 3,
+    "activity_class": "council",
+    "activity_name": "councilLeader",
+    "activity_detail": "학생회-회장",
+    "activity_weight": 5.0,
+    "activity_domain": 0
+  },
+  {
+    "activity_id": 49,
+    "category_id": 3,
+    "activity_class": "council",
+    "activity_name": "councilVice",
+    "activity_detail": "학생회-부회장",
+    "activity_weight": 3.0,
+    "activity_domain": 0
+  },
+  {
+    "activity_id": 50,
+    "category_id": 3,
+    "activity_class": "council",
+    "activity_name": "councilMember",
+    "activity_detail": "학생회-참여",
+    "activity_weight": 1.0,
+    "activity_domain": 0
+  },
+  {
+    "activity_id": 51,
+    "category_id": 3,
+    "activity_class": "reporter",
+    "activity_name": "reporterLeader",
+    "activity_detail": "기자단-회장",
+    "activity_weight": 5.0,
+    "activity_domain": 0
+  },
+  {
+    "activity_id": 52,
+    "category_id": 3,
+    "activity_class": "reporter",
+    "activity_name": "reporterVice",
+    "activity_detail": "기자단-부회장",
+    "activity_weight": 3.0,
+    "activity_domain": 0
+  },
+  {
+    "activity_id": 53,
+    "category_id": 3,
+    "activity_class": "reporter",
+    "activity_name": "reporterMember",
+    "activity_detail": "기자단-참여",
+    "activity_weight": 1.0,
+    "activity_domain": 0
+  },
+  {
+    "activity_id": 54,
+    "category_id": 3,
+    "activity_class": "studioContribution",
+    "activity_name": "studioContribution",
+    "activity_detail": "스튜디오 기여 (ARS Electronica 작품 제공 등)",
+    "activity_weight": 5.0,
+    "activity_domain": 0
+  },
+  {
+    "activity_id": 55,
+    "category_id": 3,
+    "activity_class": "studyGroup",
+    "activity_name": "studyGroupLeader",
+    "activity_detail": "SCG, MAV, 스꾸딩 등 - 회장",
+    "activity_weight": 5.0,
+    "activity_domain": 0
+  },
+  {
+    "activity_id": 56,
+    "category_id": 3,
+    "activity_class": "studyGroup",
+    "activity_name": "studyGroupVice",
+    "activity_detail": "SCG, MAV, 스꾸딩 등 - 부회장",
+    "activity_weight": 3.0,
+    "activity_domain": 0
+  },
+  {
+    "activity_id": 57,
+    "category_id": 3,
+    "activity_class": "studyGroup",
+    "activity_name": "studyGroupMember",
+    "activity_detail": "SCG, MAV, 스꾸딩 등 - 참여",
+    "activity_weight": 1.0,
+    "activity_domain": 0
+  }
+]
