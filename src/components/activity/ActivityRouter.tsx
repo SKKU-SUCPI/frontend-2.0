@@ -2,7 +2,7 @@ import useAuthStore from "@/stores/auth/authStore";
 import useActivityItem from "@/hooks/admin/useActivityItem";
 import Loading from "@/components/layouts/Loading";
 import ActivityView from "./ActivityView";
-
+import ActivityReview from "./ActivityReview";
 const ActivityRouter = ({ id }: { id: string | null }) => {
   const { userProfile } = useAuthStore();
 
@@ -25,12 +25,7 @@ const ActivityRouter = ({ id }: { id: string | null }) => {
     }
 
     if (data.basicInfo.state === 0) {
-      return (
-        <div>
-          승인하기 페이지 {data.basicInfo.id}
-          <br />
-        </div>
-      );
+      return <ActivityReview id={id} />;
     }
 
     if (data.basicInfo.state === 1 || data.basicInfo.state === 2) {
