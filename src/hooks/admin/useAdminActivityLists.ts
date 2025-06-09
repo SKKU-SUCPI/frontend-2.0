@@ -1,5 +1,5 @@
 import { useQuery } from "@tanstack/react-query";
-import getActivityLists from "@/apis/admin/getActivityLists";
+import getAdminActivityLists from "@/apis/admin/getAdminActivityLists";
 
 interface pageable {
   page: number;
@@ -7,12 +7,12 @@ interface pageable {
   sort: string;
 }
 
-const useActivityLists = (pageable: pageable) => {
+const useAdminActivityLists = (pageable: pageable) => {
   return useQuery({
     queryKey: ["activityLists", pageable],
-    queryFn: () => getActivityLists(pageable),
+    queryFn: () => getAdminActivityLists(pageable),
     enabled: !!pageable,
   });
 };
 
-export default useActivityLists;
+export default useAdminActivityLists;

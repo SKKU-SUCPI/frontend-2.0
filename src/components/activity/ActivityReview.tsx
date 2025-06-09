@@ -1,4 +1,4 @@
-import useActivityItem from "@/hooks/admin/useActivityItem";
+import useAdminActivityItem from "@/hooks/admin/useAdminActivityItem";
 import Loading from "../layouts/Loading";
 import { css } from "@emotion/react";
 import FlexBox from "@/styles/components/Flexbox";
@@ -115,7 +115,7 @@ const transformStatus = (status: number) => {
 };
 
 const ActivityReview: React.FC<{ id: string }> = ({ id }) => {
-  const { data, isLoading } = useActivityItem(id);
+  const { data, isLoading } = useAdminActivityItem(id);
   const [comment, setComment] = useState("");
   const [confirmAction, setConfirmAction] = useState<
     "approve" | "reject" | null

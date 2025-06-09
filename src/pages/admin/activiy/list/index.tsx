@@ -1,4 +1,4 @@
-import useActivityLists from "@/hooks/admin/useActivityLists";
+import useAdminActivityLists from "@/hooks/admin/useAdminActivityLists";
 import { useSearchParams } from "react-router-dom";
 import Pagination from "@mui/material/Pagination";
 import Box from "@mui/material/Box";
@@ -28,7 +28,7 @@ const AdminActivityList = () => {
   const id = searchParams.get("id");
 
   ///////////////// data fetch /////////////////
-  const { data, isLoading } = useActivityLists({
+  const { data, isLoading } = useAdminActivityLists({
     page: page ? parseInt(page) - 1 : 0,
     size: 10,
     sort: "desc",

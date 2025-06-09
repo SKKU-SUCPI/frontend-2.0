@@ -1,4 +1,4 @@
-import useActivityItem from "@/hooks/admin/useActivityItem";
+import useAdminActivityItem from "@/hooks/admin/useAdminActivityItem";
 import Loading from "../layouts/Loading";
 import { css } from "@emotion/react";
 import FlexBox from "@/styles/components/Flexbox";
@@ -90,7 +90,7 @@ const transformStatus = (status: number) => {
 };
 
 const ActivityView: React.FC<{ id: string }> = ({ id }) => {
-  const { data, isLoading } = useActivityItem(id);
+  const { data, isLoading } = useAdminActivityItem(id);
 
   if (isLoading) {
     return <Loading />;

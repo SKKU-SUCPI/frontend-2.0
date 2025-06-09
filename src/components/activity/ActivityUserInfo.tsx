@@ -1,7 +1,7 @@
 import { css } from "@emotion/react";
 import Card from "@/styles/components/Card";
 import Loading from "@/components/layouts/Loading";
-import useActivityItem from "@/hooks/admin/useActivityItem";
+import useAdminActivityItem from "@/hooks/admin/useAdminActivityItem";
 
 const titleStyle = css`
   font-size: 1rem;
@@ -29,7 +29,7 @@ const labelStyle = css`
 `;
 
 const ActivityUserInfo = ({ id }: { id: string }) => {
-  const { data, isLoading } = useActivityItem(id);
+  const { data, isLoading } = useAdminActivityItem(id);
   if (isLoading) return <Loading />;
 
   return (

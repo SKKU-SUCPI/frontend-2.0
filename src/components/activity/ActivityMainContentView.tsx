@@ -1,4 +1,4 @@
-import useActivityItem from "@/hooks/admin/useActivityItem";
+import useAdminActivityItem from "@/hooks/admin/useAdminActivityItem";
 import React from "react";
 import Loading from "../layouts/Loading";
 
@@ -81,7 +81,7 @@ const FileCard = ({ file }: { file: { name: string; type: string } }) => {
 };
 
 const ActivityMainContentView = ({ id }: { id: string }) => {
-  const { data, isLoading } = useActivityItem(id);
+  const { data, isLoading } = useAdminActivityItem(id);
   if (isLoading) return <Loading />;
 
   return (

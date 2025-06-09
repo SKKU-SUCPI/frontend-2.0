@@ -1,5 +1,5 @@
 import useAuthStore from "@/stores/auth/authStore";
-import useActivityItem from "@/hooks/admin/useActivityItem";
+import useAdminActivityItem from "@/hooks/admin/useAdminActivityItem";
 import Loading from "@/components/layouts/Loading";
 import ActivityView from "./ActivityView";
 import ActivityReview from "./ActivityReview";
@@ -17,7 +17,7 @@ const ActivityRouter = ({ id }: { id: string | null }) => {
 
   // 관리자
   if (userProfile?.role === "admin" || userProfile?.role === "super-admin") {
-    const { data, isLoading } = useActivityItem(id);
+    const { data, isLoading } = useAdminActivityItem(id);
     console.log(data);
 
     if (isLoading) {
