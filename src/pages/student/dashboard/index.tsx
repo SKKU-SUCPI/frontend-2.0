@@ -9,8 +9,10 @@ import ActivityPreviewItem from "./components/ActivityPreviwItem";
 import useStudent3qInfo from "@/hooks/student/useStudent3qInfo";
 import useStudent3qChange from "@/hooks/student/useStudent3qChange";
 import useStudent3qAverages from "@/hooks/student/useStudent3qAverages";
+import useStudentActivityList from "@/hooks/student/useStudentActivityList";
 import Loading from "@/components/layouts/Loading";
 import { useNavigate } from "react-router-dom";
+
 interface Student3qChange {
   month: string;
   lq: number;
@@ -18,22 +20,12 @@ interface Student3qChange {
   cq: number;
 }
 
-interface Student3qAverages {
-  student: {
-    lq: number;
-    rq: number;
-    cq: number;
-  };
-  department: {
-    lq: number;
-    rq: number;
-    cq: number;
-  };
-  total: {
-    lq: number;
-    rq: number;
-    cq: number;
-  };
+interface StudentActivity {
+  id: number;
+  activityDetail: string;
+  categoryName: string;
+  state: string;
+  approvedDate: string;
 }
 
 const titleStyle = css`
@@ -80,10 +72,21 @@ const StudentDashboard: React.FC = () => {
   const { data: student3qAverages, isLoading: student3qAveragesLoading } =
     useStudent3qAverages();
 
+  const { data: studentActivityList, isLoading: studentActivityListLoading } =
+    useStudentActivityList({
+      state: null,
+      page: 1,
+      size: 5,
+      sort: "desc",
+    });
+
+  console.log(studentActivityList);
+
   if (
     student3qInfoLoading ||
     student3qChangeLoading ||
-    student3qAveragesLoading
+    student3qAveragesLoading ||
+    studentActivityListLoading
   ) {
     return <Loading />;
   }
@@ -171,46 +174,11 @@ const StudentDashboard: React.FC = () => {
     ],
   };
 
-  const activityPreviewData = [
-    {
-      title: "빅데이터 분석을 통한 소비자 행동 연구",
-      category: "LQ" as "LQ" | "RQ" | "CQ",
-      status: "승인" as "승인" | "반려" | "대기",
-      date: "2024-01-01",
-    },
-
-    {
-      title: "학과 MT 기획 및 진행",
-      category: "CQ" as "LQ" | "RQ" | "CQ",
-      status: "대기" as "승인" | "반려" | "대기",
-      date: "2024-01-01",
-    },
-    {
-      title: "전국 대학생 소프트웨어 경진대회 참가",
-      category: "RQ" as "LQ" | "RQ" | "CQ",
-      status: "승인" as "승인" | "반려" | "대기",
-      date: "2024-01-01",
-    },
-    {
-      title: "ICPC 금상",
-      category: "LQ" as "LQ" | "RQ" | "CQ",
-      status: "반려" as "승인" | "반려" | "대기",
-      date: "2024-01-01",
-    },
-    {
-      title: "알고리즘 스터디 그룹 운영",
-      category: "LQ" as "LQ" | "RQ" | "CQ",
-      status: "승인" as "승인" | "반려" | "대기",
-      date: "2024-01-01",
-    },
-  ];
-
   return (
     <div>
       <h1 css={titleStyle}>Student Dashboard</h1>
       <div css={summaryContainerStyle}>
         {/* 3Q 통계 */}
-
         <div css={{ width: "100%" }}>
           <h2 css={subtitleStyle}>3Q 지표 요약</h2>
           {QData.map((q) => (
@@ -229,15 +197,28 @@ const StudentDashboard: React.FC = () => {
         {/* 최근 활동 내역 */}
         <div css={{ width: "100%" }}>
           <h2 css={subtitleStyle}>최근 활동 내역</h2>
-          {activityPreviewData.map((activity) => (
-            <ActivityPreviewItem
-              key={activity.title}
-              title={activity.title}
-              category={activity.category}
-              status={activity.status}
-              date={activity.date}
-            />
-          ))}
+          {studentActivityList?.content &&
+          studentActivityList.content.length > 0 ? (
+            studentActivityList.content.map((activity: StudentActivity) => (
+              <ActivityPreviewItem
+                key={activity.id}
+                title={activity.activityDetail}
+                category={activity.categoryName as "LQ" | "RQ" | "CQ"}
+                status={parseInt(activity.state) as 0 | 1 | 2}
+                date={activity.approvedDate}
+              />
+            ))
+          ) : (
+            <div
+              css={css`
+                text-align: center;
+                padding: 20px;
+                color: #666;
+              `}
+            >
+              등록된 활동 내역이 없습니다.
+            </div>
+          )}
           <div
             css={css`
               margin-top: 16px;
@@ -247,7 +228,6 @@ const StudentDashboard: React.FC = () => {
             <button
               css={viewAllButtonStyle}
               onClick={() => {
-                // 전체 활동 내역 페이지로 이동하는 로직
                 navigate("/student/activity");
               }}
             >
