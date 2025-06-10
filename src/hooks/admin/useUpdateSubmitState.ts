@@ -13,10 +13,12 @@ export const useUpdateSubmitState = () => {
       state: string;
       comment: string;
     }) => postSubmitState(id, state, comment),
-    onSuccess: ({ data: { id } }) => {
-      console.log("onSuccess", id);
+    onSuccess: (response) => {
+      console.log("onSuccess", String(response.data.id));
       queryClient.invalidateQueries({ queryKey: ["adminActivityLists"] });
-      queryClient.invalidateQueries({ queryKey: ["adminActivityItem", id] });
+      queryClient.invalidateQueries({
+        queryKey: ["adminActivityItem", String(response.data.id)],
+      });
     },
   });
 };

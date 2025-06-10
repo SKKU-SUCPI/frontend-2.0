@@ -134,7 +134,7 @@ const AdminActivityList = () => {
               <CloseIcon />
             </IconButton>
             {/* 모달 강제 업데이트 */}
-            <ActivityRouter key={`${id}-${Date.now()}`} id={id} />
+            <ActivityRouter key={id} id={id} />
           </Box>
         </Modal>
       )}

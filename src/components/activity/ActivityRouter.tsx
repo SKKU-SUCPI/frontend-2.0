@@ -25,12 +25,18 @@ const ActivityRouter = ({ id }: { id: string | null }) => {
       return <Loading />;
     }
 
+    console.log(`state: ${data.basicInfo.state}`);
+
     if (data.basicInfo.state === 0) {
-      return <ActivityReview id={id} />;
+      return (
+        <ActivityReview key={`review-${id}-${data.basicInfo.state}`} id={id} />
+      );
     }
 
     if (data.basicInfo.state === 1 || data.basicInfo.state === 2) {
-      return <ActivityView id={id} />;
+      return (
+        <ActivityView key={`view-${id}-${data.basicInfo.state}`} id={id} />
+      );
     }
   }
   return (
