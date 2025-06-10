@@ -1,6 +1,7 @@
 import axiosInstance from "@/apis/utils/axiosInterceptor";
 
 interface pageable {
+  name: string | null;
   page: number;
   size: number;
   sort: string;

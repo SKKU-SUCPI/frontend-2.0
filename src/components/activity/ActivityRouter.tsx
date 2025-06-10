@@ -12,7 +12,8 @@ const ActivityRouter = ({ id }: { id: string | null }) => {
 
   // 학생
   if (userProfile?.role === "student") {
-    return <div>학생 활동 상세 정보</div>;
+    if (id === "new") {
+    }
   }
 
   // 관리자

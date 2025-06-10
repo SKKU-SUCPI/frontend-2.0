@@ -15,8 +15,8 @@ export const useUpdateSubmitState = () => {
     }) => postSubmitState(id, state, comment),
     onSuccess: ({ data: { id } }) => {
       console.log("onSuccess", id);
-      queryClient.invalidateQueries({ queryKey: ["activityItem", id] });
-      queryClient.invalidateQueries({ queryKey: ["activityLists"] });
+      queryClient.invalidateQueries({ queryKey: ["adminActivityLists"] });
+      queryClient.invalidateQueries({ queryKey: ["adminActivityItem", id] });
     },
   });
 };

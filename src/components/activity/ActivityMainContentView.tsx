@@ -1,6 +1,7 @@
 import useAdminActivityItem from "@/hooks/admin/useAdminActivityItem";
 import React from "react";
 import Loading from "../layouts/Loading";
+import axiosInstance from "@/apis/utils/axiosInterceptor";
 
 const sectionStyle: React.CSSProperties = {
   borderRadius: 12,
@@ -58,28 +59,61 @@ function useHover() {
   const onMouseLeave = () => setIsHovered(false);
   return { isHovered, onMouseEnter, onMouseLeave };
 }
-
-const FileCard = ({ file }: { file: { name: string; type: string } }) => {
+const FileCard = ({
+  file,
+}: {
+  file: { id: number; fileName: string; fileType: string };
+}) => {
   const hover = useHover();
+
+  const handleDownload = async () => {
+    try {
+      const response = await axiosInstance.get(
+        `/admin/files/${file.id}/download`,
+        {
+          responseType: "blob", // 바이너리 데이터 받기 위해 필수
+        }
+      );
+
+      // Blob 생성
+      const blob = new Blob([response.data], {
+        type: response.headers["content-type"] || "application/octet-stream",
+      });
+
+      // 다운로드 링크 생성
+      const url = window.URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = `${file.fileName}.${file.fileType}`; // 확장자 포함
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+      window.URL.revokeObjectURL(url);
+    } catch (error) {
+      console.error("Download error:", error);
+      alert("다운로드 중 오류가 발생했습니다.");
+    }
+  };
+
   return (
     <div
       style={{
         ...fileCardStyle,
         ...(hover.isHovered ? fileCardHoverStyle : {}),
       }}
+      onClick={handleDownload}
       onMouseEnter={hover.onMouseEnter}
       onMouseLeave={hover.onMouseLeave}
     >
       <div>
-        <div>{file.name}</div>
+        <div>{file.fileName}</div>
       </div>
       <div style={{ color: "#888", fontSize: 14 }}>
-        {file.type.toUpperCase()}
+        {file.fileType.toUpperCase()}
       </div>
     </div>
   );
 };
-
 const ActivityMainContentView = ({ id }: { id: string }) => {
   const { data, isLoading } = useAdminActivityItem(id);
   if (isLoading) return <Loading />;

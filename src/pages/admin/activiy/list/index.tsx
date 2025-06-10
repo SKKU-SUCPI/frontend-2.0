@@ -29,6 +29,7 @@ const AdminActivityList = () => {
 
   ///////////////// data fetch /////////////////
   const { data, isLoading } = useAdminActivityLists({
+    name: null,
     page: page ? parseInt(page) - 1 : 0,
     size: 10,
     sort: "desc",

@@ -4,6 +4,7 @@ import FlexBox from "@/styles/components/Flexbox";
 import styled from "@emotion/styled";
 import useStudentActivityList from "@/hooks/student/useStudentActivityList";
 import Loading from "@/components/layouts/Loading";
+import { useSearchParams } from "react-router-dom";
 
 const titleStyle = css`
   font-size: 2.5rem;
@@ -49,9 +50,15 @@ const Divider = styled.div`
 `;
 
 const StudentActivityList: React.FC = () => {
+  ///////////////// params /////////////////
+  const [searchParams, setSearchParams] = useSearchParams();
+  const page = searchParams.get("page") || 1;
+  const id = searchParams.get("id");
+
+  ///////////////// data fetch /////////////////
   const { data, isLoading } = useStudentActivityList({
-    state: 1,
-    page: 1,
+    state: null,
+    page: 0,
     size: 10,
     sort: "desc",
   });
