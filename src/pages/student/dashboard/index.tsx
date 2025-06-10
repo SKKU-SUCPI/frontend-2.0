@@ -7,6 +7,15 @@ import StackedBarChart from "@/components/graphs/StackedBarChart";
 import QuotientChart from "@/components/graphs/QuotientChart";
 import ActivityPreviewItem from "./components/ActivityPreviwItem";
 import useStudent3qInfo from "@/hooks/student/useStudent3qInfo";
+import useStudent3qChange from "@/hooks/student/useStudent3qChange";
+import Loading from "@/components/layouts/Loading";
+
+interface Student3qChange {
+  month: string;
+  lq: number;
+  rq: number;
+  cq: number;
+}
 
 const titleStyle = css`
   font-size: 2.5rem;
@@ -44,8 +53,16 @@ const viewAllButtonStyle = css`
 `;
 
 const StudentDashboard: React.FC = () => {
-  const { data: student3qInfo } = useStudent3qInfo();
+  const { data: student3qInfo, isLoading: student3qInfoLoading } =
+    useStudent3qInfo();
+  const { data: student3qChange, isLoading: student3qChangeLoading } =
+    useStudent3qChange();
 
+  if (student3qInfoLoading || student3qChangeLoading) {
+    return <Loading />;
+  }
+
+  // 3Q 통계 데이터
   const QData = [
     {
       title: "Learning Quotient (LQ)",
@@ -73,13 +90,14 @@ const StudentDashboard: React.FC = () => {
     },
   ];
 
-  const lineChartData = [
-    { year: 2019, LQ: 15, CQ: 12, RQ: 18 },
-    { year: 2020, LQ: 18, CQ: 15, RQ: 20 },
-    { year: 2021, LQ: 22, CQ: 19, RQ: 25 },
-    { year: 2022, LQ: 25, CQ: 23, RQ: 28 },
-    { year: 2023, LQ: 28, CQ: 26, RQ: 31 },
-  ];
+  // 3Q 변화 데이터
+  const lineChartData =
+    student3qChange?.map((item: Student3qChange) => ({
+      year: item.month,
+      LQ: Math.round(item.lq * 100) / 100,
+      RQ: Math.round(item.rq * 100) / 100,
+      CQ: Math.round(item.cq * 100) / 100,
+    })) ?? [];
 
   const totalData = {
     RQ: [
