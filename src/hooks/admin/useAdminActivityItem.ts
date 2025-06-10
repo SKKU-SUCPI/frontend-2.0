@@ -3,7 +3,7 @@ import getAdminActivityItem from "@/apis/admin/getAdminActivityItem";
 
 const useAdminActivityItem = (id: string) => {
   return useQuery({
-    queryKey: ["activityItem", id],
+    queryKey: ["adminActivityItem", id],
     queryFn: () => getAdminActivityItem(id),
     enabled: !!id,
   });

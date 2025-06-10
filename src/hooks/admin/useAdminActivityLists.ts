@@ -9,7 +9,7 @@ interface pageable {
 
 const useAdminActivityLists = (pageable: pageable) => {
   return useQuery({
-    queryKey: ["activityLists", pageable],
+    queryKey: ["adminActivityLists", pageable],
     queryFn: () => getAdminActivityLists(pageable),
     enabled: !!pageable,
   });
