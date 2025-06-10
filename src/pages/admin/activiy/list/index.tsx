@@ -107,8 +107,14 @@ const AdminActivityList = () => {
               boxShadow: 24,
               p: 4,
               borderRadius: 2,
-              maxHeight: "90vh",
               overflow: "auto",
+              // 고정 크기 설정
+              width: "1200px",
+              minHeight: "600px",
+              maxWidth: "90vw",
+
+              // transition 추가
+              transition: "all 1s ease-in-out",
             }}
           >
             <IconButton
