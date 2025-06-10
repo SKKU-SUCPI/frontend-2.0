@@ -1,4 +1,5 @@
 import useAdminActivityItem from "@/hooks/admin/useAdminActivityItem";
+import { useUpdateSubmitState } from "@/hooks/admin/useUpdateSubmitState";
 import Loading from "../layouts/Loading";
 import { css } from "@emotion/react";
 import FlexBox from "@/styles/components/Flexbox";
@@ -120,6 +121,7 @@ const ActivityReview: React.FC<{ id: string }> = ({ id }) => {
   const [confirmAction, setConfirmAction] = useState<
     "approve" | "reject" | null
   >(null);
+  const { mutate: updateSubmitState } = useUpdateSubmitState();
 
   if (isLoading) {
     return <Loading />;
@@ -127,8 +129,13 @@ const ActivityReview: React.FC<{ id: string }> = ({ id }) => {
 
   const handleApprove = () => {
     if (confirmAction === "approve") {
-      console.log("승인 완료", comment);
+      updateSubmitState({
+        id,
+        state: "1",
+        comment,
+      });
       setConfirmAction(null);
+      setComment("");
     } else {
       setConfirmAction("approve");
     }
@@ -136,8 +143,13 @@ const ActivityReview: React.FC<{ id: string }> = ({ id }) => {
 
   const handleReject = () => {
     if (confirmAction === "reject") {
-      console.log("거절 완료", comment);
+      updateSubmitState({
+        id,
+        state: "2",
+        comment,
+      });
       setConfirmAction(null);
+      setComment("");
     } else {
       setConfirmAction("reject");
     }
