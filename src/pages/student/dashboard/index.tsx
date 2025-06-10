@@ -8,13 +8,32 @@ import QuotientChart from "@/components/graphs/QuotientChart";
 import ActivityPreviewItem from "./components/ActivityPreviwItem";
 import useStudent3qInfo from "@/hooks/student/useStudent3qInfo";
 import useStudent3qChange from "@/hooks/student/useStudent3qChange";
+import useStudent3qAverages from "@/hooks/student/useStudent3qAverages";
 import Loading from "@/components/layouts/Loading";
-
+import { useNavigate } from "react-router-dom";
 interface Student3qChange {
   month: string;
   lq: number;
   rq: number;
   cq: number;
+}
+
+interface Student3qAverages {
+  student: {
+    lq: number;
+    rq: number;
+    cq: number;
+  };
+  department: {
+    lq: number;
+    rq: number;
+    cq: number;
+  };
+  total: {
+    lq: number;
+    rq: number;
+    cq: number;
+  };
 }
 
 const titleStyle = css`
@@ -53,12 +72,19 @@ const viewAllButtonStyle = css`
 `;
 
 const StudentDashboard: React.FC = () => {
+  const navigate = useNavigate();
   const { data: student3qInfo, isLoading: student3qInfoLoading } =
     useStudent3qInfo();
   const { data: student3qChange, isLoading: student3qChangeLoading } =
     useStudent3qChange();
+  const { data: student3qAverages, isLoading: student3qAveragesLoading } =
+    useStudent3qAverages();
 
-  if (student3qInfoLoading || student3qChangeLoading) {
+  if (
+    student3qInfoLoading ||
+    student3qChangeLoading ||
+    student3qAveragesLoading
+  ) {
     return <Loading />;
   }
 
@@ -99,21 +125,49 @@ const StudentDashboard: React.FC = () => {
       CQ: Math.round(item.cq * 100) / 100,
     })) ?? [];
 
+  // 3Q 평균 데이터
   const totalData = {
     RQ: [
-      { name: "내 점수", score: 28 },
-      { name: "학과 평균", score: 25 },
-      { name: "전체 평균", score: 27 },
+      {
+        name: "내 점수",
+        score: Math.round((student3qAverages?.student.rq ?? 0) * 100) / 100,
+      },
+      {
+        name: "학과 평균",
+        score: Math.round((student3qAverages?.department.rq ?? 0) * 100) / 100,
+      },
+      {
+        name: "전체 평균",
+        score: Math.round((student3qAverages?.total.rq ?? 0) * 100) / 100,
+      },
     ],
     LQ: [
-      { name: "내 점수", score: 30 },
-      { name: "학과 평균", score: 29 },
-      { name: "전체 평균", score: 31 },
+      {
+        name: "내 점수",
+        score: Math.round((student3qAverages?.student.lq ?? 0) * 100) / 100,
+      },
+      {
+        name: "학과 평균",
+        score: Math.round((student3qAverages?.department.lq ?? 0) * 100) / 100,
+      },
+      {
+        name: "전체 평균",
+        score: Math.round((student3qAverages?.total.lq ?? 0) * 100) / 100,
+      },
     ],
     CQ: [
-      { name: "내 점수", score: 22 },
-      { name: "학과 평균", score: 19 },
-      { name: "전체 평균", score: 23 },
+      {
+        name: "내 점수",
+        score: Math.round((student3qAverages?.student.cq ?? 0) * 100) / 100,
+      },
+      {
+        name: "학과 평균",
+        score: Math.round((student3qAverages?.department.cq ?? 0) * 100) / 100,
+      },
+      {
+        name: "전체 평균",
+        score: Math.round((student3qAverages?.total.cq ?? 0) * 100) / 100,
+      },
     ],
   };
 
@@ -194,7 +248,7 @@ const StudentDashboard: React.FC = () => {
               css={viewAllButtonStyle}
               onClick={() => {
                 // 전체 활동 내역 페이지로 이동하는 로직
-                // window.location.href = "/student/activity/view";
+                navigate("/student/activity");
               }}
             >
               전체 활동 내역 보기
