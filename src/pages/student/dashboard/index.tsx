@@ -6,6 +6,27 @@ import LineChart from "@/components/graphs/LineChart";
 import StackedBarChart from "@/components/graphs/StackedBarChart";
 import QuotientChart from "@/components/graphs/QuotientChart";
 import ActivityPreviewItem from "./components/ActivityPreviwItem";
+import useStudent3qInfo from "@/hooks/student/useStudent3qInfo";
+import useStudent3qChange from "@/hooks/student/useStudent3qChange";
+import useStudent3qAverages from "@/hooks/student/useStudent3qAverages";
+import useStudentActivityList from "@/hooks/student/useStudentActivityList";
+import Loading from "@/components/layouts/Loading";
+import { useNavigate } from "react-router-dom";
+
+interface Student3qChange {
+  month: string;
+  lq: number;
+  rq: number;
+  cq: number;
+}
+
+interface StudentActivity {
+  id: number;
+  activityDetail: string;
+  categoryName: string;
+  state: string;
+  approvedDate: string;
+}
 
 const titleStyle = css`
   font-size: 2.5rem;
@@ -42,100 +63,122 @@ const viewAllButtonStyle = css`
   }
 `;
 
-const QData = [
-  {
-    title: "Learning Quotient (LQ)",
-    category: "LQ" as "LQ" | "RQ" | "CQ",
-    description: "학습 능력 지수",
-    score: 23,
-    total: 33,
-    percentage: 12,
-  },
-  {
-    title: "Research Quotient (RQ)",
-    category: "RQ" as "LQ" | "RQ" | "CQ",
-    description: "연구 능력 지수",
-    score: 28,
-    total: 33,
-    percentage: 5,
-  },
-  {
-    title: "Creative Quotient (CQ)",
-    category: "CQ" as "LQ" | "RQ" | "CQ",
-    description: "교류 능력 지수",
-    score: 19,
-    total: 33,
-    percentage: 28,
-  },
-];
-
-const lineChartData = [
-  { year: 2019, LQ: 15, CQ: 12, RQ: 18 },
-  { year: 2020, LQ: 18, CQ: 15, RQ: 20 },
-  { year: 2021, LQ: 22, CQ: 19, RQ: 25 },
-  { year: 2022, LQ: 25, CQ: 23, RQ: 28 },
-  { year: 2023, LQ: 28, CQ: 26, RQ: 31 },
-];
-
-const totalData = {
-  RQ: [
-    { name: "내 점수", score: 28 },
-    { name: "학과 평균", score: 25 },
-    { name: "전체 평균", score: 27 },
-  ],
-  LQ: [
-    { name: "내 점수", score: 30 },
-    { name: "학과 평균", score: 29 },
-    { name: "전체 평균", score: 31 },
-  ],
-  CQ: [
-    { name: "내 점수", score: 22 },
-    { name: "학과 평균", score: 19 },
-    { name: "전체 평균", score: 23 },
-  ],
-};
-
-const activityPreviewData = [
-  {
-    title: "빅데이터 분석을 통한 소비자 행동 연구",
-    category: "LQ" as "LQ" | "RQ" | "CQ",
-    status: "승인" as "승인" | "반려" | "대기",
-    date: "2024-01-01",
-  },
-
-  {
-    title: "학과 MT 기획 및 진행",
-    category: "CQ" as "LQ" | "RQ" | "CQ",
-    status: "대기" as "승인" | "반려" | "대기",
-    date: "2024-01-01",
-  },
-  {
-    title: "전국 대학생 소프트웨어 경진대회 참가",
-    category: "RQ" as "LQ" | "RQ" | "CQ",
-    status: "승인" as "승인" | "반려" | "대기",
-    date: "2024-01-01",
-  },
-  {
-    title: "ICPC 금상",
-    category: "LQ" as "LQ" | "RQ" | "CQ",
-    status: "반려" as "승인" | "반려" | "대기",
-    date: "2024-01-01",
-  },
-  {
-    title: "알고리즘 스터디 그룹 운영",
-    category: "LQ" as "LQ" | "RQ" | "CQ",
-    status: "승인" as "승인" | "반려" | "대기",
-    date: "2024-01-01",
-  },
-];
-
 const StudentDashboard: React.FC = () => {
+  const navigate = useNavigate();
+  const { data: student3qInfo, isLoading: student3qInfoLoading } =
+    useStudent3qInfo();
+  const { data: student3qChange, isLoading: student3qChangeLoading } =
+    useStudent3qChange();
+  const { data: student3qAverages, isLoading: student3qAveragesLoading } =
+    useStudent3qAverages();
+
+  const { data: studentActivityList, isLoading: studentActivityListLoading } =
+    useStudentActivityList({
+      state: null,
+      page: 1,
+      size: 5,
+      sort: "desc",
+    });
+
+  console.log(studentActivityList);
+
+  if (
+    student3qInfoLoading ||
+    student3qChangeLoading ||
+    student3qAveragesLoading ||
+    studentActivityListLoading
+  ) {
+    return <Loading />;
+  }
+
+  // 3Q 통계 데이터
+  const QData = [
+    {
+      title: "Learning Quotient (LQ)",
+      category: "LQ" as "LQ" | "RQ" | "CQ",
+      description: "학습 능력 지수",
+      score: Math.round((student3qInfo?.lq.score ?? 0) * 100) / 100,
+      average: Math.round((student3qInfo?.lq.average ?? 0) * 100) / 100,
+      percentage: Math.round((student3qInfo?.lq.percentile ?? 0) * 100) / 100,
+    },
+    {
+      title: "Research Quotient (RQ)",
+      category: "RQ" as "LQ" | "RQ" | "CQ",
+      description: "연구 능력 지수",
+      score: Math.round((student3qInfo?.rq.score ?? 0) * 100) / 100,
+      average: Math.round((student3qInfo?.rq.average ?? 0) * 100) / 100,
+      percentage: Math.round((student3qInfo?.rq.percentile ?? 0) * 100) / 100,
+    },
+    {
+      title: "Creative Quotient (CQ)",
+      category: "CQ" as "LQ" | "RQ" | "CQ",
+      description: "교류 능력 지수",
+      score: Math.round((student3qInfo?.cq.score ?? 0) * 100) / 100,
+      average: Math.round((student3qInfo?.cq.average ?? 0) * 100) / 100,
+      percentage: Math.round((student3qInfo?.cq.percentile ?? 0) * 100) / 100,
+    },
+  ];
+
+  // 3Q 변화 데이터
+  const lineChartData =
+    student3qChange?.map((item: Student3qChange) => ({
+      year: item.month,
+      LQ: Math.round(item.lq * 100) / 100,
+      RQ: Math.round(item.rq * 100) / 100,
+      CQ: Math.round(item.cq * 100) / 100,
+    })) ?? [];
+
+  // 3Q 평균 데이터
+  const totalData = {
+    RQ: [
+      {
+        name: "내 점수",
+        score: Math.round((student3qAverages?.student.rq ?? 0) * 100) / 100,
+      },
+      {
+        name: "학과 평균",
+        score: Math.round((student3qAverages?.department.rq ?? 0) * 100) / 100,
+      },
+      {
+        name: "전체 평균",
+        score: Math.round((student3qAverages?.total.rq ?? 0) * 100) / 100,
+      },
+    ],
+    LQ: [
+      {
+        name: "내 점수",
+        score: Math.round((student3qAverages?.student.lq ?? 0) * 100) / 100,
+      },
+      {
+        name: "학과 평균",
+        score: Math.round((student3qAverages?.department.lq ?? 0) * 100) / 100,
+      },
+      {
+        name: "전체 평균",
+        score: Math.round((student3qAverages?.total.lq ?? 0) * 100) / 100,
+      },
+    ],
+    CQ: [
+      {
+        name: "내 점수",
+        score: Math.round((student3qAverages?.student.cq ?? 0) * 100) / 100,
+      },
+      {
+        name: "학과 평균",
+        score: Math.round((student3qAverages?.department.cq ?? 0) * 100) / 100,
+      },
+      {
+        name: "전체 평균",
+        score: Math.round((student3qAverages?.total.cq ?? 0) * 100) / 100,
+      },
+    ],
+  };
+
   return (
     <div>
       <h1 css={titleStyle}>Student Dashboard</h1>
       <div css={summaryContainerStyle}>
         {/* 3Q 통계 */}
-
         <div css={{ width: "100%" }}>
           <h2 css={subtitleStyle}>3Q 지표 요약</h2>
           {QData.map((q) => (
@@ -145,23 +188,37 @@ const StudentDashboard: React.FC = () => {
               category={q.category}
               description={q.description}
               score={q.score}
-              total={q.total}
+              total={q.average}
               percentage={q.percentage}
+              average={q.average}
             />
           ))}
         </div>
         {/* 최근 활동 내역 */}
         <div css={{ width: "100%" }}>
           <h2 css={subtitleStyle}>최근 활동 내역</h2>
-          {activityPreviewData.map((activity) => (
-            <ActivityPreviewItem
-              key={activity.title}
-              title={activity.title}
-              category={activity.category}
-              status={activity.status}
-              date={activity.date}
-            />
-          ))}
+          {studentActivityList?.content &&
+          studentActivityList.content.length > 0 ? (
+            studentActivityList.content.map((activity: StudentActivity) => (
+              <ActivityPreviewItem
+                key={activity.id}
+                title={activity.activityDetail}
+                category={activity.categoryName as "LQ" | "RQ" | "CQ"}
+                status={parseInt(activity.state) as 0 | 1 | 2}
+                date={activity.approvedDate}
+              />
+            ))
+          ) : (
+            <div
+              css={css`
+                text-align: center;
+                padding: 20px;
+                color: #666;
+              `}
+            >
+              등록된 활동 내역이 없습니다.
+            </div>
+          )}
           <div
             css={css`
               margin-top: 16px;
@@ -171,8 +228,7 @@ const StudentDashboard: React.FC = () => {
             <button
               css={viewAllButtonStyle}
               onClick={() => {
-                // 전체 활동 내역 페이지로 이동하는 로직
-                // window.location.href = "/student/activity/view";
+                navigate("/student/activity");
               }}
             >
               전체 활동 내역 보기

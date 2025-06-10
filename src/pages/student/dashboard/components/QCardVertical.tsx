@@ -7,6 +7,7 @@ interface QCardVerticalProps {
   description: string;
   score: number;
   percentage: number;
+  average: number;
   total: number;
 }
 
@@ -106,6 +107,7 @@ const QCardVertical: React.FC<QCardVerticalProps> = ({
   description,
   score,
   percentage,
+  average,
   total,
 }) => {
   return (
@@ -126,7 +128,7 @@ const QCardVertical: React.FC<QCardVerticalProps> = ({
         </div>
         <span css={percentTextStyle}>상위 {percentage}%</span>
       </div>
-      <div css={bottomSection}>학과 평균: {total}점</div>
+      <div css={bottomSection}>학과 평균: {average}점</div>
     </div>
   );
 };

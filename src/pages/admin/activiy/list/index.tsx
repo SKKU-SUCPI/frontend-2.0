@@ -1,4 +1,4 @@
-import useActivityLists from "@/hooks/admin/useActivityLists";
+import useAdminActivityLists from "@/hooks/admin/useAdminActivityLists";
 import { useSearchParams } from "react-router-dom";
 import Pagination from "@mui/material/Pagination";
 import Box from "@mui/material/Box";
@@ -8,7 +8,7 @@ import Modal from "@mui/material/Modal";
 import IconButton from "@mui/material/IconButton";
 import CloseIcon from "@mui/icons-material/Close";
 import Loading from "@/components/layouts/Loading";
-
+import ActivityRouter from "@/components/activity/ActivityRouter";
 const titleStyle = css`
   font-size: 2.5rem;
   font-weight: bold;
@@ -28,7 +28,8 @@ const AdminActivityList = () => {
   const id = searchParams.get("id");
 
   ///////////////// data fetch /////////////////
-  const { data, isLoading } = useActivityLists({
+  const { data, isLoading } = useAdminActivityLists({
+    name: null,
     page: page ? parseInt(page) - 1 : 0,
     size: 10,
     sort: "desc",
@@ -37,6 +38,7 @@ const AdminActivityList = () => {
   if (isLoading) return <Loading />;
 
   const totalPages = data?.totalPage || 1;
+  console.log(data);
 
   ///////////////// render /////////////////
   return (
@@ -48,7 +50,7 @@ const AdminActivityList = () => {
       {data.content.map((item: any, index: number) => (
         <ActivityListItem
           key={index}
-          activityId={item.basicInfo.activityId}
+          activityId={item.basicInfo.id}
           content={item.basicInfo.content}
           categoryName={item.basicInfo.categoryName}
           activityClass={item.basicInfo.activityClass}
@@ -101,15 +103,19 @@ const AdminActivityList = () => {
               top: "50%",
               left: "50%",
               transform: "translate(-50%, -50%)",
-              width: "90%",
-              maxWidth: 800,
               bgcolor: "background.paper",
               border: "2px solid #000",
               boxShadow: 24,
               p: 4,
               borderRadius: 2,
-              maxHeight: "90vh",
               overflow: "auto",
+              // 고정 크기 설정
+              width: "1200px",
+              minHeight: "600px",
+              maxWidth: "90vw",
+
+              // transition 추가
+              transition: "all 1s ease-in-out",
             }}
           >
             <IconButton
@@ -127,8 +133,8 @@ const AdminActivityList = () => {
             >
               <CloseIcon />
             </IconButton>
-            <div>활동 상세 정보 (ID: {searchParams.get("id")})</div>
-            {/* 여기에 활동 상세 내용을 추가할 수 있습니다 */}
+            {/* 모달 강제 업데이트 */}
+            <ActivityRouter key={id} id={id} />
           </Box>
         </Modal>
       )}
