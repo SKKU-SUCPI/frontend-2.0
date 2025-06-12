@@ -27,6 +27,16 @@ const useStudentActivitySubmit = () => {
       }
       return submitResponse;
     },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["studentActivityList"] });
+      // URL에서 id 쿼리 파라미터 제거
+      const url = new URL(window.location.href);
+      url.searchParams.delete("id");
+      window.history.replaceState({}, "", url.toString());
+    },
+    onError: (error) => {
+      console.error(error);
+    },
   });
 };
 

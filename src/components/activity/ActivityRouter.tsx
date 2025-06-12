@@ -41,7 +41,9 @@ const ActivityRouter = ({ id }: { id: string | null }) => {
     }
   }
   if (userProfile?.role === "student") {
-    return <ActivitySubmit />;
+    if (id === "new") {
+      return <ActivitySubmit />;
+    }
   }
   return (
     <div>

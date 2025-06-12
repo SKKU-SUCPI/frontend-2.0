@@ -10,6 +10,8 @@ import Box from "@mui/material/Box";
 import IconButton from "@mui/material/IconButton";
 import CloseIcon from "@mui/icons-material/Close";
 import ActivityRouter from "@/components/activity/ActivityRouter";
+import Pagination from "@mui/material/Pagination";
+import ActivityListItem from "@/pages/admin/activiy/list/components/ActivityListItem";
 
 const titleStyle = css`
   font-size: 2.5rem;
@@ -57,19 +59,20 @@ const Divider = styled.div`
 const StudentActivityList: React.FC = () => {
   ///////////////// params /////////////////
   const [searchParams, setSearchParams] = useSearchParams();
-  const page = searchParams.get("page") || 1;
+  const page = searchParams.get("page") || "1";
   const id = searchParams.get("id");
 
   ///////////////// data fetch /////////////////
   const { data, isLoading } = useStudentActivityList({
     state: null,
-    page: 0,
+    page: page ? parseInt(page) - 1 : 0,
     size: 10,
     sort: "desc",
   });
 
   if (isLoading) return <Loading />;
 
+  const totalPages = data?.totalPage || 1;
   console.log(data);
 
   const handleCreateActivity = () => {
@@ -89,6 +92,44 @@ const StudentActivityList: React.FC = () => {
           새로운 활동 제출
         </button>
       </FlexBox>
+
+      {data.content.map((item: any, index: number) => (
+        <ActivityListItem
+          key={index}
+          activityId={item.id}
+          content={item.content}
+          categoryName={item.categoryName}
+          activityClass={item.activityClass}
+          activityDetail={item.activityDetail}
+          state={item.state}
+          submitDate={item.submitDate}
+        />
+      ))}
+
+      <Box
+        sx={{
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "center",
+          marginTop: 3,
+          marginBottom: 3,
+        }}
+      >
+        <Pagination
+          count={totalPages}
+          page={parseInt(page)}
+          onChange={(_, value) => {
+            setSearchParams((prev) => {
+              prev.set("page", value.toString());
+              return prev;
+            });
+          }}
+          color="primary"
+          showFirstButton
+          showLastButton
+          size="large"
+        />
+      </Box>
 
       {/* Modal for activity detail */}
       {id && (

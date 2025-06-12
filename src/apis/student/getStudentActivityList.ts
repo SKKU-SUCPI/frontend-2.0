@@ -11,7 +11,7 @@ const getStudentActivityList = async (pageable: pageable) => {
   const response = await axiosInstance.get(`/student/submits`, {
     params: pageable,
   });
-  return response.data;
+  return response.data.data;
 };
 
 export default getStudentActivityList;

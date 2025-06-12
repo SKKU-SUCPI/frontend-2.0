@@ -25,9 +25,9 @@ interface ActivityListItemProps {
   activityDetail: string;
   state: 0 | 1 | 2;
   submitDate: string;
-  departmemt: string;
-  studentId: string;
-  userName: string;
+  departmemt?: string;
+  studentId?: string;
+  userName?: string;
 }
 
 const cardStyle = css`
@@ -148,11 +148,15 @@ const ActivityListItem: React.FC<ActivityListItemProps> = ({
           </span>
           {submitDate && (
             <span style={{ color: "#333", fontSize: "1rem", marginTop: 2 }}>
-              <PersonOutlineOutlinedIcon
-                fontSize="small"
-                style={{ marginRight: 4, verticalAlign: "middle" }}
-              />
-              {userName} | {studentId} | {departmemt}
+              {userName && (
+                <>
+                  <PersonOutlineOutlinedIcon
+                    fontSize="small"
+                    style={{ marginRight: 4, verticalAlign: "middle" }}
+                  />
+                  {userName} | {studentId} | {departmemt}
+                </>
+              )}
               <CalendarTodayIcon
                 fontSize="small"
                 style={{

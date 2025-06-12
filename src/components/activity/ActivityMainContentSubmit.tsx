@@ -1,6 +1,8 @@
 import React, { useState, useMemo } from "react";
 import activityData from "@/constants/activity_table.json";
 import useStudentActivitySubmit from "@/hooks/student/useStudentActivitySubmit";
+import { useNavigate, useLocation } from "react-router-dom";
+
 const sectionStyle: React.CSSProperties = {
   borderRadius: 12,
   padding: 24,
@@ -168,6 +170,9 @@ const ActivityMainContentForm = () => {
   const fileInputRef = React.useRef<HTMLInputElement>(null);
   const { mutate: submitActivity } = useStudentActivitySubmit();
 
+  const navigate = useNavigate();
+  const location = useLocation();
+
   // 카테고리별로 그룹화된 활동 데이터
   const groupedActivities = useMemo(() => {
     const grouped: Record<number, Record<string, any[]>> = {};
@@ -217,12 +222,26 @@ const ActivityMainContentForm = () => {
       files,
     });
 
-    submitActivity({
-      activityId: Number(activityId),
-      content,
-      files: files.map((file) => file.file),
-    });
-    setShowConfirm(false);
+    submitActivity(
+      {
+        activityId: Number(activityId),
+        content,
+        files: files.map((file) => file.file),
+      },
+      {
+        onSuccess: (data) => {
+          setActivityId("");
+          setContent("");
+          setFiles([]);
+          setShowConfirm(false);
+          alert("활동이 성공적으로 제출되었습니다!");
+
+          const params = new URLSearchParams(location.search);
+          params.set("id", data.data.id.toString());
+          navigate(`/student/activity?${params.toString()}`);
+        },
+      }
+    );
   };
 
   const handleCancelSubmit = () => {
