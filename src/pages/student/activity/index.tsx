@@ -73,7 +73,6 @@ const StudentActivityList: React.FC = () => {
   if (isLoading) return <Loading />;
 
   const totalPages = data?.totalPage || 1;
-  console.log(data);
 
   const handleCreateActivity = () => {
     searchParams.set("id", "new");

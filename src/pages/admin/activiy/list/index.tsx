@@ -38,7 +38,6 @@ const AdminActivityList = () => {
   if (isLoading) return <Loading />;
 
   const totalPages = data?.totalPage || 1;
-  console.log(data);
 
   ///////////////// render /////////////////
   return (

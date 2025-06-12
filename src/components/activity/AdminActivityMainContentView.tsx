@@ -114,7 +114,7 @@ const FileCard = ({
     </div>
   );
 };
-const ActivityMainContentView = ({ id }: { id: string }) => {
+const AdminActivityMainContentView = ({ id }: { id: string }) => {
   const { data, isLoading } = useAdminActivityItem(id);
   if (isLoading) return <Loading />;
 
@@ -164,4 +164,4 @@ const ActivityMainContentView = ({ id }: { id: string }) => {
   );
 };
 
-export default ActivityMainContentView;
+export default AdminActivityMainContentView;

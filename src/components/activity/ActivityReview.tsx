@@ -5,7 +5,7 @@ import { css } from "@emotion/react";
 import FlexBox from "@/styles/components/Flexbox";
 import Card from "@/styles/components/Card";
 import ActivityUserInfo from "./ActivityUserInfo";
-import ActivityMainContentView from "./ActivityMainContentView";
+import AdminActivityMainContentView from "./AdminActivityMainContentView";
 import { useState } from "react";
 
 const containerStyle = css`
@@ -163,7 +163,7 @@ const ActivityReview: React.FC<{ id: string }> = ({ id }) => {
     <div css={containerStyle}>
       {/* 메인 컨텐츠 영역 */}
       <div css={mainContentStyle}>
-        <ActivityMainContentView id={id} />
+        <AdminActivityMainContentView id={id} />
       </div>
 
       {/* 사이드바 영역 */}

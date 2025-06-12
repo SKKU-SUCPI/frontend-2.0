@@ -7,12 +7,22 @@ const postStudentActivityFiles = async ({
   submitId: number;
   files: File[];
 }) => {
+  const formData = new FormData();
+
+  files.forEach((file) => {
+    formData.append("files", file);
+  });
+
   const response = await axiosInstance.post(
-    `/student/submits/${submitId}/files`,
+    `/student/submits/${submitId}/file`,
+    formData,
     {
-      files,
+      headers: {
+        "Content-Type": "multipart/form-data",
+      },
     }
   );
+
   return response.data;
 };
 

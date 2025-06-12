@@ -4,7 +4,7 @@ import { css } from "@emotion/react";
 import FlexBox from "@/styles/components/Flexbox";
 import Card from "@/styles/components/Card";
 import ActivityUserInfo from "./ActivityUserInfo";
-import ActivityMainContentView from "./ActivityMainContentView";
+import AdminActivityMainContentView from "./AdminActivityMainContentView";
 const containerStyle = css`
   width: 1000px;
   display: flex;
@@ -62,7 +62,7 @@ const transformStatus = (status: number) => {
   if (status === 2) return "반려";
 };
 
-const ActivityView: React.FC<{ id: string }> = ({ id }) => {
+const AdminActivityView: React.FC<{ id: string }> = ({ id }) => {
   const { data, isLoading } = useAdminActivityItem(id);
 
   if (isLoading) {
@@ -73,7 +73,7 @@ const ActivityView: React.FC<{ id: string }> = ({ id }) => {
     <div css={containerStyle}>
       {/* 메인 컨텐츠 영역 */}
       <div css={mainContentStyle}>
-        <ActivityMainContentView id={id} />
+        <AdminActivityMainContentView id={id} />
       </div>
 
       {/* 사이드바 영역 */}
@@ -104,4 +104,4 @@ const ActivityView: React.FC<{ id: string }> = ({ id }) => {
   );
 };
 
-export default ActivityView;
+export default AdminActivityView;

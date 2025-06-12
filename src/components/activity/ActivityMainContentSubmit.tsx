@@ -216,12 +216,6 @@ const ActivityMainContentForm = () => {
   };
 
   const handleConfirmSubmit = () => {
-    console.log("Submit data:", {
-      activityId,
-      content,
-      files,
-    });
-
     submitActivity(
       {
         activityId: Number(activityId),
