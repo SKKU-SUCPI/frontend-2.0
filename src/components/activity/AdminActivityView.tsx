@@ -4,7 +4,7 @@ import { css } from "@emotion/react";
 import FlexBox from "@/styles/components/Flexbox";
 import Card from "@/styles/components/Card";
 import ActivityUserInfo from "./ActivityUserInfo";
-import ActivityMainContentView from "./ActivityMainContentView";
+import AdminActivityMainContentView from "./AdminActivityMainContentView";
 const containerStyle = css`
   width: 1000px;
   display: flex;
@@ -46,33 +46,6 @@ const statusStyle = (state: number) => {
   `;
 };
 
-const rejectButtonStyle = css`
-  flex: 1;
-  padding: 0.5rem;
-  border: 1px solid #e5e7eb;
-  border-radius: 0.25rem;
-  background-color: white;
-  font-weight: 600;
-  cursor: pointer;
-  &:hover {
-    background-color: #f3f4f6;
-  }
-`;
-
-const approveButtonStyle = css`
-  flex: 1;
-  padding: 0.5rem;
-  border: 1px solid #e5e7eb;
-  border-radius: 0.25rem;
-  background-color: #6b7280;
-  color: white;
-  font-weight: 600;
-  cursor: pointer;
-  &:hover {
-    background-color: #4b5563;
-  }
-`;
-
 const commentStyle = css`
   margin: 0;
   padding: 0.75rem;
@@ -89,7 +62,7 @@ const transformStatus = (status: number) => {
   if (status === 2) return "반려";
 };
 
-const ActivityView: React.FC<{ id: string }> = ({ id }) => {
+const AdminActivityView: React.FC<{ id: string }> = ({ id }) => {
   const { data, isLoading } = useAdminActivityItem(id);
 
   if (isLoading) {
@@ -100,7 +73,7 @@ const ActivityView: React.FC<{ id: string }> = ({ id }) => {
     <div css={containerStyle}>
       {/* 메인 컨텐츠 영역 */}
       <div css={mainContentStyle}>
-        <ActivityMainContentView id={id} />
+        <AdminActivityMainContentView id={id} />
       </div>
 
       {/* 사이드바 영역 */}
@@ -131,4 +104,4 @@ const ActivityView: React.FC<{ id: string }> = ({ id }) => {
   );
 };
 
-export default ActivityView;
+export default AdminActivityView;

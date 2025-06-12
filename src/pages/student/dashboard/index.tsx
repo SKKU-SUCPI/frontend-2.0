@@ -80,8 +80,6 @@ const StudentDashboard: React.FC = () => {
       sort: "desc",
     });
 
-  console.log(studentActivityList);
-
   if (
     student3qInfoLoading ||
     student3qChangeLoading ||

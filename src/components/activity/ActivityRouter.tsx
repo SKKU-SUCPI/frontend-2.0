@@ -1,8 +1,11 @@
 import useAuthStore from "@/stores/auth/authStore";
 import useAdminActivityItem from "@/hooks/admin/useAdminActivityItem";
+import useStudentActivityItem from "@/hooks/student/useStudentActivityItem";
 import Loading from "@/components/layouts/Loading";
-import ActivityView from "./ActivityView";
+import AdminActivityView from "./AdminActivityView";
 import ActivityReview from "./ActivityReview";
+import ActivitySubmit from "./ActivitySubmit";
+import StudentActivityView from "./StudentActivityView";
 const ActivityRouter = ({ id }: { id: string | null }) => {
   const { userProfile } = useAuthStore();
 
@@ -10,22 +13,13 @@ const ActivityRouter = ({ id }: { id: string | null }) => {
     return <div>활동 상세 정보가 없습니다.</div>;
   }
 
-  // 학생
-  if (userProfile?.role === "student") {
-    if (id === "new") {
-    }
-  }
-
   // 관리자
   if (userProfile?.role === "admin" || userProfile?.role === "super-admin") {
     const { data, isLoading } = useAdminActivityItem(id);
-    console.log(data);
 
     if (isLoading) {
       return <Loading />;
     }
-
-    console.log(`state: ${data.basicInfo.state}`);
 
     if (data.basicInfo.state === 0) {
       return (
@@ -35,8 +29,21 @@ const ActivityRouter = ({ id }: { id: string | null }) => {
 
     if (data.basicInfo.state === 1 || data.basicInfo.state === 2) {
       return (
-        <ActivityView key={`view-${id}-${data.basicInfo.state}`} id={id} />
+        <AdminActivityView key={`view-${id}-${data.basicInfo.state}`} id={id} />
       );
+    }
+  }
+
+  // 학생
+  if (userProfile?.role === "student") {
+    if (id === "new") {
+      return <ActivitySubmit />;
+    } else {
+      const { data, isLoading } = useStudentActivityItem(id);
+      if (isLoading) {
+        return <Loading />;
+      }
+      return <StudentActivityView key={`view-${id}-${data.state}`} id={id} />;
     }
   }
   return (
