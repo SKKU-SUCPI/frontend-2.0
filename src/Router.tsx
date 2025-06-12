@@ -70,7 +70,7 @@ const Router = createBrowserRouter([
 
   // Admin routes
   {
-    path: "/manager",
+    path: "/god",
     element: <ProtectedRoute allowedRoles={["admin"]} />,
     children: [
       {
@@ -78,7 +78,7 @@ const Router = createBrowserRouter([
         children: [
           {
             index: true,
-            element: <Navigate to="/manager/statistic/dashboard" />,
+            element: <Navigate to="/god/statistic/dashboard" />,
           },
           {
             path: "statistic",
@@ -104,7 +104,7 @@ const Router = createBrowserRouter([
 
   // Super Admin routes
   {
-    path: "/superManager",
+    path: "/superGod",
     element: <ProtectedRoute allowedRoles={["super-admin"]} />,
     children: [
       {
@@ -112,7 +112,7 @@ const Router = createBrowserRouter([
         children: [
           {
             index: true,
-            element: <Navigate to="/superManager/statistic/dashboard" />,
+            element: <Navigate to="/superGod/statistic/dashboard" />,
           },
           {
             path: "statistic",
