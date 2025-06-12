@@ -1,16 +1,17 @@
 import axiosInstance from "@/apis/utils/axiosInterceptor";
 
 interface pageable {
+  state: number | null;
   page: number;
   size: number;
   sort: string;
 }
 
-const getActivityLists = async (pageable: pageable) => {
-  const response = await axiosInstance.get("/admin/submits", {
+const getStudentActivityList = async (pageable: pageable) => {
+  const response = await axiosInstance.get(`/student/submits`, {
     params: pageable,
   });
   return response.data.data;
 };
 
-export default getActivityLists;
+export default getStudentActivityList;

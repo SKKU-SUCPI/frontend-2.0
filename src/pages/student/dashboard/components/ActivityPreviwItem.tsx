@@ -10,9 +10,20 @@ const categoryColor = {
 interface ActivityPreviewItemProps {
   title: string;
   category: "LQ" | "RQ" | "CQ";
-  status: "승인" | "반려" | "대기";
+  status: 0 | 1 | 2;
   date?: string;
 }
+
+const getStatus = (status: number) => {
+  if (status === 0) return "승인";
+  else if (status === 1) return "반려";
+  else if (status === 2) return "대기";
+  return "대기";
+};
+
+const parseDate = (dateString: string) => {
+  return dateString.split("T")[0];
+};
 
 const cardStyle = css`
   display: flex;
@@ -70,12 +81,12 @@ const ActivityPreviewItem: React.FC<ActivityPreviewItemProps> = ({
         <span css={titleStyle}>{title}</span>
         {date && (
           <span style={{ color: "#888", fontSize: "0.95rem", marginTop: 2 }}>
-            {date}
+            {parseDate(date)}
           </span>
         )}
       </div>
     </div>
-    <span css={statusStyle(status)}>{status}</span>
+    <span css={statusStyle(getStatus(status))}>{getStatus(status)}</span>
   </div>
 );
 
