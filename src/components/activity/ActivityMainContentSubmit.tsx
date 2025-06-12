@@ -1,6 +1,6 @@
 import React, { useState, useMemo } from "react";
 import activityData from "@/constants/activity_table.json";
-
+import useStudentActivitySubmit from "@/hooks/student/useStudentActivitySubmit";
 const sectionStyle: React.CSSProperties = {
   borderRadius: 12,
   padding: 24,
@@ -166,6 +166,7 @@ const ActivityMainContentForm = () => {
   const [files, setFiles] = useState<FileData[]>([]);
   const [showConfirm, setShowConfirm] = useState<boolean>(false);
   const fileInputRef = React.useRef<HTMLInputElement>(null);
+  const { mutate: submitActivity } = useStudentActivitySubmit();
 
   // 카테고리별로 그룹화된 활동 데이터
   const groupedActivities = useMemo(() => {
@@ -215,7 +216,12 @@ const ActivityMainContentForm = () => {
       content,
       files,
     });
-    // TODO: API 호출
+
+    submitActivity({
+      activityId: Number(activityId),
+      content,
+      files: files.map((file) => file.file),
+    });
     setShowConfirm(false);
   };
 
