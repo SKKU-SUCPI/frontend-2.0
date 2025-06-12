@@ -46,33 +46,6 @@ const statusStyle = (state: number) => {
   `;
 };
 
-const rejectButtonStyle = css`
-  flex: 1;
-  padding: 0.5rem;
-  border: 1px solid #e5e7eb;
-  border-radius: 0.25rem;
-  background-color: white;
-  font-weight: 600;
-  cursor: pointer;
-  &:hover {
-    background-color: #f3f4f6;
-  }
-`;
-
-const approveButtonStyle = css`
-  flex: 1;
-  padding: 0.5rem;
-  border: 1px solid #e5e7eb;
-  border-radius: 0.25rem;
-  background-color: #6b7280;
-  color: white;
-  font-weight: 600;
-  cursor: pointer;
-  &:hover {
-    background-color: #4b5563;
-  }
-`;
-
 const commentStyle = css`
   margin: 0;
   padding: 0.75rem;

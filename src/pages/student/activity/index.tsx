@@ -5,6 +5,11 @@ import styled from "@emotion/styled";
 import useStudentActivityList from "@/hooks/student/useStudentActivityList";
 import Loading from "@/components/layouts/Loading";
 import { useSearchParams } from "react-router-dom";
+import Modal from "@mui/material/Modal";
+import Box from "@mui/material/Box";
+import IconButton from "@mui/material/IconButton";
+import CloseIcon from "@mui/icons-material/Close";
+import ActivityRouter from "@/components/activity/ActivityRouter";
 
 const titleStyle = css`
   font-size: 2.5rem;
@@ -67,6 +72,11 @@ const StudentActivityList: React.FC = () => {
 
   console.log(data);
 
+  const handleCreateActivity = () => {
+    searchParams.set("id", "new");
+    setSearchParams(searchParams);
+  };
+
   return (
     <div>
       <h1 css={titleStyle}>활동 모아보기</h1>
@@ -75,10 +85,64 @@ const StudentActivityList: React.FC = () => {
       </h2>
       <FlexBox justify="space-between">
         <h2 css={subtitleStyle}>활동 내역</h2>
-        <button css={filterButtonStyle} onClick={() => {}}>
+        <button css={filterButtonStyle} onClick={handleCreateActivity}>
           새로운 활동 제출
         </button>
       </FlexBox>
+
+      {/* Modal for activity detail */}
+      {id && (
+        <Modal
+          open={true}
+          onClose={() => {
+            searchParams.delete("id");
+            setSearchParams(searchParams);
+          }}
+          aria-labelledby="activity-detail-modal"
+          aria-describedby="activity-detail-description"
+        >
+          <Box
+            sx={{
+              position: "absolute",
+              top: "50%",
+              left: "50%",
+              transform: "translate(-50%, -50%)",
+              bgcolor: "background.paper",
+              border: "2px solid #000",
+              boxShadow: 24,
+              p: 4,
+              borderRadius: 2,
+              overflow: "auto",
+              // 고정 크기 설정
+              width: "1200px",
+              minHeight: "600px",
+              maxWidth: "90vw",
+              maxHeight: "80vh",
+
+              // transition 추가
+              transition: "all 1s ease-in-out",
+            }}
+          >
+            <IconButton
+              aria-label="close"
+              onClick={() => {
+                searchParams.delete("id");
+                setSearchParams(searchParams);
+              }}
+              sx={{
+                position: "absolute",
+                right: 8,
+                top: 8,
+                color: (theme) => theme.palette.grey[500],
+              }}
+            >
+              <CloseIcon />
+            </IconButton>
+            {/* 모달 강제 업데이트 */}
+            <ActivityRouter key={id} id={id} />
+          </Box>
+        </Modal>
+      )}
     </div>
   );
 };

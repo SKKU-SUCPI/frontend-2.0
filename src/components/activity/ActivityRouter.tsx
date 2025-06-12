@@ -3,6 +3,7 @@ import useAdminActivityItem from "@/hooks/admin/useAdminActivityItem";
 import Loading from "@/components/layouts/Loading";
 import ActivityView from "./ActivityView";
 import ActivityReview from "./ActivityReview";
+import ActivitySubmit from "./ActivitySubmit";
 const ActivityRouter = ({ id }: { id: string | null }) => {
   const { userProfile } = useAuthStore();
 
@@ -38,6 +39,9 @@ const ActivityRouter = ({ id }: { id: string | null }) => {
         <ActivityView key={`view-${id}-${data.basicInfo.state}`} id={id} />
       );
     }
+  }
+  if (userProfile?.role === "student") {
+    return <ActivitySubmit />;
   }
   return (
     <div>
