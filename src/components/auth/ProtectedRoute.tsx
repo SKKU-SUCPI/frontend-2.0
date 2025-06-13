@@ -6,8 +6,8 @@ interface ProtectedRouteProps {
 
 const defaultPage: Record<string, string> = {
   student: "/student",
-  admin: "/manager",
-  "super-admin": "/superManager",
+  admin: "/god",
+  "super-admin": "/superGod",
 };
 
 const ProtectedRoute = ({ allowedRoles }: ProtectedRouteProps) => {
