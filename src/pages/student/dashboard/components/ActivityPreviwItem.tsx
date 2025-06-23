@@ -15,9 +15,9 @@ interface ActivityPreviewItemProps {
 }
 
 const getStatus = (status: number) => {
-  if (status === 0) return "승인";
-  else if (status === 1) return "반려";
-  else if (status === 2) return "대기";
+  if (status === 0) return "대기";
+  else if (status === 1) return "승인";
+  else if (status === 2) return "반려";
   return "대기";
 };
 
