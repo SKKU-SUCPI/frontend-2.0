@@ -75,7 +75,7 @@ const StudentDashboard: React.FC = () => {
   const { data: studentActivityList, isLoading: studentActivityListLoading } =
     useStudentActivityList({
       state: null,
-      page: 1,
+      page: 0,
       size: 5,
       sort: "desc",
     });
@@ -174,7 +174,7 @@ const StudentDashboard: React.FC = () => {
 
   return (
     <div>
-      <h1 css={titleStyle}>Student Dashboard</h1>
+      <h1 css={titleStyle}>학생 대시보드</h1>
       <div css={summaryContainerStyle}>
         {/* 3Q 통계 */}
         <div css={{ width: "100%" }}>
