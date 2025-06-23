@@ -186,7 +186,6 @@ const StudentDashboard: React.FC = () => {
               category={q.category}
               description={q.description}
               score={q.score}
-              total={q.average}
               percentage={q.percentage}
               average={q.average}
             />
