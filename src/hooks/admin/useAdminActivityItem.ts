@@ -6,6 +6,10 @@ const useAdminActivityItem = (id: string) => {
     queryKey: ["adminActivityItem", id],
     queryFn: () => getAdminActivityItem(id),
     enabled: !!id,
+    staleTime: 1000 * 60 * 5,
+    gcTime: 1000 * 60 * 5,
+    refetchOnWindowFocus: false,
+    refetchOnMount: false,
   });
 };
 
