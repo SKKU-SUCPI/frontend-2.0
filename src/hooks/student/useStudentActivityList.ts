@@ -13,6 +13,10 @@ const useStudentActivityList = (pageable: pageable) => {
     queryKey: ["studentActivityList", pageable],
     queryFn: () => getStudentActivityList(pageable),
     enabled: !!pageable,
+    staleTime: 1000 * 60 * 5,
+    gcTime: 1000 * 60 * 5,
+    refetchOnWindowFocus: false,
+    refetchOnMount: false,
   });
 };
 

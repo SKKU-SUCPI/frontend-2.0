@@ -5,6 +5,10 @@ const useStudent3qChange = () => {
   return useQuery({
     queryKey: ["student3qChange"],
     queryFn: getStudent3qChange,
+    staleTime: 1000 * 60 * 5,
+    gcTime: 1000 * 60 * 5,
+    refetchOnWindowFocus: false,
+    refetchOnMount: false,
   });
 };
 
