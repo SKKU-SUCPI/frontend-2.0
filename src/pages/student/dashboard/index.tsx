@@ -22,7 +22,7 @@ interface Student3qChange {
 
 interface StudentActivity {
   id: number;
-  activityDetail: string;
+  content: string;
   categoryName: string;
   state: string;
   approvedDate: string;
@@ -199,7 +199,7 @@ const StudentDashboard: React.FC = () => {
             studentActivityList.content.map((activity: StudentActivity) => (
               <ActivityPreviewItem
                 key={activity.id}
-                title={activity.activityDetail}
+                title={activity.content}
                 category={activity.categoryName as "LQ" | "RQ" | "CQ"}
                 status={parseInt(activity.state) as 0 | 1 | 2}
                 date={activity.approvedDate}
