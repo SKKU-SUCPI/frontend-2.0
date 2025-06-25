@@ -9,6 +9,10 @@ import { QuotientCard } from "./components/QuotientCard";
 import { useAdminRatio } from "@/hooks/admin/useAdminRatio";
 import useSubmitSummary from "@/hooks/admin/useSubmitSummary";
 import Loading from "@/components/layouts/Loading";
+import GenericFilter from "@/components/filter/GenericFilter";
+import { adminActivityDashboardFilterConfig } from "@/components/filter/filterConfig";
+import useFilter from "@/hooks/filter/useFilter";
+
 const titleStyle = css`
   font-size: 2.5rem;
   font-weight: bold;
@@ -133,6 +137,10 @@ const CQdata = {
 };
 
 const AdminActivityDashboard: React.FC = () => {
+  const { filter, handleFilterChange, resetFilter } = useFilter(
+    adminActivityDashboardFilterConfig
+  );
+
   /////////////// data fetch ///////////////
   const { data: { data: ratioData } = {}, isLoading: isLoadingRatio } =
     useAdminRatio();
@@ -150,7 +158,7 @@ const AdminActivityDashboard: React.FC = () => {
         <h2 css={subtitleStyle}>3Q 영역별 활동 현황</h2>
         <button css={filterButtonStyle}>검색 필터</button>
       </FlexBox>
-      <Card>
+      <Card css={{ marginBottom: "40px" }}>
         <SimplePieChart data={ratioData} />
         <FlexBox direction="column" gap="10px">
           {submitSummary?.map((quotient: any, index: number) => (
@@ -165,6 +173,13 @@ const AdminActivityDashboard: React.FC = () => {
           ))}
         </FlexBox>
       </Card>
+
+      <GenericFilter
+        filterConfig={adminActivityDashboardFilterConfig}
+        filters={filter}
+        onFilterChange={handleFilterChange}
+        onReset={resetFilter}
+      />
 
       {/* TODO: data fetch 시 map 활용해서 단순화하기 */}
       <div>
