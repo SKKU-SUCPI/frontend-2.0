@@ -3,6 +3,7 @@ import getAdminActivityLists from "@/apis/admin/getAdminActivityLists";
 
 interface pageable {
   name: string | null;
+  state: number | null;
   page: number;
   size: number;
   sort: string;
