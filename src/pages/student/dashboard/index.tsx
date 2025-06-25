@@ -97,7 +97,7 @@ const StudentDashboard: React.FC = () => {
       description: "학습 능력 지수",
       score: Math.round((student3qInfo?.lq.score ?? 0) * 100) / 100,
       average: Math.round((student3qInfo?.lq.average ?? 0) * 100) / 100,
-      percentage: Math.round((student3qInfo?.lq.percentile ?? 0) * 100) / 100,
+      percentage: Math.round((student3qInfo?.lq.percentile ?? 0) * 100),
     },
     {
       title: "Research Quotient (RQ)",
@@ -105,7 +105,7 @@ const StudentDashboard: React.FC = () => {
       description: "연구 능력 지수",
       score: Math.round((student3qInfo?.rq.score ?? 0) * 100) / 100,
       average: Math.round((student3qInfo?.rq.average ?? 0) * 100) / 100,
-      percentage: Math.round((student3qInfo?.rq.percentile ?? 0) * 100) / 100,
+      percentage: Math.round((student3qInfo?.rq.percentile ?? 0) * 100),
     },
     {
       title: "Creative Quotient (CQ)",
@@ -113,7 +113,7 @@ const StudentDashboard: React.FC = () => {
       description: "교류 능력 지수",
       score: Math.round((student3qInfo?.cq.score ?? 0) * 100) / 100,
       average: Math.round((student3qInfo?.cq.average ?? 0) * 100) / 100,
-      percentage: Math.round((student3qInfo?.cq.percentile ?? 0) * 100) / 100,
+      percentage: Math.round((student3qInfo?.cq.percentile ?? 0) * 100),
     },
   ];
 
