@@ -23,16 +23,21 @@ const AdminActivityList = () => {
   const [searchParams, setSearchParams] = useSearchParams();
   const page = searchParams.get("page") || "1";
   const id = searchParams.get("id");
-  const { filter, handleFilterChange, resetFilter } = useFilter(
-    adminActivityListFilterConfig
-  );
+  const {
+    filter,
+    handleFilterChange,
+    resetFilter,
+    applyFilter,
+    appliedFilter,
+  } = useFilter(adminActivityListFilterConfig);
 
   ///////////////// data fetch /////////////////
   const { data, isLoading } = useAdminActivityLists({
-    name: null,
     page: page ? parseInt(page) - 1 : 0,
     size: 10,
-    sort: "desc",
+    sort: appliedFilter.sort,
+    state: appliedFilter.state,
+    name: appliedFilter.name,
   });
 
   if (isLoading) return <Loading />;
@@ -47,8 +52,10 @@ const AdminActivityList = () => {
       <GenericFilter
         filterConfig={adminActivityListFilterConfig}
         filters={filter}
+        appliedFilter={appliedFilter}
         onFilterChange={handleFilterChange}
         onReset={resetFilter}
+        onApply={applyFilter}
       />
 
       {data.content.map((item: any, index: number) => (

@@ -137,9 +137,13 @@ const CQdata = {
 };
 
 const AdminActivityDashboard: React.FC = () => {
-  const { filter, handleFilterChange, resetFilter } = useFilter(
-    adminActivityDashboardFilterConfig
-  );
+  const {
+    filter,
+    handleFilterChange,
+    resetFilter,
+    appliedFilter,
+    applyFilter,
+  } = useFilter(adminActivityDashboardFilterConfig);
 
   /////////////// data fetch ///////////////
   const { data: { data: ratioData } = {}, isLoading: isLoadingRatio } =
@@ -179,6 +183,8 @@ const AdminActivityDashboard: React.FC = () => {
         filters={filter}
         onFilterChange={handleFilterChange}
         onReset={resetFilter}
+        onApply={applyFilter}
+        appliedFilter={appliedFilter}
       />
 
       {/* TODO: data fetch 시 map 활용해서 단순화하기 */}

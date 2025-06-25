@@ -24,42 +24,9 @@ const GenericFilter = ({
   filters,
   onFilterChange,
   onReset,
+  onApply,
+  appliedFilter,
 }: any) => {
-  const [applied, setApplied] = useState({ ...filters });
-
-  // 필터 적용
-  const handleApply = () => {
-    setApplied({ ...filters });
-  };
-
-  // 필터 초기화
-  const handleReset = () => {
-    onReset();
-    // applied도 초기 상태로 리셋
-    const resetState = filterConfig.reduce((acc: any, config: any) => {
-      acc[config.id] = config.defaultValue;
-      return acc;
-    }, {});
-    setApplied(resetState);
-  };
-
-  // 필터가 적용되었는지 확인
-  const hasFilter = () => {
-    return filterConfig.some((config: any) => {
-      const currentValue = applied[config.id];
-      const defaultValue = config.defaultValue;
-
-      // 값이 기본값과 다른지 확인
-      if (currentValue !== defaultValue) {
-        // 빈 문자열이나 null은 필터로 간주하지 않음
-        if (currentValue !== null && currentValue !== "") {
-          return true;
-        }
-      }
-      return false;
-    });
-  };
-
   // 필터 입력 필드 렌더링
   const renderFilterField = (config: any) => {
     const { id, type, label, options, placeholder, width } = config;
@@ -146,6 +113,13 @@ const GenericFilter = ({
     }
   };
 
+  const hasFilter = () => {
+    return filterConfig.some((config: any) => {
+      const value = appliedFilter[config.id];
+      return value !== null && value !== "" && value !== config.defaultValue;
+    });
+  };
+
   // Badge 표시 여부 확인
   const shouldShowBadge = (config: any, value: any) => {
     return value !== null && value !== "" && value !== config.defaultValue;
@@ -185,7 +159,7 @@ const GenericFilter = ({
                 적용된 필터:
               </span>
               {filterConfig.map((config: any) => {
-                const value = applied[config.id];
+                const value = appliedFilter[config.id];
                 if (!shouldShowBadge(config, value)) return null;
 
                 const label = getBadgeLabel(config, value);
@@ -206,7 +180,7 @@ const GenericFilter = ({
         <Box sx={{ display: "flex", gap: 1 }}>
           <Tooltip title="적용" arrow>
             <IconButton
-              onClick={handleApply}
+              onClick={onApply}
               sx={{
                 minWidth: 40,
                 minHeight: 40,
@@ -221,7 +195,7 @@ const GenericFilter = ({
           </Tooltip>
           <Tooltip title="초기화" arrow>
             <IconButton
-              onClick={handleReset}
+              onClick={onReset}
               sx={{
                 minWidth: 40,
                 minHeight: 40,

@@ -46,16 +46,20 @@ const StudentActivityList: React.FC = () => {
   const page = searchParams.get("page") || "1";
   const id = searchParams.get("id");
 
-  const { filter, handleFilterChange, resetFilter } = useFilter(
-    studentActivityListFilterConfig
-  );
+  const {
+    filter,
+    handleFilterChange,
+    resetFilter,
+    appliedFilter,
+    applyFilter,
+  } = useFilter(studentActivityListFilterConfig);
 
   ///////////////// data fetch /////////////////
   const { data, isLoading } = useStudentActivityList({
-    state: null,
+    state: appliedFilter.state,
     page: page ? parseInt(page) - 1 : 0,
     size: 10,
-    sort: "desc",
+    sort: appliedFilter.sort,
   });
 
   if (isLoading) return <Loading />;
@@ -81,6 +85,8 @@ const StudentActivityList: React.FC = () => {
         filters={filter}
         onFilterChange={handleFilterChange}
         onReset={resetFilter}
+        onApply={applyFilter}
+        appliedFilter={appliedFilter}
       />
 
       {data.content.map((item: any, index: number) => (
