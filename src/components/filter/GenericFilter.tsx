@@ -1,4 +1,3 @@
-import { useState } from "react";
 import {
   Box,
   TextField,
@@ -26,6 +25,7 @@ const GenericFilter = ({
   onReset,
   onApply,
   appliedFilter,
+  filterShow = false,
 }: any) => {
   // 필터 입력 필드 렌더링
   const renderFilterField = (config: any) => {
@@ -141,40 +141,42 @@ const GenericFilter = ({
         </Box>
 
         {/* 가운데 적용된 필터 Badge */}
-        <Box
-          sx={{
-            display: "flex",
-            alignItems: "center",
-            gap: 1,
-            flex: 1,
-            minWidth: 0,
-            overflowX: "auto",
-            whiteSpace: "nowrap",
-            justifyContent: "center",
-          }}
-        >
-          {hasFilter() && (
-            <Stack direction="row" spacing={1} alignItems="center">
-              <span style={{ color: "#222", fontWeight: 500 }}>
-                적용된 필터:
-              </span>
-              {filterConfig.map((config: any) => {
-                const value = appliedFilter[config.id];
-                if (!shouldShowBadge(config, value)) return null;
+        {filterShow && (
+          <Box
+            sx={{
+              display: "flex",
+              alignItems: "center",
+              gap: 1,
+              flex: 1,
+              minWidth: 0,
+              overflowX: "auto",
+              whiteSpace: "nowrap",
+              justifyContent: "center",
+            }}
+          >
+            {hasFilter() && (
+              <Stack direction="row" spacing={1} alignItems="center">
+                <span style={{ color: "#222", fontWeight: 500 }}>
+                  적용된 필터:
+                </span>
+                {filterConfig.map((config: any) => {
+                  const value = appliedFilter[config.id];
+                  if (!shouldShowBadge(config, value)) return null;
 
-                const label = getBadgeLabel(config, value);
-                return label ? (
-                  <Badge
-                    key={config.id}
-                    label={label}
-                    colors={badgeColorSet}
-                    fontSize={13}
-                  />
-                ) : null;
-              })}
-            </Stack>
-          )}
-        </Box>
+                  const label = getBadgeLabel(config, value);
+                  return label ? (
+                    <Badge
+                      key={config.id}
+                      label={label}
+                      colors={badgeColorSet}
+                      fontSize={13}
+                    />
+                  ) : null;
+                })}
+              </Stack>
+            )}
+          </Box>
+        )}
 
         {/* 오른쪽 아이콘 버튼 그룹 */}
         <Box sx={{ display: "flex", gap: 1 }}>

@@ -1,179 +1,370 @@
-import React, { useState } from "react";
+import React, { useState, useRef } from "react";
 import { css } from "@emotion/react";
-import FlexBox from "@/styles/components/Flexbox";
-import UserListSideBar from "./components/UserListSideBar";
+import IndividualStudentCard from "./components/IndividualStudentCard";
+import AverageMetrics from "./components/AverageMetrics";
+import useStudentsList from "@/hooks/admin/useStudentsList";
+import Loading from "@/components/layouts/Loading";
+import Pagination from "@mui/material/Pagination";
+import Box from "@mui/material/Box";
 import { useSelectedUserStore } from "@/stores/selectedUserStore";
-import PersonIcon from "@mui/icons-material/Person";
-import TopThreeCard from "./components/TopThreeCard";
-import QuotientChart from "@/components/graphs/QuotientChart";
-import StackedBarChart from "@/components/graphs/StackedBarChart";
-import UserListTable from "../../../../components/table/UserListTable";
-import GraphWrapper from "@/components/graphs/GraphWrapper";
+import RadarChart from "@/components/graphs/RadarChart";
+import IconButton from "@mui/material/IconButton";
+import ChevronLeftIcon from "@mui/icons-material/ChevronLeft";
+import ChevronRightIcon from "@mui/icons-material/ChevronRight";
+import RefreshIcon from "@mui/icons-material/Refresh";
+import SelectedUsersTable from "@/components/table/SelectedUsersTable";
+import useFilter from "@/hooks/filter/useFilter";
+import { adminStudentListFilterConfig } from "@/components/filter/filterConfig";
+import GenericFilter from "@/components/filter/GenericFilter";
 
-const data = {
-  RQ: [
-    { name: "강병희", score: 25 },
-    { name: "신진건", score: 30 },
-    { name: "강성철", score: 28 },
-    { name: "김현우", score: 27 },
-    { name: "강현우", score: 27 },
-    { name: "박민수", score: 21 },
-    { name: "이지원", score: 29 },
-    { name: "최영희", score: 24 },
-    { name: "정태준", score: 26 },
-    { name: "송미라", score: 22 },
-    { name: "황준호", score: 31 },
-  ],
-  LQ: [
-    { name: "강병희", score: 20 },
-    { name: "신진건", score: 22 },
-    { name: "강성철", score: 24 },
-    { name: "김현우", score: 23 },
-    { name: "강현우", score: 23 },
-    { name: "박민수", score: 21 },
-    { name: "이지원", score: 25 },
-    { name: "최영희", score: 28 },
-    { name: "정태준", score: 19 },
-    { name: "송미라", score: 26 },
-    { name: "황준호", score: 24 },
-  ],
-  CQ: [
-    { name: "강병희", score: 25 },
-    { name: "신진건", score: 18 },
-    { name: "강성철", score: 21 },
-    { name: "김현우", score: 20 },
-    { name: "강현우", score: 20 },
-    { name: "박민수", score: 21 },
-    { name: "이지원", score: 23 },
-    { name: "최영희", score: 19 },
-    { name: "정태준", score: 27 },
-    { name: "송미라", score: 24 },
-    { name: "황준호", score: 22 },
-  ],
-};
+const containerStyle = css`
+  width: 100%;
+`;
 
-// 각 영역별 상위 3개 데이터 정렬
-const sortedData = {
-  RQ: [...data.RQ].sort((a, b) => b.score - a.score).slice(0, 3),
-  LQ: [...data.LQ].sort((a, b) => b.score - a.score).slice(0, 3),
-  CQ: [...data.CQ].sort((a, b) => b.score - a.score).slice(0, 3),
-};
+const bottomRowStyle = css`
+  display: flex;
+  gap: 24px;
+`;
 
-// TODO: 백엔드에서 처리할지 의논
-// Total 점수 계산 및 정렬
-const totalScores = data.RQ.map((item, index) => ({
-  name: item.name,
-  score: item.score + data.LQ[index].score + data.CQ[index].score,
-}))
-  .sort((a, b) => b.score - a.score)
-  .slice(0, 3);
+const leftBoxStyle = css`
+  flex: 3;
+  padding: 10px 20px;
+  display: flex;
+  flex-direction: column;
+`;
 
-const titleStyle = css`
-  font-size: 2.5rem;
+const rightColStyle = css`
+  flex: 4;
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+`;
+
+const rightBoxStyle = css`
+  min-height: 180px;
+  display: flex;
+  flex-direction: column;
+  padding: 15px;
+  overflow-y: auto;
+  position: relative;
+`;
+
+const chartBoxStyle = css`
+  min-height: 180px;
+  display: flex;
+  flex-direction: column;
+  padding: 15px;
+  position: relative;
+`;
+
+const navigationButtonsStyle = css`
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  z-index: 10;
+`;
+
+const pageIndicatorStyle = css`
+  font-size: 0.9rem;
+  color: #666;
+  font-weight: 500;
+  min-width: 40px;
+  text-align: center;
+`;
+
+const chartTitleStyle = css`
+  font-size: 1.1rem;
   font-weight: bold;
-  margin-bottom: 0;
+  margin-bottom: 10px;
+  color: #333;
+  text-align: center;
 `;
 
-const subtitleStyle = css`
-  font-size: 1.8rem;
-`;
-
-const descriptionStyle = css`
-  font-size: 1.5rem;
-  color: #777;
-  margin-top: 0;
-`;
-
-const buttonStyle = css`
-  background-color: #333333;
-  color: #ffffff;
-  border: 1px solid #444444;
-  border-radius: 8px;
-  padding: 8px 16px;
-  font-size: 1rem;
-  cursor: pointer;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-  transition: all 0.2s ease-in-out;
-
-  &:hover {
-    background-color: #444444;
-    border-color: #555555;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.15);
-  }
+const selectedUserTitleStyle = css`
+  font-size: 1.2rem;
+  font-weight: bold;
+  margin-bottom: 10px;
+  color: #333;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
 `;
 
 const titleContainerStyle = css`
+  display: flex;
+  align-items: center;
+  gap: 10px;
+`;
+
+const resetButtonStyle = css`
+  color: #666;
+  &:hover {
+    color: #333;
+  }
+`;
+
+const userListStyle = css`
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
   margin-bottom: 20px;
 `;
 
-const AdminStatisticIndividual: React.FC = () => {
-  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
-  const { selectedUsers } = useSelectedUserStore();
+const noDataStyle = css`
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  color: #666;
+  font-style: italic;
+`;
 
-  const toggleSidebar = () => {
-    setIsSidebarOpen(!isSidebarOpen);
+const IndividualStatisticLayout = () => {
+  const [currentPage, setCurrentPage] = useState(1);
+  const [chartPage, setChartPage] = useState(0);
+  const studentListRef = useRef<HTMLDivElement>(null);
+
+  const {
+    filter,
+    handleFilterChange,
+    resetFilter,
+    appliedFilter,
+    applyFilter,
+  } = useFilter(adminStudentListFilterConfig);
+
+  const pageSize = 10;
+
+  const {
+    selectedUsers,
+    addUser,
+    removeUser,
+    isUserSelected,
+    averages,
+    clearUsers,
+  } = useSelectedUserStore();
+
+  console.log(appliedFilter);
+
+  const pageable = {
+    name: appliedFilter.name,
+    department: appliedFilter.department,
+    page: currentPage - 1, // API는 0-based pagination을 사용
+    size: pageSize,
+    sort: appliedFilter.sort,
+  };
+
+  const { data: studentsData, isLoading } = useStudentsList(pageable);
+
+  if (isLoading) return <Loading />;
+
+  console.log(studentsData);
+
+  const totalPages = studentsData?.totalPage || 1;
+
+  // Radar Chart 데이터 생성
+  const createRadarChartData = (user: any) => [
+    { subject: "LQ", value: user.lq || 0, fullMark: 100 },
+    { subject: "RQ", value: user.rq || 0, fullMark: 100 },
+    { subject: "CQ", value: user.cq || 0, fullMark: 100 },
+  ];
+
+  // 평균값으로 Radar Chart 데이터 생성
+  const createAverageRadarChartData = () => [
+    { subject: "LQ", value: averages.averageLQ, fullMark: 100 },
+    { subject: "RQ", value: averages.averageRQ, fullMark: 100 },
+    { subject: "CQ", value: averages.averageCQ, fullMark: 100 },
+  ];
+
+  const handleUserClick = (student: any) => {
+    const userData = {
+      id: student.id,
+      name: student.name,
+      department: student.department,
+      studentId: student.studentId,
+      lq: student.lq || 0,
+      rq: student.rq || 0,
+      cq: student.cq || 0,
+      totalScore: student.totalScore || 0,
+    };
+
+    if (isUserSelected(student.id)) {
+      removeUser(student.id);
+    } else {
+      addUser(userData);
+    }
+  };
+
+  const handleChartPageChange = (direction: "prev" | "next") => {
+    if (direction === "prev") {
+      setChartPage((prev) => Math.max(0, prev - 1));
+    } else {
+      setChartPage((prev) => Math.min(selectedUsers.length, prev + 1));
+    }
+  };
+
+  const getCurrentChartData = () => {
+    if (selectedUsers.length === 0) return null;
+
+    if (chartPage === 0) {
+      return {
+        data: createAverageRadarChartData(),
+        title: "선택된 학생 평균",
+      };
+    } else {
+      const user = selectedUsers[chartPage - 1];
+      return {
+        data: createRadarChartData(user),
+        title: `${user.name} (${user.studentId})`,
+      };
+    }
+  };
+
+  const currentChartData = getCurrentChartData();
+  const totalChartPages = selectedUsers.length + 1; // 평균 + 각 학생
+
+  const handleReset = () => {
+    clearUsers();
+    setChartPage(0);
+  };
+
+  const handlePageChange = (page: number) => {
+    setCurrentPage(page);
+    // 페이지 변경 시 전체 학생 목록으로 스크롤
+    if (studentListRef.current) {
+      studentListRef.current.scrollIntoView({
+        behavior: "smooth",
+        block: "start",
+      });
+    }
   };
 
   return (
-    <div>
-      {/* 타이틀 */}
-      <h1 css={titleStyle}>개인별 3Q 비교</h1>
-      <FlexBox justify="space-between" css={titleContainerStyle}>
-        <h2 css={descriptionStyle}>선택한 유저들의 3Q 점수를 비교합니다</h2>
-        <div>
-          <button css={buttonStyle} onClick={toggleSidebar}>
-            <span style={{ display: "flex", alignItems: "center" }}>
-              <span style={{ marginRight: "8px" }}>
-                <PersonIcon fontSize="small" />
-              </span>
-              유저 선택 ({selectedUsers.length})
-            </span>
-          </button>
-        </div>
-      </FlexBox>
-      {/* 선택 유저 순위 */}
-      <h2 css={subtitleStyle}>선택 유저 TOP 3</h2>
-      {/* TODO: 여기도 데이터 정제 후 map으로 처리하기*/}
-      <FlexBox gap="20px">
-        <TopThreeCard
-          category="LQ"
-          description="Learning Quality"
-          top3={sortedData.LQ}
-        />
-        <TopThreeCard
-          category="RQ"
-          description="Research Quality"
-          top3={sortedData.RQ}
-        />
-        <TopThreeCard
-          category="CQ"
-          description="Communication Quality"
-          top3={sortedData.CQ}
-        />
-        <TopThreeCard
-          category="Total"
-          description="Total Score"
-          top3={totalScores}
-        />
-      </FlexBox>
-      {/* 선택 유저 3Q 점수 차트 */}
-      <GraphWrapper
-        title="선택 유저 통계량 확인"
-        type="block"
-        options={{
-          labels: ["영역별 그래프", "유저별 그래프", "테이블 보기"],
-          datasets: {
-            "영역별 그래프": <QuotientChart data={data} />,
-            "유저별 그래프": <StackedBarChart data={data} />,
-            "테이블 보기": <UserListTable data={data} />,
-          },
-        }}
+    <div css={containerStyle}>
+      <h1>개인별 통계 비교</h1>
+      <AverageMetrics
+        averageLQ={averages.averageLQ}
+        averageRQ={averages.averageRQ}
+        averageCQ={averages.averageCQ}
+        averageTotal={averages.averageTotal}
       />
+      <div css={bottomRowStyle}>
+        <div css={leftBoxStyle}>
+          <div css={userListStyle} ref={studentListRef}>
+            <h2>전체 학생 목록</h2>
 
-      {/* 유저 선택 사이드바 */}
-      <UserListSideBar isOpen={isSidebarOpen} onClose={toggleSidebar} />
+            <GenericFilter
+              filterConfig={adminStudentListFilterConfig}
+              filters={filter}
+              onFilterChange={handleFilterChange}
+              onReset={resetFilter}
+              onApply={() => {
+                applyFilter();
+                setCurrentPage(1);
+              }}
+              appliedFilter={appliedFilter}
+              filterShow={false}
+            />
+
+            {studentsData?.content?.length === 0 ? (
+              <div>학생이 없습니다.</div>
+            ) : (
+              studentsData?.content?.map((student: any) => (
+                <IndividualStudentCard
+                  key={student.id}
+                  name={student.name}
+                  studentId={student.studentId}
+                  department={student.department}
+                  totalScore={student.totalScore || 0}
+                  lq={student.lq || 0}
+                  rq={student.rq || 0}
+                  cq={student.cq || 0}
+                  onClick={() => handleUserClick(student)}
+                  isSelected={isUserSelected(student.id)}
+                />
+              ))
+            )}
+          </div>
+          <Box
+            sx={{
+              display: "flex",
+              justifyContent: "center",
+              alignItems: "center",
+              marginTop: 2,
+            }}
+          >
+            <Pagination
+              count={totalPages}
+              page={currentPage}
+              onChange={(_, value) => handlePageChange(value)}
+              color="primary"
+              showFirstButton
+              showLastButton
+              size="medium"
+            />
+          </Box>
+        </div>
+        <div css={rightColStyle}>
+          <div css={chartBoxStyle}>
+            {selectedUsers.length === 0 ? (
+              <div css={noDataStyle}>선택된 학생이 없습니다</div>
+            ) : (
+              <>
+                <div css={navigationButtonsStyle}>
+                  <IconButton
+                    size="small"
+                    onClick={() => handleChartPageChange("prev")}
+                    disabled={chartPage === 0}
+                  >
+                    <ChevronLeftIcon />
+                  </IconButton>
+                  <div css={pageIndicatorStyle}>
+                    {chartPage + 1}/{totalChartPages}
+                  </div>
+                  <IconButton
+                    size="small"
+                    onClick={() => handleChartPageChange("next")}
+                    disabled={chartPage === totalChartPages - 1}
+                  >
+                    <ChevronRightIcon />
+                  </IconButton>
+                </div>
+                {currentChartData && (
+                  <RadarChart
+                    data={currentChartData.data}
+                    title={currentChartData.title}
+                  />
+                )}
+              </>
+            )}
+          </div>
+          <div css={rightBoxStyle}>
+            <div css={selectedUserTitleStyle}>
+              <div css={titleContainerStyle}>
+                <span>선택된 학생 목록</span>
+                {selectedUsers.length > 0 && (
+                  <IconButton
+                    size="small"
+                    onClick={handleReset}
+                    css={resetButtonStyle}
+                    title="초기화"
+                  >
+                    <RefreshIcon />
+                  </IconButton>
+                )}
+              </div>
+            </div>
+            <SelectedUsersTable
+              users={selectedUsers}
+              onUserRemove={removeUser}
+            />
+          </div>
+        </div>
+      </div>
     </div>
   );
 };
 
-export default AdminStatisticIndividual;
+export default IndividualStatisticLayout;
