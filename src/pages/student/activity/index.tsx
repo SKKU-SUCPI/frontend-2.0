@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { css } from "@emotion/react";
 import FlexBox from "@/styles/components/Flexbox";
 import useStudentActivityList from "@/hooks/student/useStudentActivityList";
@@ -45,6 +45,11 @@ const StudentActivityList: React.FC = () => {
   const [searchParams, setSearchParams] = useSearchParams();
   const page = searchParams.get("page") || "1";
   const id = searchParams.get("id");
+
+  // 페이지 변경 시 상단으로 스크롤
+  useEffect(() => {
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  }, [page]);
 
   const {
     filter,
