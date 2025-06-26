@@ -6,6 +6,7 @@ import AdminActivityView from "./AdminActivityView";
 import ActivityReview from "./ActivityReview";
 import ActivitySubmit from "./ActivitySubmit";
 import StudentActivityView from "./StudentActivityView";
+import StudentActivityReject from "./StudentActivityReject";
 const ActivityRouter = ({ id }: { id: string | null }) => {
   const { userProfile } = useAuthStore();
 
@@ -43,7 +44,15 @@ const ActivityRouter = ({ id }: { id: string | null }) => {
       if (isLoading) {
         return <Loading />;
       }
-      return <StudentActivityView key={`view-${id}-${data.state}`} id={id} />;
+      if (data.basicInfo.state === 2) {
+        // 반려 상태
+        return (
+          <StudentActivityReject key={`reject-${id}-${data.state}`} id={id} />
+        );
+      } else {
+        // 승인 또는 대기 상태
+        return <StudentActivityView key={`view-${id}-${data.state}`} id={id} />;
+      }
     }
   }
   return (
