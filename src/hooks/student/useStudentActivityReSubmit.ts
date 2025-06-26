@@ -1,44 +1,38 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import postStudentActivity from "@/apis/student/postStudentActivity";
 import postStudentActivityFiles from "@/apis/student/postStudentActivityfiles";
 
-const useStudentActivitySubmit = () => {
+const useStudentActivityReSubmit = () => {
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: async ({
-      activityId,
-      content,
+      submitId,
       files,
     }: {
-      activityId: number;
-      content: string;
-      files?: File[];
+      submitId: number;
+      files: File[];
     }) => {
-      const submitResponse = await postStudentActivity({
-        activityId,
-        content,
+      const submitResponse = await postStudentActivityFiles({
+        submitId,
+        files,
       });
-      if (files && files.length > 0) {
-        await postStudentActivityFiles({
-          submitId: submitResponse.data.id,
-          files,
-        });
-      }
       return submitResponse;
     },
-    onSuccess: () => {
+    onSuccess: (_, variables) => {
       queryClient.invalidateQueries({ queryKey: ["studentActivityList"] });
+      queryClient.invalidateQueries({
+        queryKey: ["studentActivityItem", String(variables.submitId)],
+      });
       // URL에서 id 쿼리 파라미터 제거
       const url = new URL(window.location.href);
       url.searchParams.delete("id");
       window.history.replaceState({}, "", url.toString());
-      alert("활동 제출에 성공했습니다.");
+      alert("추가 증빙 자료 제출에 성공했습니다.");
     },
     onError: (error) => {
-      alert("활동 제출에 실패했습니다.");
       console.error(error);
+      alert("추가 증빙 자료 제출에 실패했습니다.");
     },
   });
 };
 
-export default useStudentActivitySubmit;
+export default useStudentActivityReSubmit;

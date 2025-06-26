@@ -228,8 +228,6 @@ const ActivityMainContentForm = () => {
           setContent("");
           setFiles([]);
           setShowConfirm(false);
-          alert("활동이 성공적으로 제출되었습니다!");
-
           const params = new URLSearchParams(location.search);
           params.set("id", data.data.id.toString());
           navigate(`/student/activity?${params.toString()}`);

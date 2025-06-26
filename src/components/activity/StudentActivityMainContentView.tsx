@@ -1,8 +1,8 @@
 import useStudentActivityItem from "@/hooks/student/useStudentActivityItem";
-import React from "react";
+import React, { useState, useRef } from "react";
 import Loading from "../layouts/Loading";
 import axiosInstance from "@/apis/utils/axiosInterceptor";
-
+import useStudentActivityReSubmit from "@/hooks/student/useStudentActivityReSubmit";
 const sectionStyle: React.CSSProperties = {
   borderRadius: 12,
   padding: 24,
@@ -114,9 +114,123 @@ const FileCard = ({
     </div>
   );
 };
+
+const fileInputStyle: React.CSSProperties = {
+  display: "none",
+};
+
+const fileUploadBtnStyle: React.CSSProperties = {
+  padding: "10px 20px",
+  background: "#ffffff",
+  color: "#333",
+  borderRadius: 8,
+  border: "1.5px solid #333",
+  cursor: "pointer",
+  fontSize: 14,
+  fontWeight: 500,
+  transition: "all 0.2s",
+};
+
+const removeFileBtnStyle: React.CSSProperties = {
+  background: "#ffffff",
+  color: "#ff4d4f",
+  border: "1px solid #ff4d4f",
+  borderRadius: 6,
+  padding: "4px 12px",
+  cursor: "pointer",
+  fontSize: 12,
+  transition: "all 0.2s",
+};
+
+const submitBtnStyle: React.CSSProperties = {
+  padding: "14px 40px",
+  background: "#333333",
+  color: "#fff",
+  borderRadius: 8,
+  border: "none",
+  cursor: "pointer",
+  fontSize: 16,
+  fontWeight: 600,
+  transition: "all 0.2s",
+  boxShadow: "0 2px 4px rgba(0,0,0,0.1)",
+};
+
+const confirmBtnContainerStyle: React.CSSProperties = {
+  display: "flex",
+  gap: 12,
+  justifyContent: "center",
+  alignItems: "center",
+};
+
+const confirmBtnStyle: React.CSSProperties = {
+  padding: "12px 32px",
+  borderRadius: 8,
+  border: "none",
+  cursor: "pointer",
+  fontSize: 15,
+  fontWeight: 600,
+  transition: "all 0.2s",
+};
+
+const confirmSubmitStyle: React.CSSProperties = {
+  ...confirmBtnStyle,
+  background: "#4285f4",
+  color: "#fff",
+};
+
+const confirmCancelStyle: React.CSSProperties = {
+  ...confirmBtnStyle,
+  background: "#ff4d4f",
+  color: "#fff",
+};
+
+interface FileData {
+  file: File;
+  fileName: string;
+  fileType: string;
+}
+
 const StudentActivityMainContentView = ({ id }: { id: string }) => {
   const { data, isLoading } = useStudentActivityItem(id);
+  const [files, setFiles] = useState<FileData[]>([]);
+  const [showConfirm, setShowConfirm] = useState<boolean>(false);
+  const fileInputRef = useRef<HTMLInputElement>(null);
+  const { mutate: submit } = useStudentActivityReSubmit();
+
   if (isLoading) return <Loading />;
+
+  const handleFileSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files) {
+      const newFiles = Array.from(e.target.files).map((file) => ({
+        file,
+        fileName: file.name.split(".")[0],
+        fileType: file.name.split(".").pop() || "unknown",
+      }));
+      setFiles((prev) => [...prev, ...newFiles]);
+    }
+  };
+
+  const handleRemoveFile = (index: number) => {
+    setFiles((prev) => prev.filter((_, i) => i !== index));
+  };
+
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    setShowConfirm(true);
+  };
+
+  const handleConfirmSubmit = () => {
+    submit({
+      submitId: data.basicInfo.id,
+      files: files.map((file) => file.file),
+    });
+    setFiles([]);
+    setShowConfirm(false);
+  };
+
+  const handleCancelSubmit = () => {
+    setShowConfirm(false);
+  };
 
   return (
     <div style={{ width: "auto", margin: "0 auto" }}>
@@ -160,6 +274,132 @@ const StudentActivityMainContentView = ({ id }: { id: string }) => {
           <div>첨부파일이 없습니다.</div>
         )}
       </div>
+      {data.basicInfo.state === 2 && (
+        <form onSubmit={handleSubmit}>
+          <div style={sectionStyle}>
+            <div style={titleStyle}>추가 증빙 자료</div>
+            <input
+              ref={fileInputRef}
+              type="file"
+              multiple
+              onChange={handleFileSelect}
+              style={fileInputStyle}
+              accept=".pdf,.doc,.docx,.xls,.xlsx,.ppt,.pptx,.jpg,.jpeg,.png"
+            />
+            <button
+              type="button"
+              onClick={() => fileInputRef.current?.click()}
+              style={fileUploadBtnStyle}
+              onMouseEnter={(e) => {
+                e.currentTarget.style.background = "#f5f5f5";
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.background = "#ffffff";
+              }}
+            >
+              파일 첨부
+            </button>
+
+            <div style={{ marginTop: 16 }}>
+              {files.length > 0 ? (
+                files.map((file, idx) => (
+                  <div key={idx} style={fileCardStyle}>
+                    <div>
+                      <div style={{ fontWeight: 500 }}>{file.fileName}</div>
+                      <div
+                        style={{ fontSize: 12, color: "#666", marginTop: 4 }}
+                      >
+                        {(file.file.size / 1024 / 1024).toFixed(2)} MB
+                      </div>
+                    </div>
+                    <div
+                      style={{ display: "flex", alignItems: "center", gap: 12 }}
+                    >
+                      <span style={{ color: "#888", fontSize: 14 }}>
+                        {file.fileType.toUpperCase()}
+                      </span>
+                      <button
+                        type="button"
+                        onClick={() => handleRemoveFile(idx)}
+                        style={removeFileBtnStyle}
+                        onMouseEnter={(e) => {
+                          e.currentTarget.style.background = "#ffebeb";
+                        }}
+                        onMouseLeave={(e) => {
+                          e.currentTarget.style.background = "#ffffff";
+                        }}
+                      >
+                        삭제
+                      </button>
+                    </div>
+                  </div>
+                ))
+              ) : (
+                <div style={{ color: "#888", marginTop: 12 }}>
+                  추가 증빙 자료를 첨부하려면 위 버튼을 클릭하세요.
+                </div>
+              )}
+            </div>
+
+            {/* 제출 버튼 */}
+            <div style={{ textAlign: "center", marginTop: 32 }}>
+              {!showConfirm ? (
+                <button
+                  type="submit"
+                  style={submitBtnStyle}
+                  onMouseEnter={(e) => {
+                    e.currentTarget.style.background = "#000000";
+                    e.currentTarget.style.transform = "translateY(-1px)";
+                    e.currentTarget.style.boxShadow =
+                      "0 4px 8px rgba(0,0,0,0.15)";
+                  }}
+                  onMouseLeave={(e) => {
+                    e.currentTarget.style.background = "#333333";
+                    e.currentTarget.style.transform = "translateY(0)";
+                    e.currentTarget.style.boxShadow =
+                      "0 2px 4px rgba(0,0,0,0.1)";
+                  }}
+                >
+                  추가 증빙 자료 제출
+                </button>
+              ) : (
+                <div style={confirmBtnContainerStyle}>
+                  <button
+                    type="button"
+                    style={confirmSubmitStyle}
+                    onClick={handleConfirmSubmit}
+                    onMouseEnter={(e) => {
+                      e.currentTarget.style.background = "#3367d6";
+                      e.currentTarget.style.transform = "translateY(-1px)";
+                    }}
+                    onMouseLeave={(e) => {
+                      e.currentTarget.style.background = "#4285f4";
+                      e.currentTarget.style.transform = "translateY(0)";
+                    }}
+                  >
+                    제출
+                  </button>
+                  <button
+                    type="button"
+                    style={confirmCancelStyle}
+                    onClick={handleCancelSubmit}
+                    onMouseEnter={(e) => {
+                      e.currentTarget.style.background = "#e53935";
+                      e.currentTarget.style.transform = "translateY(-1px)";
+                    }}
+                    onMouseLeave={(e) => {
+                      e.currentTarget.style.background = "#ff4d4f";
+                      e.currentTarget.style.transform = "translateY(0)";
+                    }}
+                  >
+                    취소
+                  </button>
+                </div>
+              )}
+            </div>
+          </div>
+        </form>
+      )}
     </div>
   );
 };
