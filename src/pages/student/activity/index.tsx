@@ -14,6 +14,7 @@ import ActivityListItem from "@/pages/admin/activiy/list/components/ActivityList
 import GenericFilter from "@/components/filter/GenericFilter";
 import { studentActivityListFilterConfig } from "@/components/filter/filterConfig";
 import useFilter from "@/hooks/filter/useFilter";
+import { useQueryClient } from "@tanstack/react-query";
 
 const titleStyle = css`
   font-size: 2.5rem;
@@ -60,6 +61,7 @@ const StudentActivityList: React.FC = () => {
   } = useFilter(studentActivityListFilterConfig);
 
   ///////////////// data fetch /////////////////
+  const queryClient = useQueryClient();
   const { data, isLoading } = useStudentActivityList({
     state: appliedFilter.state,
     page: page ? parseInt(page) - 1 : 0,
@@ -90,7 +92,12 @@ const StudentActivityList: React.FC = () => {
         filters={filter}
         onFilterChange={handleFilterChange}
         onReset={resetFilter}
-        onApply={applyFilter}
+        onApply={() => {
+          applyFilter();
+          queryClient.invalidateQueries({
+            queryKey: ["studentActivityList"],
+          });
+        }}
         appliedFilter={appliedFilter}
       />
 

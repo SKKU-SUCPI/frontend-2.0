@@ -61,7 +61,7 @@ export const QuotientCard = ({
           <div>
             <div css={categoryStyle}>전월 대비</div>
             <div css={valueStyle} style={{ color: changeColor }}>
-              {isPositive ? "▲" : "▼"} {Math.abs(change)}%
+              {isPositive ? "▲" : "▼"} {Math.abs(change)}건
             </div>
           </div>
           <div>

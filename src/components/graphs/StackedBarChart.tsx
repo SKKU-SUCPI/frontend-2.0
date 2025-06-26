@@ -73,10 +73,10 @@ const StackedBarChart: React.FC<StackedBarChartProps> = ({
 
       return {
         name: deptName,
-        RQ: rqScore,
-        LQ: lqScore,
-        CQ: cqScore,
-        total: rqScore + lqScore + cqScore,
+        RQ: Math.round(rqScore * 100) / 100,
+        LQ: Math.round(lqScore * 100) / 100,
+        CQ: Math.round(cqScore * 100) / 100,
+        total: Math.round((rqScore + lqScore + cqScore) * 100) / 100,
       };
     });
   }, [data]);
@@ -105,10 +105,13 @@ const StackedBarChart: React.FC<StackedBarChartProps> = ({
         <Tooltip
           content={({ active, payload, label }) => {
             if (active && payload && payload.length) {
-              const total = payload.reduce(
-                (sum, entry) => sum + (entry.value as number),
-                0
-              );
+              const total =
+                Math.round(
+                  payload.reduce(
+                    (sum, entry) => sum + (entry.value as number),
+                    0
+                  ) * 100
+                ) / 100;
               return (
                 <div css={tooltipContainerStyle}>
                   <p css={tooltipTitleStyle}>{label}</p>
