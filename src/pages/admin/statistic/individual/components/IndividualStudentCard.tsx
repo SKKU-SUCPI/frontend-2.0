@@ -10,20 +10,25 @@ interface StudentCardProps {
   rq?: number;
   cq?: number;
   onClick?: () => void;
+  isSelected?: boolean;
 }
 
-const cardWrapperStyle = css`
+const cardWrapperStyle = (isSelected: boolean) => css`
   display: flex;
   align-items: center;
-  border: 1px solid #e0e0e0;
+  border: ${isSelected ? "2px solid #6b7280" : "1px solid #e0e0e0"};
   border-radius: 16px;
   padding: 1rem 1.5rem;
-  background: #fff;
-  margin-bottom: 1rem;
+  background: ${isSelected ? "#f9fafb" : "#fff"};
   min-height: 64px;
-  transition: box-shadow 0.15s;
+  transition: all 0.15s ease;
+  cursor: pointer;
   &:hover {
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+    ${isSelected &&
+    `
+      box-shadow: 0 2px 12px rgba(107, 114, 128, 0.15);
+    `}
   }
 `;
 
@@ -74,9 +79,10 @@ const IndividualStudentCard: React.FC<StudentCardProps> = ({
   rq = 0,
   cq = 0,
   onClick,
+  isSelected = false,
 }) => {
   return (
-    <div css={cardWrapperStyle} onClick={onClick}>
+    <div css={cardWrapperStyle(isSelected)} onClick={onClick}>
       <div css={infoSectionStyle}>
         <span css={nameStyle}>{name}</span>
         <span css={subInfoStyle}>
