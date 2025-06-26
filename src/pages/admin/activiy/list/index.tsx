@@ -1,5 +1,6 @@
 import useAdminActivityLists from "@/hooks/admin/useAdminActivityLists";
 import { useSearchParams } from "react-router-dom";
+import { useEffect } from "react";
 import Pagination from "@mui/material/Pagination";
 import Box from "@mui/material/Box";
 import ActivityListItem from "./components/ActivityListItem";
@@ -39,6 +40,11 @@ const AdminActivityList = () => {
     state: appliedFilter.state,
     name: appliedFilter.name,
   });
+
+  // 페이지 변경 시 상단으로 스크롤
+  useEffect(() => {
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  }, [page]);
 
   if (isLoading) return <Loading />;
 
