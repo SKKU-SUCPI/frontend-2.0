@@ -22,10 +22,10 @@ const adminActivityListFilterConfig = [
     id: "sort",
     label: "정렬",
     type: "select",
-    defaultValue: "desc",
+    defaultValue: "submitDate,desc",
     options: [
-      { id: "desc", label: "최신순" },
-      { id: "asc", label: "오래된순" },
+      { id: "submitDate,desc", label: "최신순" },
+      { id: "submitDate,asc", label: "오래된순" },
     ],
   },
 ];
@@ -101,10 +101,10 @@ const studentActivityListFilterConfig = [
     id: "sort",
     label: "정렬",
     type: "select",
-    defaultValue: "desc",
+    defaultValue: "submitDate,desc",
     options: [
-      { id: "desc", label: "최신순" },
-      { id: "asc", label: "오래된순" },
+      { id: "submitDate,desc", label: "최신순" },
+      { id: "submitDate,asc", label: "오래된순" },
     ],
   },
 ];
