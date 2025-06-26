@@ -1,11 +1,11 @@
 /** @jsxImportSource @emotion/react */
 import { css } from "@emotion/react";
-import { NavLink, useNavigate } from "react-router-dom";
+import { NavLink, useNavigate, useLocation } from "react-router-dom";
 import useNavigationStore from "@/stores/navigationStore";
 import { Switch, Menu, MenuItem, IconButton } from "@mui/material";
 import { Typography } from "@mui/material";
 import FlexBox from "@/styles/components/Flexbox";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import AccountCircleIcon from "@mui/icons-material/AccountCircle";
 import getLogout from "@/apis/auth/getLogout";
 import useAuthStore from "@/stores/auth/authStore";
@@ -83,10 +83,26 @@ const adminRouteMap = {
 };
 
 const NavBar: React.FC = () => {
-  const { selectedTab, toggleTab } = useNavigationStore();
+  const { selectedTab, toggleTab, setSelectedTab } = useNavigationStore();
   const navigate = useNavigate();
+  const location = useLocation();
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const { userProfile } = useAuthStore();
+
+  // URL 기반으로 토글 상태 설정
+  useEffect(() => {
+    if (userProfile?.role === "admin" || userProfile?.role === "super-admin") {
+      const path = location.pathname;
+      const basePath =
+        userProfile?.role === "super-admin" ? "/superGod" : "/god";
+
+      if (path.includes(`${basePath}/statistic`)) {
+        setSelectedTab("statistic");
+      } else if (path.includes(`${basePath}/activity`)) {
+        setSelectedTab("activity");
+      }
+    }
+  }, [location.pathname, userProfile?.role, setSelectedTab]);
 
   const handleToggle = () => {
     toggleTab();
@@ -120,7 +136,9 @@ const NavBar: React.FC = () => {
             gap="8px"
             css={logoStyle}
           >
-            SUCPI
+            <span onClick={() => navigate("/")} style={{ cursor: "pointer" }}>
+              SUCPI
+            </span>
           </FlexBox>
 
           {/* 통계 / 활동 토글 부분 */}
