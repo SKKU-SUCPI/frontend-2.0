@@ -146,13 +146,22 @@ const AdminActivityDashboard: React.FC = () => {
   } = useFilter(adminActivityDashboardFilterConfig);
 
   /////////////// data fetch ///////////////
-  const { data: { data: ratioData } = {}, isLoading: isLoadingRatio } =
-    useAdminRatio();
   const { data: submitSummary, isLoading: isLoadingSubmitSummary } =
     useSubmitSummary();
 
-  const isLoading = isLoadingRatio || isLoadingSubmitSummary;
-  if (isLoading) return <Loading />;
+  if (isLoadingSubmitSummary) return <Loading />;
+
+  const ratioData = submitSummary
+    ? submitSummary.reduce((acc: any, quotient: any) => {
+        if (quotient.title.includes("Learning Quotient"))
+          acc.lq = quotient.month;
+        if (quotient.title.includes("Research Quotient"))
+          acc.rq = quotient.month;
+        if (quotient.title.includes("Communication Quotient"))
+          acc.cq = quotient.month;
+        return acc;
+      }, {})
+    : undefined;
 
   /////////////// component 부분 ///////////////
   return (
@@ -160,7 +169,6 @@ const AdminActivityDashboard: React.FC = () => {
       <h1 css={titleStyle}>활동 대시보드</h1>
       <FlexBox justify="space-between">
         <h2 css={subtitleStyle}>3Q 영역별 활동 현황</h2>
-        <button css={filterButtonStyle}>검색 필터</button>
       </FlexBox>
       <Card css={{ marginBottom: "40px" }}>
         <SimplePieChart data={ratioData} />
