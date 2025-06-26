@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useRef } from "react";
 import { css } from "@emotion/react";
 import IndividualStudentCard from "./components/IndividualStudentCard";
 import AverageMetrics from "./components/AverageMetrics";
@@ -125,6 +125,7 @@ const noDataStyle = css`
 const IndividualStatisticLayout = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const [chartPage, setChartPage] = useState(0);
+  const studentListRef = useRef<HTMLDivElement>(null);
 
   const {
     filter,
@@ -229,8 +230,20 @@ const IndividualStatisticLayout = () => {
     setChartPage(0);
   };
 
+  const handlePageChange = (page: number) => {
+    setCurrentPage(page);
+    // 페이지 변경 시 전체 학생 목록으로 스크롤
+    if (studentListRef.current) {
+      studentListRef.current.scrollIntoView({
+        behavior: "smooth",
+        block: "start",
+      });
+    }
+  };
+
   return (
     <div css={containerStyle}>
+      <h1>개인별 통계 비교</h1>
       <AverageMetrics
         averageLQ={averages.averageLQ}
         averageRQ={averages.averageRQ}
@@ -239,7 +252,7 @@ const IndividualStatisticLayout = () => {
       />
       <div css={bottomRowStyle}>
         <div css={leftBoxStyle}>
-          <div css={userListStyle}>
+          <div css={userListStyle} ref={studentListRef}>
             <h2>전체 학생 목록</h2>
 
             <GenericFilter
@@ -285,7 +298,7 @@ const IndividualStatisticLayout = () => {
             <Pagination
               count={totalPages}
               page={currentPage}
-              onChange={(_, value) => setCurrentPage(value)}
+              onChange={(_, value) => handlePageChange(value)}
               color="primary"
               showFirstButton
               showLastButton
