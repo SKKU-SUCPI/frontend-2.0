@@ -38,15 +38,21 @@ const QuotientChart: React.FC<QuotientChartProps> = ({
   const transformedData = [
     {
       name: "RQ",
-      ...Object.fromEntries(data.RQ.map((item) => [item.name, item.score])),
+      ...Object.fromEntries(
+        data.RQ.map((item) => [item.name, Math.round(item.score * 100) / 100])
+      ),
     },
     {
       name: "LQ",
-      ...Object.fromEntries(data.LQ.map((item) => [item.name, item.score])),
+      ...Object.fromEntries(
+        data.LQ.map((item) => [item.name, Math.round(item.score * 100) / 100])
+      ),
     },
     {
       name: "CQ",
-      ...Object.fromEntries(data.CQ.map((item) => [item.name, item.score])),
+      ...Object.fromEntries(
+        data.CQ.map((item) => [item.name, Math.round(item.score * 100) / 100])
+      ),
     },
   ];
 

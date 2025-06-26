@@ -13,6 +13,7 @@ import ActivityRouter from "@/components/activity/ActivityRouter";
 import { adminActivityListFilterConfig } from "@/components/filter/filterConfig";
 import useFilter from "@/hooks/filter/useFilter";
 import GenericFilter from "@/components/filter/GenericFilter";
+import { useQueryClient } from "@tanstack/react-query";
 
 const titleStyle = css`
   font-size: 2.5rem;
@@ -33,6 +34,7 @@ const AdminActivityList = () => {
   } = useFilter(adminActivityListFilterConfig);
 
   ///////////////// data fetch /////////////////
+  const queryClient = useQueryClient();
   const { data, isLoading } = useAdminActivityLists({
     page: page ? parseInt(page) - 1 : 0,
     size: 10,
@@ -61,7 +63,12 @@ const AdminActivityList = () => {
         appliedFilter={appliedFilter}
         onFilterChange={handleFilterChange}
         onReset={resetFilter}
-        onApply={applyFilter}
+        onApply={() => {
+          applyFilter();
+          queryClient.invalidateQueries({
+            queryKey: ["adminActivityLists"],
+          });
+        }}
       />
 
       {data.content.map((item: any, index: number) => (
