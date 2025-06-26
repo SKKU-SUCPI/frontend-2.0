@@ -22,7 +22,7 @@ interface Student3qChange {
 
 interface StudentActivity {
   id: number;
-  activityDetail: string;
+  content: string;
   categoryName: string;
   state: string;
   approvedDate: string;
@@ -75,7 +75,7 @@ const StudentDashboard: React.FC = () => {
   const { data: studentActivityList, isLoading: studentActivityListLoading } =
     useStudentActivityList({
       state: null,
-      page: 1,
+      page: 0,
       size: 5,
       sort: "desc",
     });
@@ -97,7 +97,7 @@ const StudentDashboard: React.FC = () => {
       description: "학습 능력 지수",
       score: Math.round((student3qInfo?.lq.score ?? 0) * 100) / 100,
       average: Math.round((student3qInfo?.lq.average ?? 0) * 100) / 100,
-      percentage: Math.round((student3qInfo?.lq.percentile ?? 0) * 100) / 100,
+      percentage: Math.round((student3qInfo?.lq.percentile ?? 0) * 100),
     },
     {
       title: "Research Quotient (RQ)",
@@ -105,7 +105,7 @@ const StudentDashboard: React.FC = () => {
       description: "연구 능력 지수",
       score: Math.round((student3qInfo?.rq.score ?? 0) * 100) / 100,
       average: Math.round((student3qInfo?.rq.average ?? 0) * 100) / 100,
-      percentage: Math.round((student3qInfo?.rq.percentile ?? 0) * 100) / 100,
+      percentage: Math.round((student3qInfo?.rq.percentile ?? 0) * 100),
     },
     {
       title: "Creative Quotient (CQ)",
@@ -113,7 +113,7 @@ const StudentDashboard: React.FC = () => {
       description: "교류 능력 지수",
       score: Math.round((student3qInfo?.cq.score ?? 0) * 100) / 100,
       average: Math.round((student3qInfo?.cq.average ?? 0) * 100) / 100,
-      percentage: Math.round((student3qInfo?.cq.percentile ?? 0) * 100) / 100,
+      percentage: Math.round((student3qInfo?.cq.percentile ?? 0) * 100),
     },
   ];
 
@@ -174,7 +174,7 @@ const StudentDashboard: React.FC = () => {
 
   return (
     <div>
-      <h1 css={titleStyle}>Student Dashboard</h1>
+      <h1 css={titleStyle}>학생 대시보드</h1>
       <div css={summaryContainerStyle}>
         {/* 3Q 통계 */}
         <div css={{ width: "100%" }}>
@@ -186,7 +186,6 @@ const StudentDashboard: React.FC = () => {
               category={q.category}
               description={q.description}
               score={q.score}
-              total={q.average}
               percentage={q.percentage}
               average={q.average}
             />
@@ -200,7 +199,7 @@ const StudentDashboard: React.FC = () => {
             studentActivityList.content.map((activity: StudentActivity) => (
               <ActivityPreviewItem
                 key={activity.id}
-                title={activity.activityDetail}
+                title={activity.content}
                 category={activity.categoryName as "LQ" | "RQ" | "CQ"}
                 status={parseInt(activity.state) as 0 | 1 | 2}
                 date={activity.approvedDate}

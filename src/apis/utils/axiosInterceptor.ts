@@ -1,6 +1,7 @@
 import useAuthStore from "@/stores/auth/authStore";
+import getRefresh from "@/apis/auth/getRefresh";
+import getProfile from "@/apis/auth/getProfile";
 import axios, { AxiosInstance } from "axios";
-import getRefresh from "../auth/getRefresh";
 
 const axiosInstance: AxiosInstance = axios.create({
   baseURL: import.meta.env.VITE_API_BASE_URL,
@@ -33,16 +34,39 @@ axiosInstance.interceptors.request.use(
   }
 );
 
+// 리프레시 토큰 함수 (useRefresh 훅 로직을 일반 함수로 변환)
+const refreshTokenAndProfile = async () => {
+  try {
+    const { accessToken } = await getRefresh();
+    useAuthStore.getState().setAccessToken(accessToken);
+    const profile = await getProfile();
+    useAuthStore.getState().setUserProfile(profile);
+    return accessToken;
+  } catch (error) {
+    // 리프레시 실패 시 인증 정보 클리어
+    useAuthStore.getState().clearAuth();
+    throw error;
+  }
+};
+
 // 응답 인터셉터
 axiosInstance.interceptors.response.use(
   (response) => {
     return response;
   },
   async (error) => {
-    if (error.response?.status === 401) {
+    const originalRequest = error.config;
+
+    if (
+      (error.response?.status === 401 || error.response?.status === 403) &&
+      !originalRequest._retry
+    ) {
+      originalRequest._retry = true;
+
       try {
-        await getRefresh();
-        return axiosInstance.request(error.config);
+        await refreshTokenAndProfile();
+        // 원래 요청 재시도
+        return axiosInstance(originalRequest);
       } catch (refreshError) {
         useAuthStore.getState().clearAuth();
         alert("로그인 세션이 만료되었습니다. 다시 로그인해주세요.");
@@ -50,6 +74,7 @@ axiosInstance.interceptors.response.use(
         return Promise.reject(refreshError);
       }
     }
+
     console.error("API 응답 오류:", error);
     return Promise.reject(error);
   }

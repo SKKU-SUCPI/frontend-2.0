@@ -1,5 +1,6 @@
 import useAdminActivityLists from "@/hooks/admin/useAdminActivityLists";
 import { useSearchParams } from "react-router-dom";
+import { useEffect } from "react";
 import Pagination from "@mui/material/Pagination";
 import Box from "@mui/material/Box";
 import ActivityListItem from "./components/ActivityListItem";
@@ -9,16 +10,13 @@ import IconButton from "@mui/material/IconButton";
 import CloseIcon from "@mui/icons-material/Close";
 import Loading from "@/components/layouts/Loading";
 import ActivityRouter from "@/components/activity/ActivityRouter";
+import { adminActivityListFilterConfig } from "@/components/filter/filterConfig";
+import useFilter from "@/hooks/filter/useFilter";
+import GenericFilter from "@/components/filter/GenericFilter";
+
 const titleStyle = css`
   font-size: 2.5rem;
   font-weight: bold;
-  margin-bottom: 0;
-`;
-
-const descriptionStyle = css`
-  font-size: 1.5rem;
-  color: #777;
-  margin-top: 0;
 `;
 
 const AdminActivityList = () => {
@@ -26,14 +24,27 @@ const AdminActivityList = () => {
   const [searchParams, setSearchParams] = useSearchParams();
   const page = searchParams.get("page") || "1";
   const id = searchParams.get("id");
+  const {
+    filter,
+    handleFilterChange,
+    resetFilter,
+    applyFilter,
+    appliedFilter,
+  } = useFilter(adminActivityListFilterConfig);
 
   ///////////////// data fetch /////////////////
   const { data, isLoading } = useAdminActivityLists({
-    name: null,
     page: page ? parseInt(page) - 1 : 0,
     size: 10,
-    sort: "desc",
+    sort: appliedFilter.sort,
+    state: appliedFilter.state,
+    name: appliedFilter.name,
   });
+
+  // 페이지 변경 시 상단으로 스크롤
+  useEffect(() => {
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  }, [page]);
 
   if (isLoading) return <Loading />;
 
@@ -42,10 +53,17 @@ const AdminActivityList = () => {
   ///////////////// render /////////////////
   return (
     <div>
-      <h1 css={titleStyle}>활동 모아보기</h1>
-      <h2 css={descriptionStyle}>
-        활동 제출 후 검토 중인 활동을 확인할 수 있습니다.
-      </h2>
+      <h1 css={titleStyle}>활동 내역</h1>
+
+      <GenericFilter
+        filterConfig={adminActivityListFilterConfig}
+        filters={filter}
+        appliedFilter={appliedFilter}
+        onFilterChange={handleFilterChange}
+        onReset={resetFilter}
+        onApply={applyFilter}
+      />
+
       {data.content.map((item: any, index: number) => (
         <ActivityListItem
           key={index}

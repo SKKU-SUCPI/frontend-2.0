@@ -8,7 +8,6 @@ interface QCardVerticalProps {
   score: number;
   percentage: number;
   average: number;
-  total: number;
 }
 
 const cardStyle = css`
@@ -108,7 +107,6 @@ const QCardVertical: React.FC<QCardVerticalProps> = ({
   score,
   percentage,
   average,
-  total,
 }) => {
   return (
     <div css={cardStyle}>
@@ -124,7 +122,7 @@ const QCardVertical: React.FC<QCardVerticalProps> = ({
       </div>
       <div css={barSection}>
         <div css={barContainerStyle}>
-          <div css={barStyle((score / total) * 100)} />
+          <div css={barStyle(100 - percentage)} />
         </div>
         <span css={percentTextStyle}>상위 {percentage}%</span>
       </div>
