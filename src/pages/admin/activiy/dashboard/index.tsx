@@ -6,12 +6,12 @@ import SimpleChart from "@/components/graphs/SimpleChart";
 import SimplePieChart from "@/components/graphs/SimplePieChart";
 import Card from "@/styles/components/Card";
 import { QuotientCard } from "./components/QuotientCard";
-import { useAdminRatio } from "@/hooks/admin/useAdminRatio";
 import useSubmitSummary from "@/hooks/admin/useSubmitSummary";
 import Loading from "@/components/layouts/Loading";
 import GenericFilter from "@/components/filter/GenericFilter";
 import { adminActivityDashboardFilterConfig } from "@/components/filter/filterConfig";
 import useFilter from "@/hooks/filter/useFilter";
+import { useQueryClient } from "@tanstack/react-query";
 
 const titleStyle = css`
   font-size: 2.5rem;
@@ -146,6 +146,8 @@ const AdminActivityDashboard: React.FC = () => {
   } = useFilter(adminActivityDashboardFilterConfig);
 
   /////////////// data fetch ///////////////
+
+  const queryClient = useQueryClient();
   const { data: submitSummary, isLoading: isLoadingSubmitSummary } =
     useSubmitSummary();
 
@@ -191,7 +193,12 @@ const AdminActivityDashboard: React.FC = () => {
         filters={filter}
         onFilterChange={handleFilterChange}
         onReset={resetFilter}
-        onApply={applyFilter}
+        onApply={() => {
+          applyFilter();
+          // queryClient.invalidateQueries({
+          //   queryKey: ["adminActivityDashboard"],
+          // });
+        }}
         appliedFilter={appliedFilter}
       />
 
