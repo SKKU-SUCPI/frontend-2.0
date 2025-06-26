@@ -13,6 +13,9 @@ import ChevronLeftIcon from "@mui/icons-material/ChevronLeft";
 import ChevronRightIcon from "@mui/icons-material/ChevronRight";
 import RefreshIcon from "@mui/icons-material/Refresh";
 import SelectedUsersTable from "@/components/table/SelectedUsersTable";
+import useFilter from "@/hooks/filter/useFilter";
+import { adminStudentListFilterConfig } from "@/components/filter/filterConfig";
+import GenericFilter from "@/components/filter/GenericFilter";
 
 const containerStyle = css`
   width: 100%;
@@ -122,6 +125,15 @@ const noDataStyle = css`
 const IndividualStatisticLayout = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const [chartPage, setChartPage] = useState(0);
+
+  const {
+    filter,
+    handleFilterChange,
+    resetFilter,
+    appliedFilter,
+    applyFilter,
+  } = useFilter(adminStudentListFilterConfig);
+
   const pageSize = 10;
 
   const {
@@ -133,12 +145,14 @@ const IndividualStatisticLayout = () => {
     clearUsers,
   } = useSelectedUserStore();
 
+  console.log(appliedFilter);
+
   const pageable = {
-    name: null,
-    department: null,
+    name: appliedFilter.name,
+    department: appliedFilter.department,
     page: currentPage - 1, // API는 0-based pagination을 사용
     size: pageSize,
-    sort: "desc",
+    sort: appliedFilter.sort,
   };
 
   const { data: studentsData, isLoading } = useStudentsList(pageable);
@@ -227,6 +241,19 @@ const IndividualStatisticLayout = () => {
         <div css={leftBoxStyle}>
           <div css={userListStyle}>
             <h2>전체 학생 목록</h2>
+
+            <GenericFilter
+              filterConfig={adminStudentListFilterConfig}
+              filters={filter}
+              onFilterChange={handleFilterChange}
+              onReset={resetFilter}
+              onApply={() => {
+                applyFilter();
+                setCurrentPage(1);
+              }}
+              appliedFilter={appliedFilter}
+              filterShow={false}
+            />
 
             {studentsData?.content?.length === 0 ? (
               <div>학생이 없습니다.</div>
