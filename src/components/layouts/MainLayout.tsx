@@ -17,6 +17,7 @@ const contentStyle = css`
   max-width: 1100px;
   margin-top: 20px;
   position: relative; // 애니메이션 대상 요소가 겹치지 않도록
+  padding-bottom: 200px;
 `;
 
 const MainLayout: React.FC = () => {
