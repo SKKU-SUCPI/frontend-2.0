@@ -71,6 +71,8 @@ const dropdownContentStyle = css`
   border-radius: 6px;
   z-index: 1;
   margin-top: 4px;
+  max-height: 200px;
+  overflow-y: auto;
 `;
 
 const dropdownItemStyle = css`

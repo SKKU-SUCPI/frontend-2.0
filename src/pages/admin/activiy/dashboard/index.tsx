@@ -177,11 +177,11 @@ const AdminActivityDashboard: React.FC = () => {
   const ratioData = submitSummary
     ? submitSummary.reduce((acc: any, quotient: any) => {
         if (quotient.title.includes("Learning Quotient"))
-          acc.lq = quotient.month;
+          acc.lq = quotient.total;
         if (quotient.title.includes("Research Quotient"))
-          acc.rq = quotient.month;
+          acc.rq = quotient.total;
         if (quotient.title.includes("Communication Quotient"))
-          acc.cq = quotient.month;
+          acc.cq = quotient.total;
         return acc;
       }, {})
     : undefined;

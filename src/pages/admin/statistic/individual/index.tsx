@@ -1,4 +1,4 @@
-import React, { useState, useRef } from "react";
+import { useState, useRef } from "react";
 import { css } from "@emotion/react";
 import IndividualStudentCard from "./components/IndividualStudentCard";
 import AverageMetrics from "./components/AverageMetrics";
@@ -7,7 +7,7 @@ import Loading from "@/components/layouts/Loading";
 import Pagination from "@mui/material/Pagination";
 import Box from "@mui/material/Box";
 import { useSelectedUserStore } from "@/stores/selectedUserStore";
-import RadarChart from "@/components/graphs/RadarChart";
+import SimpleBarChart from "@/components/graphs/SimpleBarChart";
 import IconButton from "@mui/material/IconButton";
 import ChevronLeftIcon from "@mui/icons-material/ChevronLeft";
 import ChevronRightIcon from "@mui/icons-material/ChevronRight";
@@ -72,14 +72,6 @@ const pageIndicatorStyle = css`
   color: #666;
   font-weight: 500;
   min-width: 40px;
-  text-align: center;
-`;
-
-const chartTitleStyle = css`
-  font-size: 1.1rem;
-  font-weight: bold;
-  margin-bottom: 10px;
-  color: #333;
   text-align: center;
 `;
 
@@ -164,19 +156,18 @@ const IndividualStatisticLayout = () => {
 
   const totalPages = studentsData?.totalPage || 1;
 
-  // Radar Chart 데이터 생성
-  const createRadarChartData = (user: any) => [
-    { subject: "LQ", value: user.lq || 0, fullMark: 100 },
-    { subject: "RQ", value: user.rq || 0, fullMark: 100 },
-    { subject: "CQ", value: user.cq || 0, fullMark: 100 },
-  ];
+  const createBarChartData = (user: any) => ({
+    LQ: user.lq || 0,
+    RQ: user.rq || 0,
+    CQ: user.cq || 0,
+  });
 
-  // 평균값으로 Radar Chart 데이터 생성
-  const createAverageRadarChartData = () => [
-    { subject: "LQ", value: averages.averageLQ, fullMark: 100 },
-    { subject: "RQ", value: averages.averageRQ, fullMark: 100 },
-    { subject: "CQ", value: averages.averageCQ, fullMark: 100 },
-  ];
+  // 평균값으로 Bar Chart 데이터 생성
+  const createAverageBarChartData = () => ({
+    LQ: averages.averageLQ,
+    RQ: averages.averageRQ,
+    CQ: averages.averageCQ,
+  });
 
   const handleUserClick = (student: any) => {
     const userData = {
@@ -210,13 +201,13 @@ const IndividualStatisticLayout = () => {
 
     if (chartPage === 0) {
       return {
-        data: createAverageRadarChartData(),
+        data: createAverageBarChartData(),
         title: "선택된 학생 평균",
       };
     } else {
       const user = selectedUsers[chartPage - 1];
       return {
-        data: createRadarChartData(user),
+        data: createBarChartData(user),
         title: `${user.name} (${user.studentId})`,
       };
     }
@@ -332,7 +323,7 @@ const IndividualStatisticLayout = () => {
                   </IconButton>
                 </div>
                 {currentChartData && (
-                  <RadarChart
+                  <SimpleBarChart
                     data={currentChartData.data}
                     title={currentChartData.title}
                   />
