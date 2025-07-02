@@ -9,6 +9,28 @@ const Title = styled.h2`
   font-size: 2rem;
   font-weight: bold;
   margin: 0;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+`;
+
+const ColorDot = styled.div<{ name: string }>`
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  flex-shrink: 0;
+  background-color: ${({ name }) => {
+    switch (name) {
+      case "LQ":
+        return "#0088FE"; // 파란색
+      case "RQ":
+        return "#00C49F"; // 청록색
+      case "CQ":
+        return "#FFBB28"; // 노란색
+      default:
+        return "#666"; // 기본 회색
+    }
+  }};
 `;
 
 const Description = styled.p`
@@ -51,7 +73,10 @@ const QCard = ({ name, description, score }: QCardProps) => {
       <FlexBox direction="column" gap="24px">
         {/* 제목과 설명 */}
         <FlexBox align="center" justify="flex-start" gap="16px">
-          <Title>{name}</Title>
+          <Title>
+            <ColorDot name={name} />
+            {name}
+          </Title>
           <Description>{description}</Description>
         </FlexBox>
         {/* 차트와 점수 표시 */}
