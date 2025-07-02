@@ -97,7 +97,7 @@ const StackedBarChart: React.FC<StackedBarChartProps> = ({
         data={transformedData}
         layout="vertical"
         margin={{ top: 5, right: 30, left: 30, bottom: 5 }}
-        barSize={20}
+        barSize={10}
       >
         <CartesianGrid strokeDasharray="3 3" />
         <XAxis type="number" domain={maxDomain ? [0, maxDomain] : undefined} />
@@ -116,15 +116,28 @@ const StackedBarChart: React.FC<StackedBarChartProps> = ({
                 <div css={tooltipContainerStyle}>
                   <p css={tooltipTitleStyle}>{label}</p>
                   {payload.map((entry, index) => (
-                    <p
+                    <div
                       key={index}
                       css={css`
                         ${tooltipItemStyle};
-                        color: ${entry.color};
+                        display: flex;
+                        align-items: center;
+                        gap: 8px;
                       `}
                     >
-                      {entry.name}: {entry.value}점
-                    </p>
+                      <span
+                        css={css`
+                          width: 12px;
+                          height: 12px;
+                          border-radius: 50%;
+                          background-color: ${entry.color};
+                          display: inline-block;
+                        `}
+                      />
+                      <span style={{ color: "black" }}>
+                        {entry.name}: {entry.value}점
+                      </span>
+                    </div>
                   ))}
                   <p css={tooltipTotalStyle}>총점: {total}점</p>
                 </div>
@@ -133,19 +146,17 @@ const StackedBarChart: React.FC<StackedBarChartProps> = ({
             return null;
           }}
         />
-        <Legend />
-        <Bar
-          dataKey="RQ"
-          name="Reasoning Quotient"
-          stackId="a"
-          fill="#7B8BA3"
+        <Legend
+          iconType="circle"
+          formatter={(value) => <span style={{ color: "black" }}>{value}</span>}
         />
-        <Bar dataKey="LQ" name="Learning Quotient" stackId="a" fill="#9BA6BC" />
+        <Bar dataKey="RQ" name="Research Quotient" stackId="a" fill="#66D4B3" />
+        <Bar dataKey="LQ" name="Learning Quotient" stackId="a" fill="#66A3FE" />
         <Bar
           dataKey="CQ"
           name="Communication Quotient"
           stackId="a"
-          fill="#B8C2D4"
+          fill="#FFD166"
         />
       </BarChart>
     </FlexBox>
