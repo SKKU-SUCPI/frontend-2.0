@@ -9,6 +9,7 @@ import { useState, useEffect } from "react";
 import AccountCircleIcon from "@mui/icons-material/AccountCircle";
 import getLogout from "@/apis/auth/getLogout";
 import useAuthStore from "@/stores/auth/authStore";
+import CriteriaModal from "@/components/activity/CriteriaModal";
 const navBarStyle = css`
   /* 전체 상단 바 영역 */
   height: 64px;
@@ -51,6 +52,20 @@ const linkStyle = css`
   }
 `;
 
+const buttonStyle = css`
+  background: none;
+  border: none;
+  color: #333;
+  cursor: pointer;
+  position: relative;
+  padding: 0;
+  font: inherit;
+  text-align: left;
+  &:hover {
+    font-weight: 600;
+  }
+`;
+
 const studentRoute = [
   { path: "/student/dashboard", label: "대시보드" },
   { path: "/student/activity", label: "활동 내역" },
@@ -88,6 +103,7 @@ const NavBar: React.FC = () => {
   const location = useLocation();
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const { userProfile } = useAuthStore();
+  const [isCriteriaOpen, setCriteriaOpen] = useState(false);
 
   // URL 기반으로 토글 상태 설정
   useEffect(() => {
@@ -195,6 +211,12 @@ const NavBar: React.FC = () => {
                   {item.label}
                 </NavLink>
               ))}
+              <button
+                onClick={() => setCriteriaOpen(true)}
+                css={buttonStyle}
+              >
+                평가기준
+              </button>
             </>
           )}
           {/* 관리자 라우트 */}
@@ -211,6 +233,12 @@ const NavBar: React.FC = () => {
                       {item.label}
                     </NavLink>
                   ))}
+                  <button
+                    onClick={() => setCriteriaOpen(true)}
+                    css={buttonStyle}
+                  >
+                    평가기준
+                  </button>
                 </>
               );
             })()}
@@ -243,6 +271,7 @@ const NavBar: React.FC = () => {
             <MenuItem onClick={handleLogout}>로그아웃</MenuItem>
           </Menu>
         </FlexBox>
+      <CriteriaModal open={isCriteriaOpen} onClose={() => setCriteriaOpen(false)} />
       </FlexBox>
     </FlexBox>
   );
