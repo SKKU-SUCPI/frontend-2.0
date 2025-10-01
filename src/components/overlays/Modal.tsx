@@ -1,5 +1,5 @@
 import React, { ReactNode } from "react";
-import { css } from "@emotion/react";
+import { css, SerializedStyles } from "@emotion/react";
 import FlexBox from "@/styles/components/Flexbox";
 
 const overlayStyle = (isOpen: boolean) => css`
@@ -18,8 +18,9 @@ const modalStyle = css`
   flex-direction: column;
   background-color: white;
   border-radius: 8px;
-  padding: 20px;
+  padding: 28px;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  width: 760px; /* 좌우 크기 조금 작게 고정 */
   max-width: 90%;
   max-height: 90vh;
   overflow-y: auto;
@@ -64,9 +65,10 @@ interface ModalProps {
   onClose: () => void;
   children: ReactNode;
   title?: string;
+  titleCss?: SerializedStyles;
 }
 
-const Modal: React.FC<ModalProps> = ({ isOpen, onClose, children, title }) => {
+const Modal: React.FC<ModalProps> = ({ isOpen, onClose, children, title, titleCss }) => {
   if (!isOpen) return null;
 
   const handleOverlayClick = (e: React.MouseEvent<HTMLDivElement>) => {
@@ -80,7 +82,7 @@ const Modal: React.FC<ModalProps> = ({ isOpen, onClose, children, title }) => {
       <div css={modalStyle}>
         {title && (
           <div css={headerStyle}>
-            <div css={titleStyle}>{title}</div>
+            <div css={[titleStyle, titleCss]}>{title}</div>
             <button css={closeButtonStyle} onClick={onClose}>
               ×
             </button>

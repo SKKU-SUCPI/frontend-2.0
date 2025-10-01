@@ -39,6 +39,11 @@ const postSSOLogin = () => {
 
 const Login: React.FC = () => {
   const { run } = useRefresh();
+  const navigate = useNavigate();
+  const [id, setId] = useState("");
+  const [password, setPassword] = useState("");
+  const [error, setError] = useState("");
+
   return (
     <div
       css={css`
@@ -46,10 +51,10 @@ const Login: React.FC = () => {
       `}
     >
       {(() => {
-        const navigate = useNavigate();
-        const [id, setId] = useState("");
-        const [password, setPassword] = useState("");
-        const [error, setError] = useState("");
+        // const navigate = useNavigate();
+        // const [id, setId] = useState("");
+        // const [password, setPassword] = useState("");
+        // const [error, setError] = useState("");
 
         const handleLogin = async () => {
           setError("");
