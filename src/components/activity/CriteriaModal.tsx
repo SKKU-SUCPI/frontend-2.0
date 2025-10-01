@@ -111,6 +111,15 @@ const scorePill = css`
   font-weight: 600;
 `;
 
+const refreshButtonStyle = css`
+  background: #4caf50;
+  color: white;
+  border: none;
+  padding: 6px 10px;
+  border-radius: 4px;
+  cursor: pointer;
+`;
+
 export default function CriteriaModal({ open, onClose }: CriteriaModalProps) {
   const { grouped, isLoading, isFetching, refetch, dataUpdatedAt } = useActivities();
 
@@ -147,14 +156,7 @@ export default function CriteriaModal({ open, onClose }: CriteriaModalProps) {
         </span>
         <button
           onClick={() => refetch()}
-          css={css`
-            background: #4caf50;
-            color: white;
-            border: none;
-            padding: 6px 10px;
-            border-radius: 4px;
-            cursor: pointer;
-          `}
+          css={refreshButtonStyle}
         >
           새로고침
         </button>
