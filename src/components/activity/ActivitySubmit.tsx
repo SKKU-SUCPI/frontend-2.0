@@ -1,6 +1,6 @@
-import React, { useState } from "react";
+import React from "react";
 import { css } from "@emotion/react";
-import FlexBox from "@/styles/components/Flexbox";
+// import FlexBox from "@/styles/components/Flexbox";
 import Card from "@/styles/components/Card";
 import ActivityMainContentSubmit from "./ActivityMainContentSubmit";
 
@@ -68,12 +68,12 @@ const infoBoxStyle = css`
   margin-bottom: 16px;
 `;
 
-const tipBoxStyle = css`
-  background-color: #d1ecf1;
-  border: 1px solid #17a2b8;
-  border-radius: 8px;
-  padding: 16px;
-`;
+// const tipBoxStyle = css`
+//   background-color: #d1ecf1;
+//   border: 1px solid #17a2b8;
+//   border-radius: 8px;
+//   padding: 16px;
+// `;
 
 const ActivitySubmitForm: React.FC = () => {
   return (
