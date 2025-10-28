@@ -15,6 +15,7 @@ import GenericFilter from "@/components/filter/GenericFilter";
 import { studentActivityListFilterConfig } from "@/components/filter/filterConfig";
 import useFilter from "@/hooks/filter/useFilter";
 import { useQueryClient } from "@tanstack/react-query";
+import { StudentActivityListItem } from "@/types/activitiy";
 
 const titleStyle = css`
   font-size: 2.5rem;
@@ -101,7 +102,7 @@ const StudentActivityList: React.FC = () => {
         appliedFilter={appliedFilter}
       />
 
-      {data.content.map((item: any, index: number) => (
+      {data.content.map((item: StudentActivityListItem, index: number) => (
         <ActivityListItem
           key={index}
           activityId={item.id}
