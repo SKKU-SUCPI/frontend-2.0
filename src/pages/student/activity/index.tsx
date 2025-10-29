@@ -110,7 +110,7 @@ const StudentActivityList: React.FC = () => {
           activityDetail={item.activityDetail}
           state={item.state}
           submitDate={item.submitDate}
-          score={item.activityWeight != null ? Math.round(item.activityWeight * 100) : undefined}
+          score={item.activityWeight}
         />
       ))}
 

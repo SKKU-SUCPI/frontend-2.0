@@ -82,7 +82,7 @@ const AdminActivityList = () => {
           departmemt={item.department}
           studentId={item.studentId}
           userName={item.userName}
-          score={Math.round((item.basicInfo.activityWeight ?? 0) * 100)}
+          score={item.basicInfo.activityWeight}
         />
       ))}
       <Box
