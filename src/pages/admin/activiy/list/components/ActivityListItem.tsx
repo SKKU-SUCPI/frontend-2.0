@@ -19,6 +19,7 @@ const categoryTooltip = {
 
 interface ActivityListItemProps {
   activityId: number;
+  title?: string;
   content: string;
   categoryName: "LQ" | "RQ" | "CQ";
   activityClass: string;
@@ -28,6 +29,7 @@ interface ActivityListItemProps {
   departmemt?: string;
   studentId?: string;
   userName?: string;
+  score?: number; // earned score to display when approved
 }
 
 const cardStyle = css`
@@ -63,7 +65,19 @@ const titleStyle = css`
   margin-left: 4px;
   display: flex;
   flex-direction: row;
-  gap: 16px;
+  align-items: center;
+  gap: 12px;
+`;
+
+const contentPreviewStyle = css`
+  font-size: 0.95rem;
+  color: #666;
+  margin-left: 4px;
+  margin-bottom: 4px;
+  max-width: 260px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 `;
 
 const statusStyle = (state: number) => {
@@ -78,6 +92,25 @@ const statusStyle = (state: number) => {
     color: ${color};
   `;
 };
+
+const scoreStyle = css`
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: #10b981; /* emerald */
+  margin-right: 10px;
+`;
+
+const rightSideStyle = css`
+  display: flex;
+  align-items: center;
+`;
+
+const scoreDividerStyle = css`
+  width: 1px;
+  height: 16px;
+  background: #e5e7eb;
+  margin: 0 10px 0 2px;
+`;
 
 const getState = (state: number) => {
   if (state === 0) return "대기";
@@ -97,14 +130,22 @@ const tagStyle = css`
   display: inline-block;
   background: #f8f9fa;
   color: #333;
-  font-size: 0.95rem;
-  font-weight: 500;
+  font-size: 0.85rem;
+  font-weight: 300;
   border-radius: 16px;
-  padding: 2px 10px;
+  padding: 6px 10px;
+`;
+
+const dividerStyle = css`
+  width: 1px;
+  height: 16px;
+  background: #e5e7eb;
+  margin: 0 8px 0 42px; /* 제목과 태그 사이 여백 + 얇은 구분선 */
 `;
 
 const ActivityListItem: React.FC<ActivityListItemProps> = ({
   activityId,
+  title,
   content,
   categoryName,
   activityClass,
@@ -114,6 +155,7 @@ const ActivityListItem: React.FC<ActivityListItemProps> = ({
   departmemt,
   studentId,
   userName,
+  score,
 }) => {
   const [searchParams, setSearchParams] = useSearchParams();
 
@@ -142,10 +184,12 @@ const ActivityListItem: React.FC<ActivityListItemProps> = ({
           }}
         >
           <span css={titleStyle}>
-            {content}
+            {title ?? content}
+            <span css={dividerStyle} />
             <span css={tagStyle}>{activityClass}</span>
             <span css={tagStyle}>{activityDetail}</span>
           </span>
+          {content && <span css={contentPreviewStyle}>{content}</span>}
           {submitDate && (
             <span style={{ color: "#333", fontSize: "1rem", marginTop: 2 }}>
               {userName && (
@@ -170,7 +214,15 @@ const ActivityListItem: React.FC<ActivityListItemProps> = ({
           )}
         </div>
       </div>
-      <span css={statusStyle(state)}>{getState(state)}</span>
+      <div css={rightSideStyle}>
+        {state === 1 && typeof score === "number" && (
+          <>
+            <span css={scoreStyle}>+{score}</span>
+            <span css={scoreDividerStyle} />
+          </>
+        )}
+        <span css={statusStyle(state)}>{getState(state)}</span>
+      </div>
     </div>
   );
 };

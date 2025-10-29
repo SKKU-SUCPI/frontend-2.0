@@ -25,12 +25,11 @@ const ActivityDetailModal: React.FC<ActivityDetailModalProps> = ({ id, open, onC
           boxShadow: 24,
           p: 4,
           borderRadius: 2,
-          overflow: "auto",
+          overflowY: "auto",
           width: "1200px",
           minHeight: "600px",
           maxWidth: "90vw",
-          maxHeight: "80vh",
-          transition: "all 1s ease-in-out",
+          maxHeight: "85vh",
         }}
       >
         <IconButton

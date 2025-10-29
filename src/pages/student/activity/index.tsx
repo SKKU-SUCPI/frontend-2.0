@@ -103,12 +103,14 @@ const StudentActivityList: React.FC = () => {
         <ActivityListItem
           key={index}
           activityId={item.id}
+          title={item.title}
           content={item.content}
           categoryName={item.categoryName}
           activityClass={item.activityClass}
           activityDetail={item.activityDetail}
           state={item.state}
           submitDate={item.submitDate}
+          score={item.activityWeight != null ? Math.round(item.activityWeight * 100) : undefined}
         />
       ))}
 
