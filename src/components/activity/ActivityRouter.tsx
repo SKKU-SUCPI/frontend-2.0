@@ -1,12 +1,10 @@
 import useAuthStore from "@/stores/auth/authStore";
-import useAdminActivityItem from "@/hooks/admin/useAdminActivityItem";
-import useStudentActivityItem from "@/hooks/student/useStudentActivityItem";
-import Loading from "@/components/layouts/Loading";
-import AdminActivityView from "./AdminActivityView";
-import ActivityReview from "./ActivityReview";
+// import useAdminActivityItem from "@/hooks/admin/useAdminActivityItem";
+// import useStudentActivityItem from "@/hooks/student/useStudentActivityItem";
+// import Loading from "@/components/layouts/Loading";
+import AdminActivityDetail from "./AdminActivityDetail";
 import ActivitySubmit from "./ActivitySubmit";
-import StudentActivityView from "./StudentActivityView";
-import StudentActivityReject from "./StudentActivityReject";
+import StudentActivityDetail from "./StudentActivityDetail";
 const ActivityRouter = ({ id }: { id: string | null }) => {
   const { userProfile } = useAuthStore();
 
@@ -16,23 +14,8 @@ const ActivityRouter = ({ id }: { id: string | null }) => {
 
   // 관리자
   if (userProfile?.role === "admin" || userProfile?.role === "super-admin") {
-    const { data, isLoading } = useAdminActivityItem(id);
-
-    if (isLoading) {
-      return <Loading />;
-    }
-
-    if (data.basicInfo.state === 0) {
-      return (
-        <ActivityReview key={`review-${id}-${data.basicInfo.state}`} id={id} />
-      );
-    }
-
-    if (data.basicInfo.state === 1 || data.basicInfo.state === 2) {
-      return (
-        <AdminActivityView key={`view-${id}-${data.basicInfo.state}`} id={id} />
-      );
-    }
+    // 단일 상세 뷰로 통합
+    return <AdminActivityDetail id={id} />;
   }
 
   // 학생
@@ -40,19 +23,7 @@ const ActivityRouter = ({ id }: { id: string | null }) => {
     if (id === "new") {
       return <ActivitySubmit />;
     } else {
-      const { data, isLoading } = useStudentActivityItem(id);
-      if (isLoading) {
-        return <Loading />;
-      }
-      if (data.basicInfo.state === 2) {
-        // 반려 상태
-        return (
-          <StudentActivityReject key={`reject-${id}-${data.state}`} id={id} />
-        );
-      } else {
-        // 승인 또는 대기 상태
-        return <StudentActivityView key={`view-${id}-${data.state}`} id={id} />;
-      }
+      return <StudentActivityDetail id={id} />;
     }
   }
   return (

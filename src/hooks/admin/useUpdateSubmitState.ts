@@ -4,15 +4,8 @@ import postSubmitState from "@/apis/admin/postSubmitState";
 export const useUpdateSubmitState = () => {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: ({
-      id,
-      state,
-      comment,
-    }: {
-      id: string;
-      state: string;
-      comment: string;
-    }) => postSubmitState(id, state, comment),
+    mutationFn: ({ id, state }: { id: string; state: string }) =>
+      postSubmitState(id, state),
     onSuccess: (response) => {
       queryClient.invalidateQueries({ queryKey: ["adminActivityLists"] });
       queryClient.invalidateQueries({

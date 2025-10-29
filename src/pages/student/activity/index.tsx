@@ -4,17 +4,15 @@ import FlexBox from "@/styles/components/Flexbox";
 import useStudentActivityList from "@/hooks/student/useStudentActivityList";
 import Loading from "@/components/layouts/Loading";
 import { useSearchParams } from "react-router-dom";
-import Modal from "@mui/material/Modal";
+import ActivityDetailModal from "@/components/activity/ActivityDetailModal";
 import Box from "@mui/material/Box";
-import IconButton from "@mui/material/IconButton";
-import CloseIcon from "@mui/icons-material/Close";
-import ActivityRouter from "@/components/activity/ActivityRouter";
 import Pagination from "@mui/material/Pagination";
 import ActivityListItem from "@/pages/admin/activiy/list/components/ActivityListItem";
 import GenericFilter from "@/components/filter/GenericFilter";
 import { studentActivityListFilterConfig } from "@/components/filter/filterConfig";
 import useFilter from "@/hooks/filter/useFilter";
 import { useQueryClient } from "@tanstack/react-query";
+import { StudentActivityListItem } from "@/types/activitiy";
 
 const titleStyle = css`
   font-size: 2.5rem;
@@ -101,16 +99,18 @@ const StudentActivityList: React.FC = () => {
         appliedFilter={appliedFilter}
       />
 
-      {data.content.map((item: any, index: number) => (
+      {data.content.map((item: StudentActivityListItem, index: number) => (
         <ActivityListItem
           key={index}
           activityId={item.id}
+          title={item.title}
           content={item.content}
           categoryName={item.categoryName}
           activityClass={item.activityClass}
           activityDetail={item.activityDetail}
           state={item.state}
           submitDate={item.submitDate}
+          score={item.activityWeight}
         />
       ))}
 
@@ -141,56 +141,14 @@ const StudentActivityList: React.FC = () => {
 
       {/* Modal for activity detail */}
       {id && (
-        <Modal
+        <ActivityDetailModal
+          id={id}
           open={true}
           onClose={() => {
             searchParams.delete("id");
             setSearchParams(searchParams);
           }}
-          aria-labelledby="activity-detail-modal"
-          aria-describedby="activity-detail-description"
-        >
-          <Box
-            sx={{
-              position: "absolute",
-              top: "50%",
-              left: "50%",
-              transform: "translate(-50%, -50%)",
-              bgcolor: "background.paper",
-              border: "2px solid #000",
-              boxShadow: 24,
-              p: 4,
-              borderRadius: 2,
-              overflow: "auto",
-              // 고정 크기 설정
-              width: "1200px",
-              minHeight: "600px",
-              maxWidth: "90vw",
-              maxHeight: "80vh",
-
-              // transition 추가
-              transition: "all 1s ease-in-out",
-            }}
-          >
-            <IconButton
-              aria-label="close"
-              onClick={() => {
-                searchParams.delete("id");
-                setSearchParams(searchParams);
-              }}
-              sx={{
-                position: "absolute",
-                right: 8,
-                top: 8,
-                color: (theme) => theme.palette.grey[500],
-              }}
-            >
-              <CloseIcon />
-            </IconButton>
-            {/* 모달 강제 업데이트 */}
-            <ActivityRouter key={id} id={id} />
-          </Box>
-        </Modal>
+        />
       )}
     </div>
   );

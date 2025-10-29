@@ -2,55 +2,69 @@ import useStudentActivityItem from "@/hooks/student/useStudentActivityItem";
 import React, { useState, useRef } from "react";
 import Loading from "../layouts/Loading";
 import axiosInstance from "@/apis/utils/axiosInterceptor";
-import useStudentActivityReSubmit from "@/hooks/student/useStudentActivityReSubmit";
+import useDeleteStudentActivity from "@/hooks/student/useDeleteStudentActivity";
+import usePatchStudentActivity from "@/hooks/student/usePatchStudentActivity";
+import usePostStudentActivityAddFiles from "@/hooks/student/usePostStudentActivityAddFiles";
 const sectionStyle: React.CSSProperties = {
-  borderRadius: 12,
-  padding: 24,
-  marginBottom: 24,
-  background: "#fff",
-  borderBottom: "1px solid #eaeaea",
+  marginBottom: 28,
 };
+
 const titleStyle: React.CSSProperties = {
-  fontSize: "2rem",
+  fontSize: "1.125rem",
   fontWeight: 700,
-  marginBottom: 16,
+  marginBottom: 14,
+  color: "#1a1a1a",
+  letterSpacing: "-0.02em",
 };
+
+const labelStyle: React.CSSProperties = {
+  fontSize: "0.9375rem",
+  color: "#444",
+  fontWeight: 600,
+  display: "block",
+  marginBottom: 8,
+};
+
+const valueStyle: React.CSSProperties = {
+  fontSize: "0.875rem",
+  color: "#1a1a1a",
+  padding: "10px 14px",
+  backgroundColor: "#fafafa",
+  borderRadius: 6,
+  border: "1px solid #e0e0e0",
+};
+
 const gridStyle: React.CSSProperties = {
   display: "grid",
   gridTemplateColumns: "1fr 1fr",
   gap: 16,
   marginBottom: 8,
 };
+
 const gridItemStyle: React.CSSProperties = {
   display: "flex",
   flexDirection: "column",
-  alignItems: "flex-start",
-  gap: 4,
-  marginBottom: 8,
-};
-const labelStyle: React.CSSProperties = {
-  color: "#888",
-  fontWeight: 500,
-  minWidth: 90,
-  display: "inline-block",
+  gap: 8,
 };
 
 // 파일 카드 스타일 및 hover 효과
 const fileCardStyle: React.CSSProperties = {
-  border: "1.5px solid #d0d0d0",
-  borderRadius: 12,
-  padding: "12px 20px",
-  marginBottom: 12,
-  background: "#fff",
+  border: "1px solid #e8e8e8",
+  borderRadius: 6,
+  padding: "10px 14px",
+  marginBottom: 8,
+  background: "#fafafa",
   display: "flex",
   alignItems: "center",
   justifyContent: "space-between",
-  transition: "background 0.2s, box-shadow 0.2s",
+  transition: "all 0.2s",
   cursor: "pointer",
 };
+
 const fileCardHoverStyle: React.CSSProperties = {
-  background: "#f5f8ff",
-  boxShadow: "0 2px 8px 0 rgba(0,0,0,0.04)",
+  background: "#f0f4f8",
+  borderColor: "#d0d0d0",
+  boxShadow: "0 2px 6px rgba(0,0,0,0.06)",
 };
 
 function useHover() {
@@ -105,11 +119,26 @@ const FileCard = ({
       onMouseEnter={hover.onMouseEnter}
       onMouseLeave={hover.onMouseLeave}
     >
-      <div>
-        <div>{file.fileName}</div>
+      <div style={{ flex: 1, minWidth: 0 }}>
+        <div style={{
+          fontWeight: 500,
+          fontSize: "0.8125rem",
+          overflow: "hidden",
+          textOverflow: "ellipsis",
+          whiteSpace: "nowrap"
+        }}>
+          {file.fileName}
+        </div>
+        <div style={{ fontSize: "0.6875rem", color: "#999", marginTop: 2 }}>
+          {file.fileType.toUpperCase()}
+        </div>
       </div>
-      <div style={{ color: "#888", fontSize: 14 }}>
-        {file.fileType.toUpperCase()}
+      <div style={{ 
+        color: "#1a73e8", 
+        fontSize: "0.75rem",
+        fontWeight: 500
+      }}>
+        다운로드
       </div>
     </div>
   );
@@ -120,68 +149,67 @@ const fileInputStyle: React.CSSProperties = {
 };
 
 const fileUploadBtnStyle: React.CSSProperties = {
-  padding: "10px 20px",
-  background: "#ffffff",
-  color: "#333",
-  borderRadius: 8,
-  border: "1.5px solid #333",
+  padding: "8px 16px",
+  background: "#f5f5f5",
+  color: "#444",
+  borderRadius: 6,
+  border: "1px solid #e0e0e0",
   cursor: "pointer",
-  fontSize: 14,
+  fontSize: "0.8125rem",
   fontWeight: 500,
   transition: "all 0.2s",
 };
 
 const removeFileBtnStyle: React.CSSProperties = {
-  background: "#ffffff",
-  color: "#ff4d4f",
-  border: "1px solid #ff4d4f",
-  borderRadius: 6,
-  padding: "4px 12px",
+  background: "transparent",
+  color: "#999",
+  border: "none",
   cursor: "pointer",
-  fontSize: 12,
-  transition: "all 0.2s",
+  fontSize: "0.75rem",
+  padding: "4px 8px",
+  transition: "color 0.2s",
 };
 
 const submitBtnStyle: React.CSSProperties = {
-  padding: "14px 40px",
-  background: "#333333",
+  padding: "11px 32px",
+  background: "#2c2c2c",
   color: "#fff",
-  borderRadius: 8,
+  borderRadius: 6,
   border: "none",
   cursor: "pointer",
-  fontSize: 16,
+  fontSize: "0.875rem",
   fontWeight: 600,
-  transition: "all 0.2s",
-  boxShadow: "0 2px 4px rgba(0,0,0,0.1)",
+  transition: "all 0.15s",
 };
 
 const confirmBtnContainerStyle: React.CSSProperties = {
   display: "flex",
-  gap: 12,
+  gap: 10,
   justifyContent: "center",
   alignItems: "center",
 };
 
 const confirmBtnStyle: React.CSSProperties = {
-  padding: "12px 32px",
-  borderRadius: 8,
+  padding: "10px 28px",
+  borderRadius: 6,
   border: "none",
   cursor: "pointer",
-  fontSize: 15,
+  fontSize: "0.875rem",
   fontWeight: 600,
-  transition: "all 0.2s",
+  transition: "all 0.15s",
 };
 
 const confirmSubmitStyle: React.CSSProperties = {
   ...confirmBtnStyle,
-  background: "#4285f4",
+  background: "#2c2c2c",
   color: "#fff",
 };
 
 const confirmCancelStyle: React.CSSProperties = {
   ...confirmBtnStyle,
-  background: "#ff4d4f",
-  color: "#fff",
+  background: "#f5f5f5",
+  color: "#666",
+  border: "1px solid #e0e0e0",
 };
 
 interface FileData {
@@ -194,10 +222,49 @@ const StudentActivityMainContentView = ({ id }: { id: string }) => {
   const { data, isLoading } = useStudentActivityItem(id);
   const [files, setFiles] = useState<FileData[]>([]);
   const [showConfirm, setShowConfirm] = useState<boolean>(false);
+  const [showDeleteConfirm, setShowDeleteConfirm] = useState<boolean>(false);
+  const [showFileConfirm, setShowFileConfirm] = useState<boolean>(false);
+  const [isEditMode, setIsEditMode] = useState<boolean>(false);
+  const [editTitle, setEditTitle] = useState<string>("");
+  const [editContent, setEditContent] = useState<string>("");
   const fileInputRef = useRef<HTMLInputElement>(null);
-  const { mutate: submit } = useStudentActivityReSubmit();
+  
+  const { mutate: deleteActivity } = useDeleteStudentActivity();
+  const { mutate: patchActivity } = usePatchStudentActivity();
+  const { mutate: addFiles } = usePostStudentActivityAddFiles();
 
   if (isLoading) return <Loading />;
+
+  // 수정 모드 진입
+  const handleEditClick = () => {
+    setEditTitle(data.basicInfo.title);
+    setEditContent(data.basicInfo.content);
+    setIsEditMode(true);
+  };
+
+  // 수정 취소
+  const handleCancelEdit = () => {
+    setIsEditMode(false);
+    setEditTitle("");
+    setEditContent("");
+    setFiles([]);
+  };
+
+  // 삭제 확인
+  const handleDeleteClick = () => {
+    setShowDeleteConfirm(true);
+  };
+
+  // 삭제 확정
+  const handleConfirmDelete = () => {
+    deleteActivity(data.basicInfo.id);
+    setShowDeleteConfirm(false);
+  };
+
+  // 삭제 취소
+  const handleCancelDelete = () => {
+    setShowDeleteConfirm(false);
+  };
 
   const handleFileSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files) {
@@ -214,18 +281,53 @@ const StudentActivityMainContentView = ({ id }: { id: string }) => {
     setFiles((prev) => prev.filter((_, i) => i !== index));
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    setShowConfirm(true);
+  const handleConfirmSubmit = () => {
+    // 제목과 내용 수정
+    patchActivity(
+      {
+        submitId: data.basicInfo.id,
+        title: editTitle,
+        content: editContent,
+      },
+      {
+        onSuccess: () => {
+          // 파일이 있으면 파일 추가 확인
+          if (files.length > 0) {
+            setShowFileConfirm(true);
+          } else {
+            // 파일이 없으면 수정 완료
+            setIsEditMode(false);
+            setShowConfirm(false);
+          }
+        },
+      }
+    );
   };
 
-  const handleConfirmSubmit = () => {
-    submit({
-      submitId: data.basicInfo.id,
-      files: files.map((file) => file.file),
-    });
-    setFiles([]);
+  // 파일 추가 확정
+  const handleConfirmAddFiles = () => {
+    addFiles(
+      {
+        submitId: data.basicInfo.id,
+        files: files.map((f) => f.file),
+      },
+      {
+        onSuccess: () => {
+          setIsEditMode(false);
+          setShowConfirm(false);
+          setShowFileConfirm(false);
+          setFiles([]);
+        },
+      }
+    );
+  };
+
+  // 파일 추가 취소
+  const handleCancelAddFiles = () => {
+    setShowFileConfirm(false);
+    setIsEditMode(false);
     setShowConfirm(false);
+    setFiles([]);
   };
 
   const handleCancelSubmit = () => {
@@ -233,51 +335,166 @@ const StudentActivityMainContentView = ({ id }: { id: string }) => {
   };
 
   return (
-    <div style={{ width: "auto", margin: "0 auto" }}>
+    <div style={{ width: "100%", padding: "4px 0" }}>
       {/* 활동 정보 */}
       <div style={sectionStyle}>
-        <div style={titleStyle}>활동 정보</div>
-        <div style={gridStyle}>
-          <div style={gridItemStyle}>
-            <span style={labelStyle}>활동 분류</span>
-            <span>{data.basicInfo.categoryName}</span>
-          </div>
-          <div style={gridItemStyle}>
-            <span style={labelStyle}>세부 활동</span>
-            <span>{data.basicInfo.activityClass}</span>
-          </div>
-          <div style={gridItemStyle}>
-            <span style={labelStyle}>실적</span>
-            <span>{data.basicInfo.activityDetail}</span>
-          </div>
-          <div style={gridItemStyle}>
-            <span style={labelStyle}>활동 날짜</span>
-            <span>
-              {new Date(data.basicInfo.submitDate).toLocaleDateString("ko-KR")}
-            </span>
+        <div style={{ 
+          display: "flex", 
+          justifyContent: "space-between", 
+          alignItems: "center",
+          marginBottom: 14
+        }}>
+          <div style={{...titleStyle, marginBottom: 0}}>활동 정보</div>
+          <div style={{
+            fontSize: "0.8125rem",
+            color: "#666",
+            fontWeight: 500,
+          }}>
+            제출 날짜: {new Date(data.basicInfo.submitDate).toLocaleDateString("ko-KR")}
           </div>
         </div>
+        <div style={gridStyle}>
+          <div style={gridItemStyle}>
+            <label style={labelStyle}>분류</label>
+            <div style={valueStyle}>
+              {data.basicInfo.categoryName}
+              <span style={{ color: "#888", marginLeft: 6, fontSize: "0.75rem" }}>
+                (가중치 {data.basicInfo.categoryRatio})
+              </span>
+            </div>
+          </div>
+          <div style={gridItemStyle}>
+            <label style={labelStyle}>세부 활동</label>
+            <div style={valueStyle}>{data.basicInfo.activityClass}</div>
+          </div>
+        </div>
+        
+        {/* 상세항목 - full width */}
+        <div style={{ marginTop: 16 }}>
+          <label style={labelStyle}>상세항목</label>
+          <div style={valueStyle}>
+            {data.basicInfo.activityDetail}
+          </div>
+        </div>
+        
+        {/* 점수 표시 */}
+        <div style={{
+          marginTop: 12,
+          fontSize: "0.8125rem",
+          color: "#2c7a2c",
+          fontWeight: 600,
+          padding: "6px 12px",
+          backgroundColor: "#f0f8f0",
+          borderRadius: 6,
+          display: "inline-block",
+        }}>
+          점수: +{data.basicInfo.activityWeight}
+        </div>
       </div>
-      {/* 활동 내용 */}
+
+      {/* 제목 */}
       <div style={sectionStyle}>
         <div style={titleStyle}>활동 내용</div>
-        <div>{data.basicInfo.content}</div>
+        <label style={labelStyle}>제목</label>
+        {isEditMode ? (
+          <input
+            type="text"
+            value={editTitle}
+            onChange={(e) => setEditTitle(e.target.value)}
+            style={{
+              width: "100%",
+              padding: "10px 14px",
+              border: "1px solid #e0e0e0",
+              borderRadius: 6,
+              fontSize: "0.875rem",
+              outline: "none",
+              transition: "all 0.2s",
+              fontFamily: "inherit",
+              backgroundColor: "#fff",
+              boxSizing: "border-box",
+            }}
+            onFocus={(e) => {
+              e.currentTarget.style.backgroundColor = "#fff";
+              e.currentTarget.style.borderColor = "#999";
+            }}
+            onBlur={(e) => {
+              e.currentTarget.style.backgroundColor = "#fff";
+              e.currentTarget.style.borderColor = "#e0e0e0";
+            }}
+          />
+        ) : (
+          <div style={valueStyle}>{data.basicInfo.title}</div>
+        )}
       </div>
-      {/* 첨부파일 */}
+
+      {/* 활동 내용 */}
       <div style={sectionStyle}>
-        <div style={titleStyle}>첨부파일</div>
+        <label style={labelStyle}>상세 내용</label>
+        {isEditMode ? (
+          <textarea
+            value={editContent}
+            onChange={(e) => setEditContent(e.target.value)}
+            style={{
+              width: "100%",
+              padding: "10px 14px",
+              border: "1px solid #e0e0e0",
+              borderRadius: 6,
+              fontSize: "0.875rem",
+              outline: "none",
+              transition: "all 0.2s",
+              minHeight: 140,
+              resize: "vertical",
+              lineHeight: 1.6,
+              fontFamily: "inherit",
+              backgroundColor: "#fff",
+              boxSizing: "border-box",
+            }}
+            onFocus={(e) => {
+              e.currentTarget.style.backgroundColor = "#fff";
+              e.currentTarget.style.borderColor = "#999";
+            }}
+            onBlur={(e) => {
+              e.currentTarget.style.backgroundColor = "#fff";
+              e.currentTarget.style.borderColor = "#e0e0e0";
+            }}
+          />
+        ) : (
+          <div style={{
+            ...valueStyle,
+            minHeight: 140,
+            lineHeight: 1.6,
+            whiteSpace: "pre-wrap",
+          }}>
+            {data.basicInfo.content}
+          </div>
+        )}
+      </div>
+
+      {/* 증빙자료 */}
+      <div style={sectionStyle}>
+        <div style={titleStyle}>증빙자료</div>
         {data.fileInfoList.length > 0 ? (
-          data.fileInfoList.map((file: any, idx: number) => (
+          data.fileInfoList.map((file: { id: number; fileName: string; fileType: string }, idx: number) => (
             <FileCard key={idx} file={file} />
           ))
         ) : (
-          <div>첨부파일이 없습니다.</div>
+          <div style={{ 
+            color: "#999", 
+            fontSize: "0.8125rem",
+            padding: "20px 0",
+            textAlign: "center",
+            backgroundColor: "#fafafa",
+            borderRadius: 6,
+            border: "1px dashed #e0e0e0"
+          }}>
+            증빙자료가 없습니다
+          </div>
         )}
       </div>
-      {data.basicInfo.state === 2 && (
-        <form onSubmit={handleSubmit}>
-          <div style={sectionStyle}>
-            <div style={titleStyle}>추가 증빙 자료</div>
+      {/* 추가 증빙 자료 (수정 모드일 때만) */}
+      {isEditMode && (
+        <div style={sectionStyle}>
+          <div style={titleStyle}>추가 증빙 자료</div>
             <input
               ref={fileInputRef}
               type="file"
@@ -291,114 +508,299 @@ const StudentActivityMainContentView = ({ id }: { id: string }) => {
               onClick={() => fileInputRef.current?.click()}
               style={fileUploadBtnStyle}
               onMouseEnter={(e) => {
-                e.currentTarget.style.background = "#f5f5f5";
+                e.currentTarget.style.background = "#e8e8e8";
               }}
               onMouseLeave={(e) => {
-                e.currentTarget.style.background = "#ffffff";
+                e.currentTarget.style.background = "#f5f5f5";
               }}
             >
-              파일 첨부
+              + 파일 첨부
             </button>
 
-            <div style={{ marginTop: 16 }}>
+            <div style={{ marginTop: 12 }}>
               {files.length > 0 ? (
                 files.map((file, idx) => (
                   <div key={idx} style={fileCardStyle}>
-                    <div>
-                      <div style={{ fontWeight: 500 }}>{file.fileName}</div>
-                      <div
-                        style={{ fontSize: 12, color: "#666", marginTop: 4 }}
-                      >
-                        {(file.file.size / 1024 / 1024).toFixed(2)} MB
+                    <div style={{ flex: 1, minWidth: 0 }}>
+                      <div style={{ 
+                        fontWeight: 500, 
+                        fontSize: "0.8125rem",
+                        overflow: "hidden",
+                        textOverflow: "ellipsis",
+                        whiteSpace: "nowrap"
+                      }}>
+                        {file.fileName}
+                      </div>
+                      <div style={{ fontSize: "0.6875rem", color: "#999", marginTop: 2 }}>
+                        {(file.file.size / 1024 / 1024).toFixed(2)} MB · {file.fileType.toUpperCase()}
                       </div>
                     </div>
-                    <div
-                      style={{ display: "flex", alignItems: "center", gap: 12 }}
+                    <button
+                      type="button"
+                      onClick={() => handleRemoveFile(idx)}
+                      style={removeFileBtnStyle}
+                      onMouseEnter={(e) => {
+                        e.currentTarget.style.color = "#d32f2f";
+                      }}
+                      onMouseLeave={(e) => {
+                        e.currentTarget.style.color = "#999";
+                      }}
                     >
-                      <span style={{ color: "#888", fontSize: 14 }}>
-                        {file.fileType.toUpperCase()}
-                      </span>
-                      <button
-                        type="button"
-                        onClick={() => handleRemoveFile(idx)}
-                        style={removeFileBtnStyle}
-                        onMouseEnter={(e) => {
-                          e.currentTarget.style.background = "#ffebeb";
-                        }}
-                        onMouseLeave={(e) => {
-                          e.currentTarget.style.background = "#ffffff";
-                        }}
-                      >
-                        삭제
-                      </button>
-                    </div>
+                      삭제
+                    </button>
                   </div>
                 ))
               ) : (
-                <div style={{ color: "#888", marginTop: 12 }}>
-                  추가 증빙 자료를 첨부하려면 위 버튼을 클릭하세요.
+                <div style={{ 
+                  color: "#999", 
+                  fontSize: "0.8125rem",
+                  marginTop: 10,
+                  padding: "20px 0",
+                  textAlign: "center",
+                  backgroundColor: "#fafafa",
+                  borderRadius: 6,
+                  border: "1px dashed #e0e0e0"
+                }}>
+                  추가 증빙 자료를 첨부하려면 위 버튼을 클릭하세요
                 </div>
               )}
             </div>
+        </div>
+      )}
 
-            {/* 제출 버튼 */}
-            <div style={{ textAlign: "center", marginTop: 32 }}>
-              {!showConfirm ? (
-                <button
-                  type="submit"
-                  style={submitBtnStyle}
-                  onMouseEnter={(e) => {
-                    e.currentTarget.style.background = "#000000";
-                    e.currentTarget.style.transform = "translateY(-1px)";
-                    e.currentTarget.style.boxShadow =
-                      "0 4px 8px rgba(0,0,0,0.15)";
-                  }}
-                  onMouseLeave={(e) => {
-                    e.currentTarget.style.background = "#333333";
-                    e.currentTarget.style.transform = "translateY(0)";
-                    e.currentTarget.style.boxShadow =
-                      "0 2px 4px rgba(0,0,0,0.1)";
-                  }}
-                >
-                  추가 증빙 자료 제출
-                </button>
-              ) : (
-                <div style={confirmBtnContainerStyle}>
-                  <button
-                    type="button"
-                    style={confirmSubmitStyle}
-                    onClick={handleConfirmSubmit}
-                    onMouseEnter={(e) => {
-                      e.currentTarget.style.background = "#3367d6";
-                      e.currentTarget.style.transform = "translateY(-1px)";
-                    }}
-                    onMouseLeave={(e) => {
-                      e.currentTarget.style.background = "#4285f4";
-                      e.currentTarget.style.transform = "translateY(0)";
-                    }}
-                  >
-                    제출
-                  </button>
-                  <button
-                    type="button"
-                    style={confirmCancelStyle}
-                    onClick={handleCancelSubmit}
-                    onMouseEnter={(e) => {
-                      e.currentTarget.style.background = "#e53935";
-                      e.currentTarget.style.transform = "translateY(-1px)";
-                    }}
-                    onMouseLeave={(e) => {
-                      e.currentTarget.style.background = "#ff4d4f";
-                      e.currentTarget.style.transform = "translateY(0)";
-                    }}
-                  >
-                    취소
-                  </button>
-                </div>
-              )}
+      {/* 수정/삭제 버튼 또는 저장/취소 버튼 */}
+      <div style={{ textAlign: "center", marginTop: 28, paddingTop: 8 }}>
+        {!isEditMode ? (
+          <div style={confirmBtnContainerStyle}>
+            <button
+              type="button"
+              style={submitBtnStyle}
+              onClick={handleEditClick}
+              onMouseEnter={(e) => {
+                e.currentTarget.style.background = "#1a1a1a";
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.background = "#2c2c2c";
+              }}
+            >
+              수정
+            </button>
+            <button
+              type="button"
+              style={{
+                ...submitBtnStyle,
+                background: "#dc2626",
+              }}
+              onClick={handleDeleteClick}
+              onMouseEnter={(e) => {
+                e.currentTarget.style.background = "#b91c1c";
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.background = "#dc2626";
+              }}
+            >
+              삭제
+            </button>
+          </div>
+        ) : (
+          !showConfirm ? (
+            <div style={confirmBtnContainerStyle}>
+              <button
+                type="button"
+                style={confirmSubmitStyle}
+                onClick={() => setShowConfirm(true)}
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.background = "#1a1a1a";
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.background = "#2c2c2c";
+                }}
+              >
+                저장
+              </button>
+              <button
+                type="button"
+                style={confirmCancelStyle}
+                onClick={handleCancelEdit}
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.background = "#e8e8e8";
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.background = "#f5f5f5";
+                }}
+              >
+                취소
+              </button>
+            </div>
+          ) : (
+            <div style={confirmBtnContainerStyle}>
+              <button
+                type="button"
+                style={confirmSubmitStyle}
+                onClick={handleConfirmSubmit}
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.background = "#1a1a1a";
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.background = "#2c2c2c";
+                }}
+              >
+                확인
+              </button>
+              <button
+                type="button"
+                style={confirmCancelStyle}
+                onClick={handleCancelSubmit}
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.background = "#e8e8e8";
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.background = "#f5f5f5";
+                }}
+              >
+                취소
+              </button>
+            </div>
+          )
+        )}
+      </div>
+
+      {/* 삭제 확인 모달 */}
+      {showDeleteConfirm && (
+        <div style={{
+          position: "fixed",
+          top: 0,
+          left: 0,
+          right: 0,
+          bottom: 0,
+          backgroundColor: "rgba(0, 0, 0, 0.5)",
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+          zIndex: 1000,
+        }}>
+          <div style={{
+            backgroundColor: "#fff",
+            borderRadius: 8,
+            padding: "24px 32px",
+            maxWidth: 400,
+            textAlign: "center",
+          }}>
+            <div style={{
+              fontSize: "1.125rem",
+              fontWeight: 600,
+              marginBottom: 16,
+            }}>
+              정말 삭제하시겠습니까?
+            </div>
+            <div style={{
+              fontSize: "0.875rem",
+              color: "#666",
+              marginBottom: 24,
+            }}>
+              삭제된 활동은 복구할 수 없습니다.
+            </div>
+            <div style={confirmBtnContainerStyle}>
+              <button
+                type="button"
+                style={{
+                  ...confirmBtnStyle,
+                  background: "#dc2626",
+                  color: "#fff",
+                }}
+                onClick={handleConfirmDelete}
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.background = "#b91c1c";
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.background = "#dc2626";
+                }}
+              >
+                삭제
+              </button>
+              <button
+                type="button"
+                style={confirmCancelStyle}
+                onClick={handleCancelDelete}
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.background = "#e8e8e8";
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.background = "#f5f5f5";
+                }}
+              >
+                취소
+              </button>
             </div>
           </div>
-        </form>
+        </div>
+      )}
+
+      {/* 파일 추가 확인 모달 */}
+      {showFileConfirm && (
+        <div style={{
+          position: "fixed",
+          top: 0,
+          left: 0,
+          right: 0,
+          bottom: 0,
+          backgroundColor: "rgba(0, 0, 0, 0.5)",
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+          zIndex: 1000,
+        }}>
+          <div style={{
+            backgroundColor: "#fff",
+            borderRadius: 8,
+            padding: "24px 32px",
+            maxWidth: 400,
+            textAlign: "center",
+          }}>
+            <div style={{
+              fontSize: "1.125rem",
+              fontWeight: 600,
+              marginBottom: 16,
+            }}>
+              파일을 추가하시겠습니까?
+            </div>
+            <div style={{
+              fontSize: "0.875rem",
+              color: "#666",
+              marginBottom: 24,
+            }}>
+              ⚠️ 기존 파일은 모두 삭제되고 새 파일로 교체됩니다.
+            </div>
+            <div style={confirmBtnContainerStyle}>
+              <button
+                type="button"
+                style={confirmSubmitStyle}
+                onClick={handleConfirmAddFiles}
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.background = "#1a1a1a";
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.background = "#2c2c2c";
+                }}
+              >
+                추가
+              </button>
+              <button
+                type="button"
+                style={confirmCancelStyle}
+                onClick={handleCancelAddFiles}
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.background = "#e8e8e8";
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.background = "#f5f5f5";
+                }}
+              >
+                취소
+              </button>
+            </div>
+          </div>
+        </div>
       )}
     </div>
   );

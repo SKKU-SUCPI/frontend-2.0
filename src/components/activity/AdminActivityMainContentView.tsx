@@ -126,7 +126,12 @@ const AdminActivityMainContentView = ({ id }: { id: string }) => {
         <div style={gridStyle}>
           <div style={gridItemStyle}>
             <span style={labelStyle}>활동 분류</span>
-            <span>{data.basicInfo.categoryName}</span>
+            <span>
+              {data.basicInfo.categoryName}
+              <span style={{ color: "#6b7280", marginLeft: 6 }}>
+                (가중치 {data.basicInfo.categoryRatio})
+              </span>
+            </span>
           </div>
           <div style={gridItemStyle}>
             <span style={labelStyle}>세부 활동</span>
@@ -134,7 +139,12 @@ const AdminActivityMainContentView = ({ id }: { id: string }) => {
           </div>
           <div style={gridItemStyle}>
             <span style={labelStyle}>실적</span>
-            <span>{data.basicInfo.activityDetail}</span>
+            <span>
+              {data.basicInfo.activityDetail}
+              <span style={{ color: "#6b7280", marginLeft: 6 }}>
+                (+{data.basicInfo.activityWeight})
+              </span>
+            </span>
           </div>
           <div style={gridItemStyle}>
             <span style={labelStyle}>활동 날짜</span>
@@ -143,6 +153,11 @@ const AdminActivityMainContentView = ({ id }: { id: string }) => {
             </span>
           </div>
         </div>
+      </div>
+      {/* 제목 */}
+      <div style={sectionStyle}>
+        <div style={titleStyle}>제목</div>
+        <div style={{ fontSize: 18, fontWeight: 600 }}>{data.basicInfo.title}</div>
       </div>
       {/* 활동 내용 */}
       <div style={sectionStyle}>
