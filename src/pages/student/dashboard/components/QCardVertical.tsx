@@ -8,6 +8,7 @@ interface QCardVerticalProps {
   score: number;
   percentage: number;
   average: number;
+  onViewAll?: () => void;
 }
 
 const cardStyle = css`
@@ -45,10 +46,26 @@ const textInfo = css`
   flex-direction: column;
 `;
 
+const titleContainerStyle = css`
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 2px;
+`;
+
 const titleStyle = css`
   font-size: 1.2rem;
   font-weight: 700;
-  margin-bottom: 2px;
+`;
+
+const viewAllButtonStyle = css`
+  font-size: 0.9rem;
+  color: #888;
+  cursor: pointer;
+  transition: color 0.2s;
+  &:hover {
+    color: #555;
+  }
 `;
 
 const descriptionStyle = css`
@@ -107,6 +124,7 @@ const QCardVertical: React.FC<QCardVerticalProps> = ({
   score,
   percentage,
   average,
+  onViewAll,
 }) => {
   return (
     <div css={cardStyle}>
@@ -114,7 +132,14 @@ const QCardVertical: React.FC<QCardVerticalProps> = ({
         <div css={leftInfo}>
           <div css={dotStyle(category)} />
           <div css={textInfo}>
-            <span css={titleStyle}>{title}</span>
+            <div css={titleContainerStyle}>
+              <span css={titleStyle}>{title}</span>
+              {onViewAll && (
+                <span css={viewAllButtonStyle} onClick={onViewAll}>
+                  전체보기 &gt;
+                </span>
+              )}
+            </div>
             <span css={descriptionStyle}>{description}</span>
           </div>
         </div>
