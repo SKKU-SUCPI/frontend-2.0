@@ -14,6 +14,8 @@ export interface ActivityComment {
   id: number;
   content: string;
   date: string; // ISO string
+  userId: number;
+  userName: string;
 }
 
 

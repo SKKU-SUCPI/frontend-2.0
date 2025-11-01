@@ -1,10 +1,20 @@
+/** @jsxImportSource @emotion/react */
 import useStudentActivityItem from "@/hooks/student/useStudentActivityItem";
 import React, { useState, useRef } from "react";
+import ReactDOM from "react-dom";
 import Loading from "../layouts/Loading";
 import axiosInstance from "@/apis/utils/axiosInterceptor";
 import useDeleteStudentActivity from "@/hooks/student/useDeleteStudentActivity";
 import usePatchStudentActivity from "@/hooks/student/usePatchStudentActivity";
 import usePostStudentActivityAddFiles from "@/hooks/student/usePostStudentActivityAddFiles";
+import {
+  ModalOverlay,
+  ModalContent,
+  ModalTitle,
+  ModalDesc,
+  ModalButtonContainer,
+  ModalButton,
+} from "@/styles/components/Modal";
 const sectionStyle: React.CSSProperties = {
   marginBottom: 28,
 };
@@ -221,9 +231,10 @@ interface FileData {
 const StudentActivityMainContentView = ({ id }: { id: string }) => {
   const { data, isLoading } = useStudentActivityItem(id);
   const [files, setFiles] = useState<FileData[]>([]);
-  const [showConfirm, setShowConfirm] = useState<boolean>(false);
+  const [showSaveConfirm, setShowSaveConfirm] = useState<boolean>(false);
   const [showDeleteConfirm, setShowDeleteConfirm] = useState<boolean>(false);
   const [showFileConfirm, setShowFileConfirm] = useState<boolean>(false);
+  const [showApprovedWarning, setShowApprovedWarning] = useState<boolean>(false);
   const [isEditMode, setIsEditMode] = useState<boolean>(false);
   const [editTitle, setEditTitle] = useState<string>("");
   const [editContent, setEditContent] = useState<string>("");
@@ -237,9 +248,19 @@ const StudentActivityMainContentView = ({ id }: { id: string }) => {
 
   // 수정 모드 진입
   const handleEditClick = () => {
+    // 승인된 제출내역(state=1)은 수정할 수 없음
+    if (data.basicInfo.state === 1) {
+      setShowApprovedWarning(true);
+      return;
+    }
     setEditTitle(data.basicInfo.title);
     setEditContent(data.basicInfo.content);
     setIsEditMode(true);
+  };
+
+  // 승인 경고 모달 닫기
+  const handleCloseApprovedWarning = () => {
+    setShowApprovedWarning(false);
   };
 
   // 수정 취소
@@ -252,6 +273,11 @@ const StudentActivityMainContentView = ({ id }: { id: string }) => {
 
   // 삭제 확인
   const handleDeleteClick = () => {
+    // 승인된 제출내역(state=1)은 삭제할 수 없음
+    if (data.basicInfo.state === 1) {
+      setShowApprovedWarning(true);
+      return;
+    }
     setShowDeleteConfirm(true);
   };
 
@@ -281,7 +307,13 @@ const StudentActivityMainContentView = ({ id }: { id: string }) => {
     setFiles((prev) => prev.filter((_, i) => i !== index));
   };
 
-  const handleConfirmSubmit = () => {
+  // 저장 버튼 클릭 시 확인 모달 표시
+  const handleSaveClick = () => {
+    setShowSaveConfirm(true);
+  };
+
+  // 저장 확정
+  const handleConfirmSave = () => {
     // 제목과 내용 수정
     patchActivity(
       {
@@ -291,17 +323,22 @@ const StudentActivityMainContentView = ({ id }: { id: string }) => {
       },
       {
         onSuccess: () => {
+          setShowSaveConfirm(false);
           // 파일이 있으면 파일 추가 확인
           if (files.length > 0) {
             setShowFileConfirm(true);
           } else {
             // 파일이 없으면 수정 완료
             setIsEditMode(false);
-            setShowConfirm(false);
           }
         },
       }
     );
+  };
+
+  // 저장 취소
+  const handleCancelSave = () => {
+    setShowSaveConfirm(false);
   };
 
   // 파일 추가 확정
@@ -314,7 +351,6 @@ const StudentActivityMainContentView = ({ id }: { id: string }) => {
       {
         onSuccess: () => {
           setIsEditMode(false);
-          setShowConfirm(false);
           setShowFileConfirm(false);
           setFiles([]);
         },
@@ -326,12 +362,7 @@ const StudentActivityMainContentView = ({ id }: { id: string }) => {
   const handleCancelAddFiles = () => {
     setShowFileConfirm(false);
     setIsEditMode(false);
-    setShowConfirm(false);
     setFiles([]);
-  };
-
-  const handleCancelSubmit = () => {
-    setShowConfirm(false);
   };
 
   return (
@@ -603,204 +634,108 @@ const StudentActivityMainContentView = ({ id }: { id: string }) => {
             </button>
           </div>
         ) : (
-          !showConfirm ? (
-            <div style={confirmBtnContainerStyle}>
-              <button
-                type="button"
-                style={confirmSubmitStyle}
-                onClick={() => setShowConfirm(true)}
-                onMouseEnter={(e) => {
-                  e.currentTarget.style.background = "#1a1a1a";
-                }}
-                onMouseLeave={(e) => {
-                  e.currentTarget.style.background = "#2c2c2c";
-                }}
-              >
-                저장
-              </button>
-              <button
-                type="button"
-                style={confirmCancelStyle}
-                onClick={handleCancelEdit}
-                onMouseEnter={(e) => {
-                  e.currentTarget.style.background = "#e8e8e8";
-                }}
-                onMouseLeave={(e) => {
-                  e.currentTarget.style.background = "#f5f5f5";
-                }}
-              >
-                취소
-              </button>
-            </div>
-          ) : (
-            <div style={confirmBtnContainerStyle}>
-              <button
-                type="button"
-                style={confirmSubmitStyle}
-                onClick={handleConfirmSubmit}
-                onMouseEnter={(e) => {
-                  e.currentTarget.style.background = "#1a1a1a";
-                }}
-                onMouseLeave={(e) => {
-                  e.currentTarget.style.background = "#2c2c2c";
-                }}
-              >
-                확인
-              </button>
-              <button
-                type="button"
-                style={confirmCancelStyle}
-                onClick={handleCancelSubmit}
-                onMouseEnter={(e) => {
-                  e.currentTarget.style.background = "#e8e8e8";
-                }}
-                onMouseLeave={(e) => {
-                  e.currentTarget.style.background = "#f5f5f5";
-                }}
-              >
-                취소
-              </button>
-            </div>
-          )
+          <div style={confirmBtnContainerStyle}>
+            <button
+              type="button"
+              style={confirmSubmitStyle}
+              onClick={handleSaveClick}
+              onMouseEnter={(e) => {
+                e.currentTarget.style.background = "#1a1a1a";
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.background = "#2c2c2c";
+              }}
+            >
+              저장
+            </button>
+            <button
+              type="button"
+              style={confirmCancelStyle}
+              onClick={handleCancelEdit}
+              onMouseEnter={(e) => {
+                e.currentTarget.style.background = "#e8e8e8";
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.background = "#f5f5f5";
+              }}
+            >
+              취소
+            </button>
+          </div>
         )}
       </div>
 
-      {/* 삭제 확인 모달 */}
-      {showDeleteConfirm && (
-        <div style={{
-          position: "fixed",
-          top: 0,
-          left: 0,
-          right: 0,
-          bottom: 0,
-          backgroundColor: "rgba(0, 0, 0, 0.5)",
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "center",
-          zIndex: 1000,
-        }}>
-          <div style={{
-            backgroundColor: "#fff",
-            borderRadius: 8,
-            padding: "24px 32px",
-            maxWidth: 400,
-            textAlign: "center",
-          }}>
-            <div style={{
-              fontSize: "1.125rem",
-              fontWeight: 600,
-              marginBottom: 16,
-            }}>
-              정말 삭제하시겠습니까?
-            </div>
-            <div style={{
-              fontSize: "0.875rem",
-              color: "#666",
-              marginBottom: 24,
-            }}>
-              삭제된 활동은 복구할 수 없습니다.
-            </div>
-            <div style={confirmBtnContainerStyle}>
-              <button
-                type="button"
-                style={{
-                  ...confirmBtnStyle,
-                  background: "#dc2626",
-                  color: "#fff",
-                }}
-                onClick={handleConfirmDelete}
-                onMouseEnter={(e) => {
-                  e.currentTarget.style.background = "#b91c1c";
-                }}
-                onMouseLeave={(e) => {
-                  e.currentTarget.style.background = "#dc2626";
-                }}
-              >
-                삭제
-              </button>
-              <button
-                type="button"
-                style={confirmCancelStyle}
-                onClick={handleCancelDelete}
-                onMouseEnter={(e) => {
-                  e.currentTarget.style.background = "#e8e8e8";
-                }}
-                onMouseLeave={(e) => {
-                  e.currentTarget.style.background = "#f5f5f5";
-                }}
-              >
+      {/* 저장 확인 모달 */}
+      {showSaveConfirm && ReactDOM.createPortal(
+        <ModalOverlay>
+          <ModalContent>
+            <ModalTitle>수정 사항을 저장하시겠습니까?</ModalTitle>
+            <ModalDesc>제목과 내용이 수정됩니다.</ModalDesc>
+            <ModalButtonContainer>
+              <ModalButton variant="primary" onClick={handleConfirmSave}>
+                저장
+              </ModalButton>
+              <ModalButton variant="cancel" onClick={handleCancelSave}>
                 취소
-              </button>
-            </div>
-          </div>
-        </div>
+              </ModalButton>
+            </ModalButtonContainer>
+          </ModalContent>
+        </ModalOverlay>,
+        document.body
+      )}
+
+      {/* 삭제 확인 모달 */}
+      {showDeleteConfirm && ReactDOM.createPortal(
+        <ModalOverlay>
+          <ModalContent>
+            <ModalTitle>정말 삭제하시겠습니까?</ModalTitle>
+            <ModalDesc>삭제된 활동은 복구할 수 없습니다.</ModalDesc>
+            <ModalButtonContainer>
+              <ModalButton variant="danger" onClick={handleConfirmDelete}>
+                삭제
+              </ModalButton>
+              <ModalButton variant="cancel" onClick={handleCancelDelete}>
+                취소
+              </ModalButton>
+            </ModalButtonContainer>
+          </ModalContent>
+        </ModalOverlay>,
+        document.body
       )}
 
       {/* 파일 추가 확인 모달 */}
-      {showFileConfirm && (
-        <div style={{
-          position: "fixed",
-          top: 0,
-          left: 0,
-          right: 0,
-          bottom: 0,
-          backgroundColor: "rgba(0, 0, 0, 0.5)",
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "center",
-          zIndex: 1000,
-        }}>
-          <div style={{
-            backgroundColor: "#fff",
-            borderRadius: 8,
-            padding: "24px 32px",
-            maxWidth: 400,
-            textAlign: "center",
-          }}>
-            <div style={{
-              fontSize: "1.125rem",
-              fontWeight: 600,
-              marginBottom: 16,
-            }}>
-              파일을 추가하시겠습니까?
-            </div>
-            <div style={{
-              fontSize: "0.875rem",
-              color: "#666",
-              marginBottom: 24,
-            }}>
-              ⚠️ 기존 파일은 모두 삭제되고 새 파일로 교체됩니다.
-            </div>
-            <div style={confirmBtnContainerStyle}>
-              <button
-                type="button"
-                style={confirmSubmitStyle}
-                onClick={handleConfirmAddFiles}
-                onMouseEnter={(e) => {
-                  e.currentTarget.style.background = "#1a1a1a";
-                }}
-                onMouseLeave={(e) => {
-                  e.currentTarget.style.background = "#2c2c2c";
-                }}
-              >
+      {showFileConfirm && ReactDOM.createPortal(
+        <ModalOverlay>
+          <ModalContent>
+            <ModalTitle>파일을 추가하시겠습니까?</ModalTitle>
+            <ModalDesc>⚠️ 기존 파일은 모두 삭제되고 새 파일로 교체됩니다.</ModalDesc>
+            <ModalButtonContainer>
+              <ModalButton variant="primary" onClick={handleConfirmAddFiles}>
                 추가
-              </button>
-              <button
-                type="button"
-                style={confirmCancelStyle}
-                onClick={handleCancelAddFiles}
-                onMouseEnter={(e) => {
-                  e.currentTarget.style.background = "#e8e8e8";
-                }}
-                onMouseLeave={(e) => {
-                  e.currentTarget.style.background = "#f5f5f5";
-                }}
-              >
+              </ModalButton>
+              <ModalButton variant="cancel" onClick={handleCancelAddFiles}>
                 취소
-              </button>
-            </div>
-          </div>
-        </div>
+              </ModalButton>
+            </ModalButtonContainer>
+          </ModalContent>
+        </ModalOverlay>,
+        document.body
+      )}
+
+      {/* 승인된 제출내역 수정 불가 경고 모달 */}
+      {showApprovedWarning && ReactDOM.createPortal(
+        <ModalOverlay>
+          <ModalContent>
+            <ModalTitle>승인된 제출내역은 수정할 수 없습니다</ModalTitle>
+            <ModalDesc>이미 승인된 활동은 수정이 불가능합니다.</ModalDesc>
+            <ModalButtonContainer>
+              <ModalButton variant="primary" onClick={handleCloseApprovedWarning}>
+                확인
+              </ModalButton>
+            </ModalButtonContainer>
+          </ModalContent>
+        </ModalOverlay>,
+        document.body
       )}
     </div>
   );

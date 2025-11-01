@@ -8,10 +8,12 @@ const categoryColor = {
 };
 
 interface ActivityPreviewItemProps {
-  title: string;
+  title?: string;
+  content: string;
   category: "LQ" | "RQ" | "CQ";
   status: 0 | 1 | 2;
   date?: string;
+  activityWeight?: number;
 }
 
 const getStatus = (status: number) => {
@@ -62,11 +64,32 @@ const statusStyle = (status: string) => {
   `;
 };
 
+const rightSideStyle = css`
+  display: flex;
+  align-items: center;
+`;
+
+const scoreStyle = css`
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: #10b981; /* emerald */
+  margin-right: 10px;
+`;
+
+const scoreDividerStyle = css`
+  width: 1px;
+  height: 16px;
+  background: #e5e7eb;
+  margin: 0 10px 0 2px;
+`;
+
 const ActivityPreviewItem: React.FC<ActivityPreviewItemProps> = ({
   title,
+  content,
   category,
   status,
   date,
+  activityWeight,
 }) => (
   <div css={cardStyle}>
     <div style={{ display: "flex", alignItems: "center" }}>
@@ -78,7 +101,7 @@ const ActivityPreviewItem: React.FC<ActivityPreviewItemProps> = ({
           justifyContent: "center",
         }}
       >
-        <span css={titleStyle}>{title}</span>
+        <span css={titleStyle}>{title ?? content}</span>
         {date && (
           <span style={{ color: "#888", fontSize: "0.95rem", marginTop: 2 }}>
             {parseDate(date)}
@@ -86,7 +109,15 @@ const ActivityPreviewItem: React.FC<ActivityPreviewItemProps> = ({
         )}
       </div>
     </div>
-    <span css={statusStyle(getStatus(status))}>{getStatus(status)}</span>
+    <div css={rightSideStyle}>
+      {status === 1 && typeof activityWeight === "number" && (
+        <>
+          <span css={scoreStyle}>+{activityWeight}</span>
+          <span css={scoreDividerStyle} />
+        </>
+      )}
+      <span css={statusStyle(getStatus(status))}>{getStatus(status)}</span>
+    </div>
   </div>
 );
 

@@ -36,9 +36,11 @@ const ActivityDetailModal: React.FC<ActivityDetailModalProps> = ({ id, open, onC
           aria-label="close"
           onClick={onClose}
           sx={{
-            position: "absolute",
-            right: 8,
+            position: "sticky",
+            float: "right",
             top: 8,
+            right: 8,
+            marginBottom: "-40px",
             color: (theme) => theme.palette.grey[500],
           }}
         >

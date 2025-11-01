@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import { css } from "@emotion/react";
 import QCardVertical from "./components/QCardVertical";
 import GraphWrapper from "@/components/graphs/GraphWrapper";
@@ -6,6 +6,7 @@ import LineChart from "@/components/graphs/LineChart";
 import StackedBarChart from "@/components/graphs/StackedBarChart";
 import QuotientChart from "@/components/graphs/QuotientChart";
 import ActivityPreviewItem from "./components/ActivityPreviwItem";
+import ApprovedActivitiesModal from "./components/ApprovedActivitiesModal";
 import useStudent3qInfo from "@/hooks/student/useStudent3qInfo";
 import useStudent3qChange from "@/hooks/student/useStudent3qChange";
 import useStudent3qAverages from "@/hooks/student/useStudent3qAverages";
@@ -22,10 +23,12 @@ interface Student3qChange {
 
 interface StudentActivity {
   id: number;
+  title?: string;
   content: string;
   categoryName: string;
   state: string;
   approvedDate: string;
+  activityWeight?: number;
 }
 
 const titleStyle = css`
@@ -63,8 +66,21 @@ const viewAllButtonStyle = css`
   }
 `;
 
+const emptyMessageStyle = css`
+  text-align: center;
+  padding: 20px;
+  color: #666;
+`;
+
+const buttonContainerStyle = css`
+  margin-top: 16px;
+  width: 100%;
+`;
+
 const StudentDashboard: React.FC = () => {
   const navigate = useNavigate();
+  const [selectedCategory, setSelectedCategory] = useState<"LQ" | "RQ" | "CQ" | null>(null);
+  
   const { data: student3qInfo, isLoading: student3qInfoLoading } =
     useStudent3qInfo();
   const { data: student3qChange, isLoading: student3qChangeLoading } =
@@ -80,6 +96,15 @@ const StudentDashboard: React.FC = () => {
       sort: "desc",
     });
 
+  // 승인된 활동 내역 가져오기 (모달용)
+  const { data: approvedActivityList, isLoading: approvedActivityListLoading } =
+    useStudentActivityList({
+      state: 1, // 승인된 것만
+      page: 0,
+      size: 100, // 충분히 많은 수
+      sort: "desc",
+    });
+
   if (
     student3qInfoLoading ||
     student3qChangeLoading ||
@@ -88,6 +113,13 @@ const StudentDashboard: React.FC = () => {
   ) {
     return <Loading />;
   }
+
+  // 카테고리별 필터링된 승인 활동 내역
+  const filteredApprovedActivities = selectedCategory
+    ? approvedActivityList?.content?.filter(
+        (activity: StudentActivity) => activity.categoryName === selectedCategory
+      ) || []
+    : [];
 
   // 3Q 통계 데이터
   const QData = [
@@ -188,6 +220,7 @@ const StudentDashboard: React.FC = () => {
               score={q.score}
               percentage={q.percentage}
               average={q.average}
+              onViewAll={() => setSelectedCategory(q.category)}
             />
           ))}
         </div>
@@ -199,29 +232,18 @@ const StudentDashboard: React.FC = () => {
             studentActivityList.content.map((activity: StudentActivity) => (
               <ActivityPreviewItem
                 key={activity.id}
-                title={activity.content}
+                title={activity.title}
+                content={activity.content}
                 category={activity.categoryName as "LQ" | "RQ" | "CQ"}
                 status={parseInt(activity.state) as 0 | 1 | 2}
                 date={activity.approvedDate}
+                activityWeight={activity.activityWeight}
               />
             ))
           ) : (
-            <div
-              css={css`
-                text-align: center;
-                padding: 20px;
-                color: #666;
-              `}
-            >
-              등록된 활동 내역이 없습니다.
-            </div>
+            <div css={emptyMessageStyle}>등록된 활동 내역이 없습니다.</div>
           )}
-          <div
-            css={css`
-              margin-top: 16px;
-              width: 100%;
-            `}
-          >
+          <div css={buttonContainerStyle}>
             <button
               css={viewAllButtonStyle}
               onClick={() => {
@@ -244,6 +266,15 @@ const StudentDashboard: React.FC = () => {
             "학과별 비교": <StackedBarChart data={totalData} />,
           },
         }}
+      />
+
+      {/* 카테고리별 승인 활동 내역 모달 */}
+      <ApprovedActivitiesModal
+        isOpen={!!selectedCategory}
+        category={selectedCategory}
+        activities={filteredApprovedActivities}
+        isLoading={approvedActivityListLoading}
+        onClose={() => setSelectedCategory(null)}
       />
     </div>
   );
