@@ -40,7 +40,9 @@ const valueStyle: React.CSSProperties = {
   padding: "10px 14px",
   backgroundColor: "#fafafa",
   borderRadius: 6,
-  border: "1px solid #e0e0e0",
+  borderWidth: "1px",
+  borderStyle: "solid",
+  borderColor: "#e0e0e0",
 };
 
 const gridStyle: React.CSSProperties = {
@@ -58,7 +60,9 @@ const gridItemStyle: React.CSSProperties = {
 
 // 파일 카드 스타일 및 hover 효과
 const fileCardStyle: React.CSSProperties = {
-  border: "1px solid #e8e8e8",
+  borderWidth: "1px",
+  borderStyle: "solid",
+  borderColor: "#e8e8e8",
   borderRadius: 6,
   padding: "10px 14px",
   marginBottom: 8,
@@ -74,6 +78,31 @@ const fileCardHoverStyle: React.CSSProperties = {
   background: "#f0f4f8",
   borderColor: "#d0d0d0",
   boxShadow: "0 2px 6px rgba(0,0,0,0.06)",
+};
+
+const fileNameStyle: React.CSSProperties = {
+  fontWeight: 500,
+  fontSize: "0.8125rem",
+  overflow: "hidden",
+  textOverflow: "ellipsis",
+  whiteSpace: "nowrap",
+};
+
+const fileMetaStyle: React.CSSProperties = {
+  fontSize: "0.6875rem",
+  color: "#999",
+  marginTop: 2,
+};
+
+const fileInfoFlexStyle: React.CSSProperties = {
+  flex: 1,
+  minWidth: 0,
+};
+
+const downloadTextStyle: React.CSSProperties = {
+  color: "#1a73e8",
+  fontSize: "0.75rem",
+  fontWeight: 500,
 };
 
 function useHover() {
@@ -128,29 +157,15 @@ const FileCard = ({
       onMouseEnter={hover.onMouseEnter}
       onMouseLeave={hover.onMouseLeave}
     >
-      <div style={{ flex: 1, minWidth: 0 }}>
-        <div
-          style={{
-            fontWeight: 500,
-            fontSize: "0.8125rem",
-            overflow: "hidden",
-            textOverflow: "ellipsis",
-            whiteSpace: "nowrap",
-          }}
-        >
+      <div style={fileInfoFlexStyle}>
+        <div style={fileNameStyle}>
           {file.fileName}
         </div>
-        <div style={{ fontSize: "0.6875rem", color: "#999", marginTop: 2 }}>
+        <div style={fileMetaStyle}>
           {file.fileType.toUpperCase()}
         </div>
       </div>
-      <div
-        style={{
-          color: "#1a73e8",
-          fontSize: "0.75rem",
-          fontWeight: 500,
-        }}
-      >
+      <div style={downloadTextStyle}>
         다운로드
       </div>
     </div>
@@ -292,7 +307,9 @@ const AdminActivityMainContentView = ({ id }: { id: string }) => {
               textAlign: "center",
               backgroundColor: "#fafafa",
               borderRadius: 6,
-              border: "1px dashed #e0e0e0",
+              borderWidth: "1px",
+              borderStyle: "dashed",
+              borderColor: "#e0e0e0",
             }}
           >
             증빙자료가 없습니다

@@ -41,7 +41,9 @@ const valueStyle: React.CSSProperties = {
   padding: "10px 14px",
   backgroundColor: "#fafafa",
   borderRadius: 6,
-  border: "1px solid #e0e0e0",
+  borderWidth: "1px",
+  borderStyle: "solid",
+  borderColor: "#e0e0e0",
 };
 
 const gridStyle: React.CSSProperties = {
@@ -59,7 +61,9 @@ const gridItemStyle: React.CSSProperties = {
 
 // 파일 카드 스타일 및 hover 효과
 const fileCardStyle: React.CSSProperties = {
-  border: "1px solid #e8e8e8",
+  borderWidth: "1px",
+  borderStyle: "solid",
+  borderColor: "#e8e8e8",
   borderRadius: 6,
   padding: "10px 14px",
   marginBottom: 8,
@@ -75,6 +79,20 @@ const fileCardHoverStyle: React.CSSProperties = {
   background: "#f0f4f8",
   borderColor: "#d0d0d0",
   boxShadow: "0 2px 6px rgba(0,0,0,0.06)",
+};
+
+const fileNameStyle: React.CSSProperties = {
+  fontWeight: 500,
+  fontSize: "0.8125rem",
+  overflow: "hidden",
+  textOverflow: "ellipsis",
+  whiteSpace: "nowrap",
+};
+
+const fileMetaStyle: React.CSSProperties = {
+  fontSize: "0.6875rem",
+  color: "#999",
+  marginTop: 2,
 };
 
 function useHover() {
@@ -129,25 +147,15 @@ const FileCard = ({
       onMouseEnter={hover.onMouseEnter}
       onMouseLeave={hover.onMouseLeave}
     >
-      <div style={{ flex: 1, minWidth: 0 }}>
-        <div style={{
-          fontWeight: 500,
-          fontSize: "0.8125rem",
-          overflow: "hidden",
-          textOverflow: "ellipsis",
-          whiteSpace: "nowrap"
-        }}>
+      <div style={fileInfoFlexStyle}>
+        <div style={fileNameStyle}>
           {file.fileName}
         </div>
-        <div style={{ fontSize: "0.6875rem", color: "#999", marginTop: 2 }}>
+        <div style={fileMetaStyle}>
           {file.fileType.toUpperCase()}
         </div>
       </div>
-      <div style={{ 
-        color: "#1a73e8", 
-        fontSize: "0.75rem",
-        fontWeight: 500
-      }}>
+      <div style={downloadTextStyle}>
         다운로드
       </div>
     </div>
@@ -163,7 +171,9 @@ const fileUploadBtnStyle: React.CSSProperties = {
   background: "#f5f5f5",
   color: "#444",
   borderRadius: 6,
-  border: "1px solid #e0e0e0",
+  borderWidth: "1px",
+  borderStyle: "solid",
+  borderColor: "#e0e0e0",
   cursor: "pointer",
   fontSize: "0.8125rem",
   fontWeight: 500,
@@ -173,7 +183,8 @@ const fileUploadBtnStyle: React.CSSProperties = {
 const removeFileBtnStyle: React.CSSProperties = {
   background: "transparent",
   color: "#999",
-  border: "none",
+  borderWidth: "0",
+  borderStyle: "none",
   cursor: "pointer",
   fontSize: "0.75rem",
   padding: "4px 8px",
@@ -185,7 +196,8 @@ const submitBtnStyle: React.CSSProperties = {
   background: "#2c2c2c",
   color: "#fff",
   borderRadius: 6,
-  border: "none",
+  borderWidth: "0",
+  borderStyle: "none",
   cursor: "pointer",
   fontSize: "0.875rem",
   fontWeight: 600,
@@ -202,7 +214,8 @@ const confirmBtnContainerStyle: React.CSSProperties = {
 const confirmBtnStyle: React.CSSProperties = {
   padding: "10px 28px",
   borderRadius: 6,
-  border: "none",
+  borderWidth: "0",
+  borderStyle: "none",
   cursor: "pointer",
   fontSize: "0.875rem",
   fontWeight: 600,
@@ -219,7 +232,43 @@ const confirmCancelStyle: React.CSSProperties = {
   ...confirmBtnStyle,
   background: "#f5f5f5",
   color: "#666",
-  border: "1px solid #e0e0e0",
+  borderWidth: "1px",
+  borderStyle: "solid",
+  borderColor: "#e0e0e0",
+};
+
+const contentContainerStyle: React.CSSProperties = {
+  width: "100%",
+  padding: "4px 0",
+};
+
+const headerContainerStyle: React.CSSProperties = {
+  display: "flex",
+  justifyContent: "space-between",
+  alignItems: "center",
+  marginBottom: 14,
+};
+
+const titleWithoutMarginStyle: React.CSSProperties = {
+  ...titleStyle,
+  marginBottom: 0,
+};
+
+const submittedDateStyle: React.CSSProperties = {
+  fontSize: "0.8125rem",
+  color: "#666",
+  fontWeight: 500,
+};
+
+const fileInfoFlexStyle: React.CSSProperties = {
+  flex: 1,
+  minWidth: 0,
+};
+
+const downloadTextStyle: React.CSSProperties = {
+  color: "#1a73e8",
+  fontSize: "0.75rem",
+  fontWeight: 500,
 };
 
 interface FileData {
@@ -366,21 +415,12 @@ const StudentActivityMainContentView = ({ id }: { id: string }) => {
   };
 
   return (
-    <div style={{ width: "100%", padding: "4px 0" }}>
+    <div style={contentContainerStyle}>
       {/* 활동 정보 */}
       <div style={sectionStyle}>
-        <div style={{ 
-          display: "flex", 
-          justifyContent: "space-between", 
-          alignItems: "center",
-          marginBottom: 14
-        }}>
-          <div style={{...titleStyle, marginBottom: 0}}>활동 정보</div>
-          <div style={{
-            fontSize: "0.8125rem",
-            color: "#666",
-            fontWeight: 500,
-          }}>
+        <div style={headerContainerStyle}>
+          <div style={titleWithoutMarginStyle}>활동 정보</div>
+          <div style={submittedDateStyle}>
             제출 날짜: {new Date(data.basicInfo.submitDate).toLocaleDateString("ko-KR")}
           </div>
         </div>
@@ -435,7 +475,9 @@ const StudentActivityMainContentView = ({ id }: { id: string }) => {
             style={{
               width: "100%",
               padding: "10px 14px",
-              border: "1px solid #e0e0e0",
+              borderWidth: "1px",
+              borderStyle: "solid",
+              borderColor: "#e0e0e0",
               borderRadius: 6,
               fontSize: "0.875rem",
               outline: "none",
@@ -468,7 +510,9 @@ const StudentActivityMainContentView = ({ id }: { id: string }) => {
             style={{
               width: "100%",
               padding: "10px 14px",
-              border: "1px solid #e0e0e0",
+              borderWidth: "1px",
+              borderStyle: "solid",
+              borderColor: "#e0e0e0",
               borderRadius: 6,
               fontSize: "0.875rem",
               outline: "none",
@@ -516,7 +560,9 @@ const StudentActivityMainContentView = ({ id }: { id: string }) => {
             textAlign: "center",
             backgroundColor: "#fafafa",
             borderRadius: 6,
-            border: "1px dashed #e0e0e0"
+            borderWidth: "1px",
+            borderStyle: "dashed",
+            borderColor: "#e0e0e0"
           }}>
             증빙자료가 없습니다
           </div>
@@ -590,7 +636,9 @@ const StudentActivityMainContentView = ({ id }: { id: string }) => {
                   textAlign: "center",
                   backgroundColor: "#fafafa",
                   borderRadius: 6,
-                  border: "1px dashed #e0e0e0"
+                  borderWidth: "1px",
+                  borderStyle: "dashed",
+                  borderColor: "#e0e0e0"
                 }}>
                   추가 증빙 자료를 첨부하려면 위 버튼을 클릭하세요
                 </div>
