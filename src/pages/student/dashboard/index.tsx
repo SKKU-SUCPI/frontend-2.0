@@ -259,9 +259,9 @@ const StudentDashboard: React.FC = () => {
         title="성과 분석"
         type="block"
         options={{
-          labels: ["연도별 변화 추이", "지수별 분석", "학과별 비교"],
+          labels: ["월별 변화 추이", "지수별 분석", "학과별 비교"],
           datasets: {
-            "연도별 변화 추이": <LineChart data={lineChartData} />,
+            "월별 변화 추이": <LineChart data={lineChartData} />,
             "지수별 분석": <QuotientChart data={totalData} />,
             "학과별 비교": <StackedBarChart data={totalData} />,
           },
