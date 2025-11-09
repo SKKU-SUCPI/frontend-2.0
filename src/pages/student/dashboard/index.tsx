@@ -43,6 +43,7 @@ const subtitleStyle = css`
   font-size: 1.5rem;
   font-weight: bold;
   margin-bottom: 0;
+  margin-top: 0;
 `;
 
 const summaryContainerStyle = css`
@@ -79,9 +80,64 @@ const buttonContainerStyle = css`
   width: 100%;
 `;
 
+const sectionHeaderStyle = css`
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 16px;
+`;
+
+const toggleContainerStyle = css`
+  display: flex;
+  align-items: center;
+  gap: 8px;
+`;
+
+const toggleLabelStyle = css`
+  font-size: 0.9rem;
+  color: #666;
+  font-weight: 500;
+`;
+
+const toggleButtonStyle = css`
+  position: relative;
+  width: 44px;
+  height: 24px;
+  background: #e0e0e0;
+  border-radius: 12px;
+  border: none;
+  cursor: pointer;
+  transition: background 0.3s;
+  
+  &:hover {
+    background: #d0d0d0;
+  }
+  
+  &.active {
+    background: #4CAF50;
+  }
+`;
+
+const toggleKnobStyle = css`
+  position: absolute;
+  top: 2px;
+  left: 2px;
+  width: 20px;
+  height: 20px;
+  background: white;
+  border-radius: 50%;
+  transition: transform 0.3s;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+  
+  &.active {
+    transform: translateX(20px);
+  }
+`;
+
 const StudentDashboard: React.FC = () => {
   const navigate = useNavigate();
   const [selectedCategory, setSelectedCategory] = useState<"LQ" | "RQ" | "CQ" | null>(null);
+  const [showTScore, setShowTScore] = useState(false);
   
   const { data: student3qInfo, isLoading: student3qInfoLoading } =
     useStudent3qInfo();
@@ -127,33 +183,60 @@ const StudentDashboard: React.FC = () => {
       ) || []
     : [];
 
-  // 3Q 통계 데이터
-  const QData = [
-    {
-      title: "Learning Quotient (LQ)",
-      category: "LQ" as "LQ" | "RQ" | "CQ",
-      description: "학습 능력 지수",
-      score: Math.round((student3qInfo?.lq.score ?? 0) * 100) / 100,
-      average: Math.round((student3qInfo?.lq.average ?? 0) * 100) / 100,
-      percentage: Math.round((student3qInfo?.lq.percentile ?? 0) * 100),
-    },
-    {
-      title: "Research Quotient (RQ)",
-      category: "RQ" as "LQ" | "RQ" | "CQ",
-      description: "연구 능력 지수",
-      score: Math.round((student3qInfo?.rq.score ?? 0) * 100) / 100,
-      average: Math.round((student3qInfo?.rq.average ?? 0) * 100) / 100,
-      percentage: Math.round((student3qInfo?.rq.percentile ?? 0) * 100),
-    },
-    {
-      title: "Creative Quotient (CQ)",
-      category: "CQ" as "LQ" | "RQ" | "CQ",
-      description: "교류 능력 지수",
-      score: Math.round((student3qInfo?.cq.score ?? 0) * 100) / 100,
-      average: Math.round((student3qInfo?.cq.average ?? 0) * 100) / 100,
-      percentage: Math.round((student3qInfo?.cq.percentile ?? 0) * 100),
-    },
-  ];
+  // 3Q 통계 데이터 (일반 점수 또는 T-점수)
+  const QData = showTScore
+    ? [
+        {
+          title: "Learning Quotient (LQ)",
+          category: "LQ" as "LQ" | "RQ" | "CQ",
+          description: "학습 능력 지수 (T-점수)",
+          score: Math.round((studentMe?.tlq ?? 0) * 100) / 100,
+          average: Math.round((50 / 3) * 100) / 100, // 16.67
+          percentage: Math.round((student3qInfo?.lq.percentile ?? 0) * 100),
+        },
+        {
+          title: "Research Quotient (RQ)",
+          category: "RQ" as "LQ" | "RQ" | "CQ",
+          description: "연구 능력 지수 (T-점수)",
+          score: Math.round((studentMe?.trq ?? 0) * 100) / 100,
+          average: Math.round((50 / 3) * 100) / 100, // 16.67
+          percentage: Math.round((student3qInfo?.rq.percentile ?? 0) * 100),
+        },
+        {
+          title: "Creative Quotient (CQ)",
+          category: "CQ" as "LQ" | "RQ" | "CQ",
+          description: "교류 능력 지수 (T-점수)",
+          score: Math.round((studentMe?.tcq ?? 0) * 100) / 100,
+          average: Math.round((50 / 3) * 100) / 100, // 16.67
+          percentage: Math.round((student3qInfo?.cq.percentile ?? 0) * 100),
+        },
+      ]
+    : [
+        {
+          title: "Learning Quotient (LQ)",
+          category: "LQ" as "LQ" | "RQ" | "CQ",
+          description: "학습 능력 지수",
+          score: Math.round((student3qInfo?.lq.score ?? 0) * 100) / 100,
+          average: Math.round((student3qInfo?.lq.average ?? 0) * 100) / 100,
+          percentage: Math.round((student3qInfo?.lq.percentile ?? 0) * 100),
+        },
+        {
+          title: "Research Quotient (RQ)",
+          category: "RQ" as "LQ" | "RQ" | "CQ",
+          description: "연구 능력 지수",
+          score: Math.round((student3qInfo?.rq.score ?? 0) * 100) / 100,
+          average: Math.round((student3qInfo?.rq.average ?? 0) * 100) / 100,
+          percentage: Math.round((student3qInfo?.rq.percentile ?? 0) * 100),
+        },
+        {
+          title: "Creative Quotient (CQ)",
+          category: "CQ" as "LQ" | "RQ" | "CQ",
+          description: "교류 능력 지수",
+          score: Math.round((student3qInfo?.cq.score ?? 0) * 100) / 100,
+          average: Math.round((student3qInfo?.cq.average ?? 0) * 100) / 100,
+          percentage: Math.round((student3qInfo?.cq.percentile ?? 0) * 100),
+        },
+      ];
 
   // 3Q 변화 데이터
   const lineChartData =
@@ -216,7 +299,20 @@ const StudentDashboard: React.FC = () => {
       <div css={summaryContainerStyle}>
         {/* 3Q 통계 */}
         <div css={{ width: "100%" }}>
-          <h2 css={subtitleStyle}>3Q 지표 요약</h2>
+          <div css={sectionHeaderStyle}>
+            <h2 css={subtitleStyle}>3Q 지표 요약</h2>
+            <div css={toggleContainerStyle}>
+              <span css={toggleLabelStyle}>T-점수 보기</span>
+              <button
+                css={toggleButtonStyle}
+                className={showTScore ? "active" : ""}
+                onClick={() => setShowTScore(!showTScore)}
+                aria-label="T-점수 보기 토글"
+              >
+                <div css={toggleKnobStyle} className={showTScore ? "active" : ""} />
+              </button>
+            </div>
+          </div>
           {QData.map((q) => (
             <QCardVertical
               key={q.title}
