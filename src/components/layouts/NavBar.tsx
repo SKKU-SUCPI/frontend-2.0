@@ -88,11 +88,11 @@ const adminRouteMap = {
     [
       { path: "/superGod/statistic/dashboard", label: "대시보드" },
       { path: "/superGod/statistic/individual", label: "개인별 통계" },
-      { path: "/superGod/statistic/parameter", label: "파라미터 설정" },
     ],
     [
       { path: "/superGod/activity/dashboard", label: "대시보드" },
       { path: "/superGod/activity/list", label: "활동 목록" },
+      { path: "/superGod/activity/parameter", label: "활동 설정" },
     ],
   ],
 };

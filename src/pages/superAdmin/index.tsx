@@ -654,11 +654,22 @@ const AdminStatisticParameter: React.FC = () => {
                     margin-bottom: 8px;
                     font-size: 14px;
                   `}>
-                    활동 영역 *
+                    활동 영역 * 
+                    {editingActivity && (
+                      <span css={css`
+                        font-size: 12px;
+                        color: #ff9800;
+                        font-weight: 400;
+                        margin-left: 8px;
+                      `}>
+                        (수정 불가)
+                      </span>
+                    )}
                   </label>
                   <select
                     value={activityForm.categoryName}
                     onChange={(e) => handleActivityFormChange('categoryName', e.target.value)}
+                    disabled={!!editingActivity}
                     css={css`
                       width: 100%;
                       padding: 10px 12px;
@@ -666,7 +677,13 @@ const AdminStatisticParameter: React.FC = () => {
                       border-radius: 4px;
                       font-size: 14px;
                       box-sizing: border-box;
-                      &:focus { outline: none; border-color: #4caf50; }
+                      background: ${editingActivity ? '#f5f5f5' : 'white'};
+                      cursor: ${editingActivity ? 'not-allowed' : 'pointer'};
+                      color: ${editingActivity ? '#999' : '#333'};
+                      &:focus { 
+                        outline: none; 
+                        border-color: ${editingActivity ? '#ddd' : '#4caf50'}; 
+                      }
                     `}
                   >
                     <option value="LQ">LQ - 학습 능력 지수</option>
