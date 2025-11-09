@@ -212,31 +212,31 @@ const StudentDashboard: React.FC = () => {
         },
       ]
     : [
-        {
-          title: "Learning Quotient (LQ)",
-          category: "LQ" as "LQ" | "RQ" | "CQ",
-          description: "학습 능력 지수",
-          score: Math.round((student3qInfo?.lq.score ?? 0) * 100) / 100,
-          average: Math.round((student3qInfo?.lq.average ?? 0) * 100) / 100,
-          percentage: Math.round((student3qInfo?.lq.percentile ?? 0) * 100),
-        },
-        {
-          title: "Research Quotient (RQ)",
-          category: "RQ" as "LQ" | "RQ" | "CQ",
-          description: "연구 능력 지수",
-          score: Math.round((student3qInfo?.rq.score ?? 0) * 100) / 100,
-          average: Math.round((student3qInfo?.rq.average ?? 0) * 100) / 100,
-          percentage: Math.round((student3qInfo?.rq.percentile ?? 0) * 100),
-        },
-        {
-          title: "Creative Quotient (CQ)",
-          category: "CQ" as "LQ" | "RQ" | "CQ",
-          description: "교류 능력 지수",
-          score: Math.round((student3qInfo?.cq.score ?? 0) * 100) / 100,
-          average: Math.round((student3qInfo?.cq.average ?? 0) * 100) / 100,
-          percentage: Math.round((student3qInfo?.cq.percentile ?? 0) * 100),
-        },
-      ];
+    {
+      title: "Learning Quotient (LQ)",
+      category: "LQ" as "LQ" | "RQ" | "CQ",
+      description: "학습 능력 지수",
+      score: Math.round((student3qInfo?.lq.score ?? 0) * 100) / 100,
+      average: Math.round((student3qInfo?.lq.average ?? 0) * 100) / 100,
+      percentage: Math.round((student3qInfo?.lq.percentile ?? 0) * 100),
+    },
+    {
+      title: "Research Quotient (RQ)",
+      category: "RQ" as "LQ" | "RQ" | "CQ",
+      description: "연구 능력 지수",
+      score: Math.round((student3qInfo?.rq.score ?? 0) * 100) / 100,
+      average: Math.round((student3qInfo?.rq.average ?? 0) * 100) / 100,
+      percentage: Math.round((student3qInfo?.rq.percentile ?? 0) * 100),
+    },
+    {
+      title: "Creative Quotient (CQ)",
+      category: "CQ" as "LQ" | "RQ" | "CQ",
+      description: "교류 능력 지수",
+      score: Math.round((student3qInfo?.cq.score ?? 0) * 100) / 100,
+      average: Math.round((student3qInfo?.cq.average ?? 0) * 100) / 100,
+      percentage: Math.round((student3qInfo?.cq.percentile ?? 0) * 100),
+    },
+  ];
 
   // 3Q 변화 데이터
   const lineChartData =
@@ -300,7 +300,7 @@ const StudentDashboard: React.FC = () => {
         {/* 3Q 통계 */}
         <div css={{ width: "100%" }}>
           <div css={sectionHeaderStyle}>
-            <h2 css={subtitleStyle}>3Q 지표 요약</h2>
+          <h2 css={subtitleStyle}>3Q 지표 요약</h2>
             <div css={toggleContainerStyle}>
               <span css={toggleLabelStyle}>T-점수 보기</span>
               <button

@@ -10,13 +10,12 @@ import {
 } from "recharts";
 import { css } from "@emotion/react";
 
+type ChartDataRecord = Record<string, number | undefined>;
+
 interface SimpleBarChartProps {
-  data: {
-    LQ: number;
-    RQ: number;
-    CQ: number;
-  };
+  data: ChartDataRecord;
   title: string;
+  showTScore?: boolean;
 }
 
 const tooltipContainerStyle = css`
@@ -52,12 +51,25 @@ const titleStyle = css`
   text-align: center;
 `;
 
-const SimpleBarChart: React.FC<SimpleBarChartProps> = ({ data, title }) => {
-  const chartData = [
-    { name: "LQ", value: data.LQ, fill: "#0088FE" },
-    { name: "RQ", value: data.RQ, fill: "#00C49F" },
-    { name: "CQ", value: data.CQ, fill: "#FFBB28" },
-  ];
+const barColorMap: Record<string, string> = {
+  LQ: "#0088FE",
+  RQ: "#00C49F",
+  CQ: "#FFBB28",
+  "T-합계": "#845EC2",
+};
+
+const SimpleBarChart: React.FC<SimpleBarChartProps> = ({
+  data,
+  title,
+  showTScore = false,
+}) => {
+  const chartData = Object.entries(data)
+    .filter(([, value]) => typeof value === "number" && !Number.isNaN(value))
+    .map(([name, value]) => ({
+      name,
+      value: value as number,
+      fill: barColorMap[name] ?? "#8884d8",
+    }));
 
   return (
     <div>
@@ -70,14 +82,20 @@ const SimpleBarChart: React.FC<SimpleBarChartProps> = ({ data, title }) => {
           >
             <CartesianGrid strokeDasharray="3 3" />
             <XAxis dataKey="name" />
-            <YAxis domain={[0, 33]} />
+            <YAxis domain={showTScore ? [0, 100] : [0, 33]} />
             <Tooltip
               content={({ active, payload, label }) => {
                 if (active && payload && payload.length) {
                   return (
                     <div css={tooltipContainerStyle}>
                       <p css={tooltipTitleStyle}>{label}</p>
-                      <p css={tooltipItemStyle}>점수: {payload[0]?.value}점</p>
+                      <p css={tooltipItemStyle}>
+                        점수:{" "}
+                        {showTScore
+                          ? Number(payload[0]?.value).toFixed(2)
+                          : payload[0]?.value}
+                        점
+                      </p>
                     </div>
                   );
                 }

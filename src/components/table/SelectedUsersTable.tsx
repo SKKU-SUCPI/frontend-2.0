@@ -20,11 +20,16 @@ interface User {
   rq: number;
   cq: number;
   totalScore: number;
+  tlq?: number;
+  trq?: number;
+  tcq?: number;
+  totalTScore?: number;
 }
 
 interface SelectedUsersTableProps {
   users: User[];
   onUserRemove: (userId: number) => void;
+  showTScore?: boolean;
 }
 
 type SortField = "name" | "lq" | "rq" | "cq" | "total";
@@ -82,6 +87,7 @@ const deleteButtonStyle = css`
 const SelectedUsersTable: React.FC<SelectedUsersTableProps> = ({
   users,
   onUserRemove,
+  showTScore = false,
 }) => {
   const [sortField, setSortField] = useState<SortField>("name");
   const [sortDirection, setSortDirection] = useState<SortDirection>("asc");
@@ -99,20 +105,20 @@ const SelectedUsersTable: React.FC<SelectedUsersTableProps> = ({
         bValue = `${b.name} ${b.studentId}`;
         break;
       case "lq":
-        aValue = a.lq;
-        bValue = b.lq;
+        aValue = showTScore ? (a.tlq || 0) : a.lq;
+        bValue = showTScore ? (b.tlq || 0) : b.lq;
         break;
       case "rq":
-        aValue = a.rq;
-        bValue = b.rq;
+        aValue = showTScore ? (a.trq || 0) : a.rq;
+        bValue = showTScore ? (b.trq || 0) : b.rq;
         break;
       case "cq":
-        aValue = a.cq;
-        bValue = b.cq;
+        aValue = showTScore ? (a.tcq || 0) : a.cq;
+        bValue = showTScore ? (b.tcq || 0) : b.cq;
         break;
       case "total":
-        aValue = a.totalScore;
-        bValue = b.totalScore;
+        aValue = showTScore ? (a.totalTScore || 0) : a.totalScore;
+        bValue = showTScore ? (b.totalTScore || 0) : b.totalScore;
         break;
       default:
         aValue = a.name;
@@ -235,10 +241,18 @@ const SelectedUsersTable: React.FC<SelectedUsersTableProps> = ({
             {paginatedUsers.map((user) => (
               <TableRow key={user.id} css={tableRowStyle}>
                 <TableCell css={nameCellStyle}>{user.name}</TableCell>
-                <TableCell css={scoreCellStyle}>{user.lq}</TableCell>
-                <TableCell css={scoreCellStyle}>{user.rq}</TableCell>
-                <TableCell css={scoreCellStyle}>{user.cq}</TableCell>
-                <TableCell css={scoreCellStyle}>{user.totalScore}</TableCell>
+                <TableCell css={scoreCellStyle}>
+                  {showTScore ? (user.tlq || 0).toFixed(2) : user.lq}
+                </TableCell>
+                <TableCell css={scoreCellStyle}>
+                  {showTScore ? (user.trq || 0).toFixed(2) : user.rq}
+                </TableCell>
+                <TableCell css={scoreCellStyle}>
+                  {showTScore ? (user.tcq || 0).toFixed(2) : user.cq}
+                </TableCell>
+                <TableCell css={scoreCellStyle}>
+                  {showTScore ? (user.totalTScore || 0).toFixed(2) : user.totalScore}
+                </TableCell>
                 <TableCell css={tableCellStyle} align="center">
                   <IconButton
                     css={deleteButtonStyle}
