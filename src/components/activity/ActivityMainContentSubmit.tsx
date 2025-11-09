@@ -27,7 +27,9 @@ const labelStyle: React.CSSProperties = {
 const inputBaseStyle: React.CSSProperties = {
   width: "100%",
   padding: "10px 14px",
-  border: "1px solid #e0e0e0",
+  borderWidth: "1px",
+  borderStyle: "solid",
+  borderColor: "#e0e0e0",
   borderRadius: 6,
   fontSize: "0.875rem",
   outline: "none",
@@ -65,7 +67,9 @@ const fileUploadBtnStyle: React.CSSProperties = {
   background: "#f5f5f5",
   color: "#444",
   borderRadius: 6,
-  border: "1px solid #e0e0e0",
+  borderWidth: "1px",
+  borderStyle: "solid",
+  borderColor: "#e0e0e0",
   cursor: "pointer",
   fontSize: "0.8125rem",
   fontWeight: 500,
@@ -73,7 +77,9 @@ const fileUploadBtnStyle: React.CSSProperties = {
 };
 
 const fileCardStyle: React.CSSProperties = {
-  border: "1px solid #e8e8e8",
+  borderWidth: "1px",
+  borderStyle: "solid",
+  borderColor: "#e8e8e8",
   borderRadius: 6,
   padding: "10px 14px",
   marginBottom: 8,
@@ -86,7 +92,8 @@ const fileCardStyle: React.CSSProperties = {
 const removeFileBtnStyle: React.CSSProperties = {
   background: "transparent",
   color: "#999",
-  border: "none",
+  borderWidth: "0",
+  borderStyle: "none",
   cursor: "pointer",
   fontSize: "0.75rem",
   padding: "4px 8px",
@@ -98,7 +105,8 @@ const submitBtnStyle: React.CSSProperties = {
   background: "#2c2c2c",
   color: "#fff",
   borderRadius: 6,
-  border: "none",
+  borderWidth: "0",
+  borderStyle: "none",
   cursor: "pointer",
   fontSize: "0.875rem",
   fontWeight: 600,
@@ -115,7 +123,8 @@ const confirmBtnContainerStyle: React.CSSProperties = {
 const confirmBtnStyle: React.CSSProperties = {
   padding: "10px 28px",
   borderRadius: 6,
-  border: "none",
+  borderWidth: "0",
+  borderStyle: "none",
   cursor: "pointer",
   fontSize: "0.875rem",
   fontWeight: 600,
@@ -132,12 +141,16 @@ const confirmCancelStyle: React.CSSProperties = {
   ...confirmBtnStyle,
   background: "#f5f5f5",
   color: "#666",
-  border: "1px solid #e0e0e0",
+  borderWidth: "1px",
+  borderStyle: "solid",
+  borderColor: "#e0e0e0",
 };
 
 const infoBoxStyle: React.CSSProperties = {
   backgroundColor: "#fffbf0",
-  border: "1px solid #f0e8d0",
+  borderWidth: "1px",
+  borderStyle: "solid",
+  borderColor: "#f0e8d0",
   borderRadius: 6,
   padding: 14,
   marginTop: 28,
@@ -148,6 +161,103 @@ const activityTextStyle: React.CSSProperties = {
   fontSize: "0.75rem",
   color: "#666",
   lineHeight: 1.6,
+};
+
+const formContainerStyle: React.CSSProperties = {
+  width: "100%",
+  maxWidth: "100%",
+};
+
+const guideBoxStyle: React.CSSProperties = {
+  fontSize: "0.8125rem",
+  color: "#666",
+  marginBottom: 16,
+  padding: "10px 14px",
+  backgroundColor: "#f9f9f9",
+  borderRadius: 6,
+  borderWidth: "1px",
+  borderStyle: "solid",
+  borderColor: "#e8e8e8",
+};
+
+const twoColumnContainerStyle: React.CSSProperties = {
+  display: "flex",
+  gap: 12,
+  marginBottom: 16,
+};
+
+const halfWidthColumnStyle: React.CSSProperties = {
+  flex: 1,
+};
+
+const scoreDisplayStyle: React.CSSProperties = {
+  marginTop: 8,
+  fontSize: "0.8125rem",
+  color: "#2c7a2c",
+  fontWeight: 600,
+  padding: "6px 12px",
+  backgroundColor: "#f0f8f0",
+  borderRadius: 6,
+  display: "inline-block",
+};
+
+const titleInputStyle: React.CSSProperties = {
+  ...inputBaseStyle,
+  marginBottom: 16,
+};
+
+const fileListContainerStyle: React.CSSProperties = {
+  marginTop: 12,
+};
+
+const fileInfoContainerStyle: React.CSSProperties = {
+  flex: 1,
+  minWidth: 0,
+};
+
+const fileNameStyle: React.CSSProperties = {
+  fontWeight: 500,
+  fontSize: "0.8125rem",
+  overflow: "hidden",
+  textOverflow: "ellipsis",
+  whiteSpace: "nowrap",
+};
+
+const fileMetaStyle: React.CSSProperties = {
+  fontSize: "0.6875rem",
+  color: "#999",
+  marginTop: 2,
+};
+
+const emptyFileBoxStyle: React.CSSProperties = {
+  color: "#999",
+  fontSize: "0.8125rem",
+  marginTop: 10,
+  padding: "20px 0",
+  textAlign: "center",
+  backgroundColor: "#fafafa",
+  borderRadius: 6,
+  borderWidth: "1px",
+  borderStyle: "dashed",
+  borderColor: "#e0e0e0",
+};
+
+const submitContainerStyle: React.CSSProperties = {
+  textAlign: "center",
+  marginTop: 28,
+  paddingTop: 8,
+};
+
+const warningTitleStyle: React.CSSProperties = {
+  fontWeight: 600,
+  fontSize: "0.8125rem",
+  marginBottom: 6,
+  color: "#8b7043",
+};
+
+const warningTextStyle: React.CSSProperties = {
+  ...activityTextStyle,
+  color: "#8b7043",
 };
 
 interface FileData {
@@ -311,28 +421,20 @@ const ActivityMainContentForm = () => {
   }
 
   return (
-    <form onSubmit={handleSubmit} style={{ width: "100%", maxWidth: "100%" }}>
+    <form onSubmit={handleSubmit} style={formContainerStyle}>
       {/* 활동 선택 */}
       <div style={sectionStyle}>
         <div style={titleStyle}>활동 선택</div>
         
         {/* 안내 문구 */}
-        <div style={{ 
-          fontSize: "0.8125rem", 
-          color: "#666", 
-          marginBottom: 16,
-          padding: "10px 14px",
-          backgroundColor: "#f9f9f9",
-          borderRadius: 6,
-          border: "1px solid #e8e8e8"
-        }}>
+        <div style={guideBoxStyle}>
           💡 항목과 평가기준은 [홈 상단 → 평가기준] 표를 확인해주세요
         </div>
 
         {/* 1단계, 2단계: 분류와 세부 활동을 한 줄에 배치 */}
-        <div style={{ display: "flex", gap: 12, marginBottom: 16 }}>
+        <div style={twoColumnContainerStyle}>
           {/* 1단계: 분류 선택 */}
-          <div style={{ flex: 1 }}>
+          <div style={halfWidthColumnStyle}>
             <label style={labelStyle}>분류</label>
             <select
               value={selectedCategory}
@@ -358,7 +460,7 @@ const ActivityMainContentForm = () => {
           </div>
 
           {/* 2단계: 세부 활동 선택 */}
-          <div style={{ flex: 1 }}>
+          <div style={halfWidthColumnStyle}>
             <label style={labelStyle}>세부 활동</label>
             <select
               value={selectedClass}
@@ -420,16 +522,7 @@ const ActivityMainContentForm = () => {
 
         {/* 선택된 활동의 점수 표시 */}
         {selectedActivityScore !== null && (
-          <div style={{
-            marginTop: 8,
-            fontSize: "0.8125rem",
-            color: "#2c7a2c",
-            fontWeight: 600,
-            padding: "6px 12px",
-            backgroundColor: "#f0f8f0",
-            borderRadius: 6,
-            display: "inline-block",
-          }}>
+          <div style={scoreDisplayStyle}>
             점수: +{selectedActivityScore}
           </div>
         )}
@@ -443,10 +536,7 @@ const ActivityMainContentForm = () => {
           type="text"
           value={title}
           onChange={(e) => setTitle(e.target.value)}
-          style={{
-            ...inputBaseStyle,
-            marginBottom: 16,
-          }}
+          style={titleInputStyle}
           placeholder="활동 제목을 입력하세요"
           required
           onFocus={(e) => {
@@ -501,21 +591,15 @@ const ActivityMainContentForm = () => {
           + 파일 첨부
         </button>
 
-        <div style={{ marginTop: 12 }}>
+        <div style={fileListContainerStyle}>
           {files.length > 0 ? (
             files.map((file, idx) => (
               <div key={idx} style={fileCardStyle}>
-                <div style={{ flex: 1, minWidth: 0 }}>
-                  <div style={{ 
-                    fontWeight: 500, 
-                    fontSize: "0.8125rem",
-                    overflow: "hidden",
-                    textOverflow: "ellipsis",
-                    whiteSpace: "nowrap"
-                  }}>
+                <div style={fileInfoContainerStyle}>
+                  <div style={fileNameStyle}>
                     {file.fileName}
                   </div>
-                  <div style={{ fontSize: "0.6875rem", color: "#999", marginTop: 2 }}>
+                  <div style={fileMetaStyle}>
                     {(file.file.size / 1024 / 1024).toFixed(2)} MB · {file.fileType.toUpperCase()}
                   </div>
                 </div>
@@ -535,16 +619,7 @@ const ActivityMainContentForm = () => {
               </div>
             ))
           ) : (
-            <div style={{ 
-              color: "#999", 
-              fontSize: "0.8125rem",
-              marginTop: 10,
-              padding: "20px 0",
-              textAlign: "center",
-              backgroundColor: "#fafafa",
-              borderRadius: 6,
-              border: "1px dashed #e0e0e0"
-            }}>
+            <div style={emptyFileBoxStyle}>
               파일을 첨부하려면 위 버튼을 클릭하세요
             </div>
           )}
@@ -552,7 +627,7 @@ const ActivityMainContentForm = () => {
       </div>
 
       {/* 제출 버튼 */}
-      <div style={{ textAlign: "center", marginTop: 28, paddingTop: 8 }}>
+      <div style={submitContainerStyle}>
         {!showConfirm ? (
           <button
             type="submit"
@@ -600,10 +675,10 @@ const ActivityMainContentForm = () => {
 
       {/* 제출 전 확인사항 */}
       <div style={infoBoxStyle}>
-        <div style={{ fontWeight: 600, fontSize: "0.8125rem", marginBottom: 6, color: "#8b7043" }}>
+        <div style={warningTitleStyle}>
           ⚠️ 제출 전 확인사항
         </div>
-        <div style={{ ...activityTextStyle, color: "#8b7043" }}>
+        <div style={warningTextStyle}>
           • 모든 활동은 증빙자료 첨부 필수
           <br />
           • 활동별 점수가 높을수록 더 많은 증빙 필요

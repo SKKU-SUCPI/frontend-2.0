@@ -119,7 +119,6 @@ const Router = createBrowserRouter([
             children: [
               { path: "dashboard", element: <AdminStatisticDashboard /> },
               { path: "individual", element: <AdminStatisticIndividual /> },
-              { path: "parameter", element: <SuperAdminParameter /> },
             ],
           },
           {
@@ -130,6 +129,7 @@ const Router = createBrowserRouter([
                 path: "list",
                 element: <AdminActivityList />,
               },
+              { path: "parameter", element: <SuperAdminParameter /> },
             ],
           },
         ],
