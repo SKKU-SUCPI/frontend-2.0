@@ -5,12 +5,14 @@ import GraphWrapper from "@/components/graphs/GraphWrapper";
 import LineChart from "@/components/graphs/LineChart";
 import StackedBarChart from "@/components/graphs/StackedBarChart";
 import QuotientChart from "@/components/graphs/QuotientChart";
+import MyDistribution from "@/components/graphs/MyDistribution";
 import ActivityPreviewItem from "./components/ActivityPreviwItem";
 import ApprovedActivitiesModal from "./components/ApprovedActivitiesModal";
 import useStudent3qInfo from "@/hooks/student/useStudent3qInfo";
 import useStudent3qChange from "@/hooks/student/useStudent3qChange";
 import useStudent3qAverages from "@/hooks/student/useStudent3qAverages";
 import useStudentActivityList from "@/hooks/student/useStudentActivityList";
+import useStudentMe from "@/hooks/student/useStudentMe";
 import Loading from "@/components/layouts/Loading";
 import { useNavigate } from "react-router-dom";
 
@@ -105,11 +107,15 @@ const StudentDashboard: React.FC = () => {
       sort: "desc",
     });
 
+  // 학생 프로필 정보 (T-점수 포함)
+  const { data: studentMe, isLoading: studentMeLoading } = useStudentMe();
+
   if (
     student3qInfoLoading ||
     student3qChangeLoading ||
     student3qAveragesLoading ||
-    studentActivityListLoading
+    studentActivityListLoading ||
+    studentMeLoading
   ) {
     return <Loading />;
   }
@@ -259,8 +265,17 @@ const StudentDashboard: React.FC = () => {
         title="성과 분석"
         type="block"
         options={{
-          labels: ["월별 변화 추이", "지수별 분석", "학과별 비교"],
+          labels: ["나의 분포", "월별 변화 추이", "지수별 분석", "학과별 비교"],
           datasets: {
+            "나의 분포": studentMe ? (
+              <MyDistribution
+                tlq={studentMe.tlq}
+                trq={studentMe.trq}
+                tcq={studentMe.tcq}
+              />
+            ) : (
+              <div>데이터를 불러올 수 없습니다.</div>
+            ),
             "월별 변화 추이": <LineChart data={lineChartData} />,
             "지수별 분석": <QuotientChart data={totalData} />,
             "학과별 비교": <StackedBarChart data={totalData} />,
