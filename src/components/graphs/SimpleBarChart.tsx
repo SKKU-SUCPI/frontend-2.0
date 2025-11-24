@@ -40,15 +40,15 @@ const tooltipItemStyle = css`
 
 const chartContainerStyle = css`
   width: 100%;
-  height: 300px;
+  height: 350px;
 `;
 
 const titleStyle = css`
-  font-size: 1.2rem;
-  font-weight: bold;
-  margin-bottom: 15px;
+  font-size: 1.1rem;
+  font-weight: 600;
+  margin-bottom: 16px;
+  text-align: start;
   color: #333;
-  text-align: center;
 `;
 
 const barColorMap: Record<string, string> = {
@@ -72,17 +72,20 @@ const SimpleBarChart: React.FC<SimpleBarChartProps> = ({
     }));
 
   return (
-    <div>
-      <div css={titleStyle}>{title}</div>
+    <div style={{ width: "100%", height: "100%", display: "flex", flexDirection: "column" }}>
+      <h3 css={titleStyle}>{title}</h3>
       <div css={chartContainerStyle}>
         <ResponsiveContainer width="100%" height="100%">
           <BarChart
             data={chartData}
-            margin={{ top: 20, right: 30, left: 20, bottom: 5 }}
+            margin={{ top: 20, right: 30, left: 20, bottom: 20 }}
           >
             <CartesianGrid strokeDasharray="3 3" />
-            <XAxis dataKey="name" />
-            <YAxis domain={showTScore ? [0, 100] : [0, 33]} />
+            <XAxis dataKey="name" tick={{ fontSize: 11 }} />
+            <YAxis 
+              domain={showTScore ? [0, 100] : [0, 33]} 
+              tick={{ fontSize: 11 }}
+            />
             <Tooltip
               content={({ active, payload, label }) => {
                 if (active && payload && payload.length) {

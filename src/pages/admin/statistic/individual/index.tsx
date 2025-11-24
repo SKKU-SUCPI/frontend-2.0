@@ -2,6 +2,7 @@ import { useState, useRef } from "react";
 import { css } from "@emotion/react";
 import IndividualStudentCard from "./components/IndividualStudentCard";
 import AverageMetrics from "./components/AverageMetrics";
+import StudentDistributionModal from "./components/StudentDistributionModal";
 import useStudentsList, { Pageable } from "@/hooks/admin/useStudentsList";
 import Loading from "@/components/layouts/Loading";
 import Pagination from "@mui/material/Pagination";
@@ -9,6 +10,7 @@ import Box from "@mui/material/Box";
 import { useSelectedUserStore } from "@/stores/selectedUserStore";
 import type { SelectedUser } from "@/stores/selectedUserStore";
 import SimpleBarChart from "@/components/graphs/SimpleBarChart";
+import HorizontalBarChart from "@/components/graphs/HorizontalBarChart";
 import IconButton from "@mui/material/IconButton";
 import ChevronLeftIcon from "@mui/icons-material/ChevronLeft";
 import ChevronRightIcon from "@mui/icons-material/ChevronRight";
@@ -27,22 +29,25 @@ const containerStyle = css`
 `;
 
 const chartSectionStyle = css`
+  display: flex;
+  gap: 24px;
   width: 100%;
   min-height: 400px;
+`;
+
+const chartBoxStyle = css`
+  flex: 1;
+  min-height: 500px;
+  max-height: 600px;
   padding: 20px;
   border: 1px solid #e0e0e0;
   border-radius: 12px;
   background: white;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
-`;
-
-const chartBoxStyle = css`
-  min-height: 350px;
   display: flex;
   flex-direction: column;
-  justify-content: center;
-  align-items: center;
   position: relative;
+  overflow: hidden;
 `;
 
 const bottomRowStyle = css`
@@ -107,6 +112,21 @@ const titleContainerStyle = css`
   display: flex;
   align-items: center;
   gap: 10px;
+  flex-direction: column;
+  align-items: flex-start;
+`;
+
+const titleRowStyle = css`
+  display: flex;
+  align-items: center;
+  gap: 10px;
+`;
+
+const hintTextStyle = css`
+  font-size: 0.85rem;
+  color: #888;
+  font-weight: 400;
+  margin-top: 4px;
 `;
 
 const resetButtonStyle = css`
@@ -200,7 +220,10 @@ const toggleKnobStyle = css`
 const IndividualStatisticLayout = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const [chartPage, setChartPage] = useState(0);
+  const [rightChartPage, setRightChartPage] = useState(0);
   const [showTScore, setShowTScore] = useState(false);
+  const [modalOpen, setModalOpen] = useState(false);
+  const [selectedStudent, setSelectedStudent] = useState<SelectedUser | null>(null);
   const studentListRef = useRef<HTMLDivElement>(null);
 
   const {
@@ -222,7 +245,6 @@ const IndividualStatisticLayout = () => {
     clearUsers,
   } = useSelectedUserStore();
 
-  console.log(appliedFilter);
 
   const pageable: Pageable = {
     name: appliedFilter.name,
@@ -236,7 +258,6 @@ const IndividualStatisticLayout = () => {
 
   if (isLoading) return <Loading />;
 
-  console.log(studentsData);
 
   const totalPages = studentsData?.totalPage || 1;
 
@@ -329,6 +350,14 @@ const IndividualStatisticLayout = () => {
     }
   };
 
+  const handleRightChartPageChange = (direction: "prev" | "next") => {
+    if (direction === "prev") {
+      setRightChartPage((prev) => Math.max(0, prev - 1));
+    } else {
+      setRightChartPage((prev) => Math.min(3, prev + 1));
+    }
+  };
+
   const getCurrentChartData = () => {
     if (selectedUsers.length === 0) return null;
 
@@ -352,7 +381,81 @@ const IndividualStatisticLayout = () => {
   const handleReset = () => {
     clearUsers();
     setChartPage(0);
+    setRightChartPage(0);
   };
+
+  // 우측 가로 막대 그래프 데이터 생성
+  const createHorizontalBarChartData = () => {
+    if (selectedUsers.length === 0) return [];
+
+    // 점수순으로 정렬 (높은 점수가 위로)
+    const sortedUsers = [...selectedUsers].sort((a, b) => {
+      if (showTScore) {
+        const totalA = a.totalTScore || 0;
+        const totalB = b.totalTScore || 0;
+        return totalB - totalA;
+      } else {
+        const totalA = a.totalScore || 0;
+        const totalB = b.totalScore || 0;
+        return totalB - totalA;
+      }
+    });
+
+    if (rightChartPage === 0) {
+      // 누적 막대 (3Q 전체) - 총합으로 표시
+      const data = sortedUsers.map((user) => {
+        let totalValue;
+        
+        if (showTScore) {
+          const lq = typeof user.tlq === 'number' && !isNaN(user.tlq) ? user.tlq : 0;
+          const rq = typeof user.trq === 'number' && !isNaN(user.trq) ? user.trq : 0;
+          const cq = typeof user.tcq === 'number' && !isNaN(user.tcq) ? user.tcq : 0;
+          totalValue = lq + rq + cq;
+        } else {
+          const lq = typeof user.lq === 'number' && !isNaN(user.lq) ? user.lq : 0;
+          const rq = typeof user.rq === 'number' && !isNaN(user.rq) ? user.rq : 0;
+          const cq = typeof user.cq === 'number' && !isNaN(user.cq) ? user.cq : 0;
+          totalValue = lq + rq + cq;
+        }
+        
+        return {
+          name: user.name,
+          value: totalValue,
+        };
+      });
+      return data;
+    } else {
+      // 개별 영역 (LQ, RQ, CQ)
+      const categories = ["LQ", "RQ", "CQ"] as const;
+      const category = categories[rightChartPage - 1];
+      
+      return sortedUsers.map((user) => {
+        let value = 0;
+        if (showTScore) {
+          if (category === "LQ") value = user.tlq || 0;
+          else if (category === "RQ") value = user.trq || 0;
+          else if (category === "CQ") value = user.tcq || 0;
+        } else {
+          if (category === "LQ") value = user.lq || 0;
+          else if (category === "RQ") value = user.rq || 0;
+          else if (category === "CQ") value = user.cq || 0;
+        }
+        return {
+          name: user.name,
+          value: typeof value === 'number' && !isNaN(value) ? value : 0,
+        };
+      });
+    }
+  };
+
+  const getRightChartTitle = () => {
+    if (rightChartPage === 0) return "전체 학생 3Q 분포";
+    const categories = ["LQ", "RQ", "CQ"];
+    return `전체 학생 ${categories[rightChartPage - 1]} 분포`;
+  };
+
+  const horizontalChartData = createHorizontalBarChartData();
+  const rightChartTitle = getRightChartTitle();
 
   const handlePageChange = (page: number) => {
     setCurrentPage(page);
@@ -363,6 +466,16 @@ const IndividualStatisticLayout = () => {
         block: "start",
       });
     }
+  };
+
+  const handleStudentClick = (user: SelectedUser) => {
+    setSelectedStudent(user);
+    setModalOpen(true);
+  };
+
+  const handleModalClose = () => {
+    setModalOpen(false);
+    setSelectedStudent(null);
   };
 
   return (
@@ -392,18 +505,15 @@ const IndividualStatisticLayout = () => {
         showTScore={showTScore}
       />
 
-      {/* 그래프 섹션 - 메인 */}
+      {/* 그래프 섹션 - 좌우 분할 */}
       <div css={chartSectionStyle}>
+        {/* 좌측: 세로 막대 그래프 */}
         {selectedUsers.length === 0 ? (
           <div css={chartBoxStyle}>
             <div css={noDataStyle}>선택된 학생이 없습니다</div>
           </div>
         ) : (
-          <div css={css`
-            ${chartBoxStyle}
-            justify-content: flex-start;
-            align-items: stretch;
-          `}>
+          <div css={chartBoxStyle}>
             <div css={navigationButtonsStyle}>
               <IconButton
                 size="small"
@@ -423,13 +533,55 @@ const IndividualStatisticLayout = () => {
                 <ChevronRightIcon />
               </IconButton>
             </div>
-            {currentChartData && (
+            <div style={{ flex: 1, width: "100%", display: "flex", flexDirection: "column" }}>
+              {currentChartData && (
                 <SimpleBarChart
                   data={currentChartData.data}
                   title={currentChartData.title}
                   showTScore={showTScore}
                 />
-            )}
+              )}
+            </div>
+          </div>
+        )}
+
+        {/* 우측: 가로 막대 그래프 */}
+        {selectedUsers.length === 0 ? (
+          <div css={chartBoxStyle}>
+            <div css={noDataStyle}>선택된 학생이 없습니다</div>
+          </div>
+        ) : (
+          <div css={chartBoxStyle}>
+            <div css={navigationButtonsStyle}>
+              <IconButton
+                size="small"
+                onClick={() => handleRightChartPageChange("prev")}
+                disabled={rightChartPage === 0}
+              >
+                <ChevronLeftIcon />
+              </IconButton>
+              <div css={pageIndicatorStyle}>
+                {rightChartPage + 1}/4
+              </div>
+              <IconButton
+                size="small"
+                onClick={() => handleRightChartPageChange("next")}
+                disabled={rightChartPage === 3}
+              >
+                <ChevronRightIcon />
+              </IconButton>
+            </div>
+            <div style={{ flex: 1, width: "100%", display: "flex", flexDirection: "column", overflow: "auto" }}>
+              <HorizontalBarChart
+                data={horizontalChartData}
+                title={rightChartTitle}
+                showStacked={rightChartPage === 0}
+                singleCategory={
+                  rightChartPage === 1 ? "LQ" : rightChartPage === 2 ? "RQ" : rightChartPage === 3 ? "CQ" : undefined
+                }
+                showTScore={showTScore}
+              />
+            </div>
           </div>
         )}
       </div>
@@ -501,26 +653,43 @@ const IndividualStatisticLayout = () => {
         <div css={rightBoxStyle}>
           <div css={selectedUserTitleStyle}>
             <div css={titleContainerStyle}>
-              <span>선택된 학생 목록</span>
-              {selectedUsers.length > 0 && (
-                <IconButton
-                  size="small"
-                  onClick={handleReset}
-                  css={resetButtonStyle}
-                  title="초기화"
-                >
-                  <RefreshIcon />
-                </IconButton>
-              )}
+              <div css={titleRowStyle}>
+                <span>선택된 학생 목록</span>
+                {selectedUsers.length > 0 && (
+                  <IconButton
+                    size="small"
+                    onClick={handleReset}
+                    css={resetButtonStyle}
+                    title="초기화"
+                  >
+                    <RefreshIcon />
+                  </IconButton>
+                )}
+              </div>
+              <span css={hintTextStyle}>아래 학생을 클릭하면 개인별 점수 정보를 확인할 수 있습니다</span>
             </div>
           </div>
           <SelectedUsersTable 
             users={selectedUsers} 
             onUserRemove={removeUser}
             showTScore={showTScore}
+            onUserClick={handleStudentClick}
           />
         </div>
       </div>
+
+      {/* 학생 정규분포 모달 */}
+      {selectedStudent && (
+        <StudentDistributionModal
+          open={modalOpen}
+          onClose={handleModalClose}
+          studentName={selectedStudent.name}
+          studentId={selectedStudent.studentId}
+          tlq={selectedStudent.tlq || 0}
+          trq={selectedStudent.trq || 0}
+          tcq={selectedStudent.tcq || 0}
+        />
+      )}
     </div>
   );
 };

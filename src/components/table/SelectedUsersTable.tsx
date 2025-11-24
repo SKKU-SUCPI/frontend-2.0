@@ -30,6 +30,7 @@ interface SelectedUsersTableProps {
   users: User[];
   onUserRemove: (userId: number) => void;
   showTScore?: boolean;
+  onUserClick?: (user: User) => void;
 }
 
 type SortField = "name" | "lq" | "rq" | "cq" | "total";
@@ -88,6 +89,7 @@ const SelectedUsersTable: React.FC<SelectedUsersTableProps> = ({
   users,
   onUserRemove,
   showTScore = false,
+  onUserClick,
 }) => {
   const [sortField, setSortField] = useState<SortField>("name");
   const [sortDirection, setSortDirection] = useState<SortDirection>("asc");
@@ -239,7 +241,11 @@ const SelectedUsersTable: React.FC<SelectedUsersTableProps> = ({
           </TableHead>
           <TableBody>
             {paginatedUsers.map((user) => (
-              <TableRow key={user.id} css={tableRowStyle}>
+              <TableRow 
+                key={user.id} 
+                css={tableRowStyle}
+                onClick={() => onUserClick?.(user)}
+              >
                 <TableCell css={nameCellStyle}>{user.name}</TableCell>
                 <TableCell css={scoreCellStyle}>
                   {showTScore ? (user.tlq || 0).toFixed(2) : user.lq}
