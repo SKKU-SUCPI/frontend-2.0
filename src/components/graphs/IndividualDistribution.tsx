@@ -96,7 +96,7 @@ const IndividualDistribution: React.FC<IndividualDistributionProps> = ({
           <AreaChart
             data={chartData}
             margin={{
-              top: 80,
+              top: 20,
               right: 30,
               left: 10,
               bottom: 60,
@@ -116,6 +116,60 @@ const IndividualDistribution: React.FC<IndividualDistributionProps> = ({
             <Tooltip
               content={({ active, payload }) => {
                 if (active && payload && payload.length) {
+                  const currentX = payload[0].payload.tScore;
+                  const threshold = 1.5; // 수직선 근처 판단 기준
+
+                  // 각 점수와의 거리 계산
+                  const distToLQ = Math.abs(currentX - tlq);
+                  const distToRQ = Math.abs(currentX - trq);
+                  const distToCQ = Math.abs(currentX - tcq);
+
+                  // 가장 가까운 점수 찾기
+                  const minDist = Math.min(distToLQ, distToRQ, distToCQ);
+
+                  // 수직선 근처인 경우 해당 점수의 특별 툴팁 표시
+                  if (minDist <= threshold) {
+                    let color, label, score, percentile;
+                    
+                    if (minDist === distToLQ) {
+                      color = "#0066CC";
+                      label = "LQ";
+                      score = tlq;
+                      percentile = lqPercentile;
+                    } else if (minDist === distToRQ) {
+                      color = "#00A878";
+                      label = "RQ";
+                      score = trq;
+                      percentile = rqPercentile;
+                    } else {
+                      color = "#FFA500";
+                      label = "CQ";
+                      score = tcq;
+                      percentile = cqPercentile;
+                    }
+
+                    return (
+                      <div
+                        style={{
+                          background: color,
+                          color: "white",
+                          padding: "12px 16px",
+                          borderRadius: "8px",
+                          boxShadow: "0 4px 8px rgba(0,0,0,0.2)",
+                          border: `2px solid ${color}`,
+                        }}
+                      >
+                        <p style={{ margin: 0, fontWeight: "bold", fontSize: "14px" }}>
+                          {label}: {score.toFixed(1)}점
+                        </p>
+                        <p style={{ margin: "4px 0 0 0", fontSize: "12px" }}>
+                          상위 {Math.max(0, Math.min(100, 100 - percentile)).toFixed(1)}%
+                        </p>
+                      </div>
+                    );
+                  }
+
+                  // 기본 툴팁 (수직선 근처가 아닌 경우)
                   return (
                     <div
                       style={{
@@ -127,7 +181,7 @@ const IndividualDistribution: React.FC<IndividualDistributionProps> = ({
                       }}
                     >
                       <p style={{ margin: 0, fontWeight: "bold" }}>
-                        T-점수: {payload[0].payload.tScore.toFixed(1)}
+                        T-점수: {currentX.toFixed(1)}
                       </p>
                     </div>
                   );
@@ -146,34 +200,19 @@ const IndividualDistribution: React.FC<IndividualDistributionProps> = ({
               strokeWidth={2}
             />
 
-            {/* 평균선 (16.67) */}
+            {/* 평균선 (16.67) - 레이블 제거 */}
             <ReferenceLine
               x={mean}
               stroke="#999"
               strokeDasharray="5 5"
-              label={{
-                value: `평균: ${mean.toFixed(2)}`,
-                position: "top",
-                fill: "#999",
-                fontSize: 11,
-                offset: 65,
-              }}
             />
 
-            {/* 학생의 T-점수 위치 표시 - 그래프 위쪽에 배치 */}
+            {/* 학생의 T-점수 위치 표시 - 레이블 제거 */}
             <ReferenceLine
               x={tlq}
               stroke="#0066CC"
               strokeWidth={2.5}
               strokeDasharray="0"
-              label={{
-                value: `LQ: ${tlq.toFixed(1)}`,
-                position: "top",
-                fill: "#0066CC",
-                fontWeight: "bold",
-                fontSize: 12,
-                offset: 5,
-              }}
               isFront={true}
             />
             <ReferenceLine
@@ -181,14 +220,6 @@ const IndividualDistribution: React.FC<IndividualDistributionProps> = ({
               stroke="#00A878"
               strokeWidth={2.5}
               strokeDasharray="0"
-              label={{
-                value: `RQ: ${trq.toFixed(1)}`,
-                position: "top",
-                fill: "#00A878",
-                fontWeight: "bold",
-                fontSize: 12,
-                offset: 25,
-              }}
               isFront={true}
             />
             <ReferenceLine
@@ -196,14 +227,6 @@ const IndividualDistribution: React.FC<IndividualDistributionProps> = ({
               stroke="#FFA500"
               strokeWidth={2.5}
               strokeDasharray="0"
-              label={{
-                value: `CQ: ${tcq.toFixed(1)}`,
-                position: "top",
-                fill: "#FFA500",
-                fontWeight: "bold",
-                fontSize: 12,
-                offset: 45,
-              }}
               isFront={true}
             />
             

@@ -98,7 +98,7 @@ const TotalDistribution: React.FC<TotalDistributionProps> = ({
     if (score >= mean + 2 * stdDev) return "매우 우수 (상위 2.3%)";
     if (score >= mean + stdDev) return "우수 (상위 16%)";
     if (score >= mean) return "평균 이상";
-    if (score >= mean - stdDev) return "평균";
+    if (score >= mean - stdDev) return "평균 수준";
     if (score >= mean - 2 * stdDev) return "개선 필요 (하위 16%)";
     return "많은 노력 필요 (하위 2.3%)";
   };
@@ -119,7 +119,7 @@ const TotalDistribution: React.FC<TotalDistributionProps> = ({
           <AreaChart
             data={chartData}
             margin={{
-              top: 60,
+              top: 20,
               right: 30,
               left: 10,
               bottom: 60,
@@ -145,7 +145,39 @@ const TotalDistribution: React.FC<TotalDistributionProps> = ({
             <Tooltip
               content={({ active, payload }) => {
                 if (active && payload && payload.length) {
-                  const score = payload[0].payload.tScore;
+                  const currentX = payload[0].payload.tScore;
+                  const threshold = 3; // 수직선 근처 판단 기준 (총점은 범위가 넓어서 조금 더 크게)
+
+                  // 내 점수 수직선 근처인지 확인
+                  const distToMyScore = Math.abs(currentX - totalTScore);
+
+                  if (distToMyScore <= threshold) {
+                    // 내 점수 근처: 빨간색 특별 툴팁
+                    return (
+                      <div
+                        style={{
+                          background: "#ff4757",
+                          color: "white",
+                          padding: "12px 16px",
+                          borderRadius: "8px",
+                          boxShadow: "0 4px 8px rgba(0,0,0,0.2)",
+                          border: "2px solid #ff4757",
+                        }}
+                      >
+                        <p style={{ margin: 0, fontWeight: "bold", fontSize: "14px" }}>
+                          내 총 T-점수: {totalTScore.toFixed(1)}점
+                        </p>
+                        <p style={{ margin: "4px 0 0 0", fontSize: "12px" }}>
+                          상위 {(100 - percentile).toFixed(1)}%
+                        </p>
+                        <p style={{ margin: "4px 0 0 0", fontSize: "12px" }}>
+                          {scoreLevel}
+                        </p>
+                      </div>
+                    );
+                  }
+
+                  // 기본 툴팁 (수직선 근처가 아닌 경우)
                   return (
                     <div
                       style={{
@@ -157,10 +189,10 @@ const TotalDistribution: React.FC<TotalDistributionProps> = ({
                       }}
                     >
                       <p style={{ margin: 0, fontWeight: "bold" }}>
-                        총 T-점수: {score.toFixed(1)}
+                        총 T-점수: {currentX.toFixed(1)}
                       </p>
                       <p style={{ margin: "4px 0 0 0", fontSize: "0.9rem" }}>
-                        {getScoreLevel(score)}
+                        {getScoreLevel(currentX)}
                       </p>
                     </div>
                   );
@@ -178,34 +210,19 @@ const TotalDistribution: React.FC<TotalDistributionProps> = ({
               strokeWidth={2}
             />
 
-            {/* 평균선 - 위쪽에 배치 */}
+            {/* 평균선 - 레이블 제거 */}
             <ReferenceLine
               x={mean}
               stroke="#999"
               strokeDasharray="5 5"
-              label={{
-                value: `평균: ${mean.toFixed(0)}`,
-                position: "top",
-                fill: "#999",
-                fontSize: 12,
-                offset: 30,
-              }}
             />
 
-            {/* 학생의 총 T-점수 위치 - 그래프 위쪽에 배치 */}
+            {/* 학생의 총 T-점수 위치 - 레이블 제거 */}
             <ReferenceLine
               x={totalTScore}
               stroke="#ff4757"
               strokeWidth={2.5}
               strokeDasharray="0"
-              label={{
-                value: `내 점수: ${totalTScore.toFixed(1)}`,
-                position: "top",
-                fill: "#ff4757",
-                fontWeight: "bold",
-                fontSize: 13,
-                offset: 10,
-              }}
               isFront={true}
             />
             
