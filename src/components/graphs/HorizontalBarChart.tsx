@@ -61,19 +61,19 @@ const HorizontalBarChart: React.FC<HorizontalBarChartProps> = ({
   });
 
   const maxValue = showTScore ? 100 : Math.ceil(calculatedMax * 1.1);
-  const chartHeight = 400;
+  // 학생 수에 따라 동적으로 높이 계산 (학생당 50px + 여백)
+  const chartHeight = Math.max(400, data.length * 50 + 100);
 
   return (
-    <div style={{ width: "100%", height: "100%", display: "flex", flexDirection: "column", alignItems: "flex-start" }}>
+    <div style={{ width: "100%", display: "flex", flexDirection: "column", alignItems: "flex-start" }}>
       <h3 css={chartTitleStyle}>{title}</h3>
-      <div style={{ flex: 1, overflow: "auto", width: "100%", minHeight: 0, display: "flex", alignItems: "flex-start" }}>
-        <div style={{ width: "100%", height: chartHeight }}>
-          <ResponsiveContainer width="100%" height="100%">
-            <BarChart
-              data={data}
-              layout="vertical"
-              margin={{ top: 20, right: 30, left: 20, bottom: 40 }}
-            >
+      <div style={{ width: "100%", minHeight: chartHeight }}>
+        <ResponsiveContainer width="100%" height={chartHeight}>
+          <BarChart
+            data={data}
+            layout="vertical"
+            margin={{ top: 20, right: 30, left: 20, bottom: 40 }}
+          >
               <CartesianGrid strokeDasharray="3 3" />
               <XAxis
                 type="number"
@@ -98,8 +98,7 @@ const HorizontalBarChart: React.FC<HorizontalBarChartProps> = ({
                 name={showStacked ? "총점" : (singleCategory || "점수")}
               />
             </BarChart>
-          </ResponsiveContainer>
-        </div>
+        </ResponsiveContainer>
       </div>
     </div>
   );

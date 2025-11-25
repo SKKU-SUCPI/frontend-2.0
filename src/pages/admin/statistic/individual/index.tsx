@@ -38,7 +38,6 @@ const chartSectionStyle = css`
 const chartBoxStyle = css`
   flex: 1;
   min-height: 500px;
-  max-height: 600px;
   padding: 20px;
   border: 1px solid #e0e0e0;
   border-radius: 12px;
@@ -47,7 +46,6 @@ const chartBoxStyle = css`
   display: flex;
   flex-direction: column;
   position: relative;
-  overflow: hidden;
 `;
 
 const bottomRowStyle = css`
