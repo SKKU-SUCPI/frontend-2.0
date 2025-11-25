@@ -388,16 +388,34 @@ const IndividualStatisticLayout = () => {
   const createHorizontalBarChartData = () => {
     if (selectedUsers.length === 0) return [];
 
-    // 점수순으로 정렬 (높은 점수가 위로)
+    // rightChartPage에 따라 정렬 기준 변경 (높은 점수가 위로)
     const sortedUsers = [...selectedUsers].sort((a, b) => {
-      if (showTScore) {
-        const totalA = a.totalTScore || 0;
-        const totalB = b.totalTScore || 0;
-        return totalB - totalA;
+      if (rightChartPage === 0) {
+        // 전체 3Q 총합 기준 정렬
+        if (showTScore) {
+          const totalA = (a.tlq || 0) + (a.trq || 0) + (a.tcq || 0);
+          const totalB = (b.tlq || 0) + (b.trq || 0) + (b.tcq || 0);
+          return totalB - totalA;
+        } else {
+          const totalA = (a.lq || 0) + (a.rq || 0) + (a.cq || 0);
+          const totalB = (b.lq || 0) + (b.rq || 0) + (b.cq || 0);
+          return totalB - totalA;
+        }
+      } else if (rightChartPage === 1) {
+        // LQ 기준 정렬
+        const valueA = showTScore ? (a.tlq || 0) : (a.lq || 0);
+        const valueB = showTScore ? (b.tlq || 0) : (b.lq || 0);
+        return valueB - valueA;
+      } else if (rightChartPage === 2) {
+        // RQ 기준 정렬
+        const valueA = showTScore ? (a.trq || 0) : (a.rq || 0);
+        const valueB = showTScore ? (b.trq || 0) : (b.rq || 0);
+        return valueB - valueA;
       } else {
-        const totalA = a.totalScore || 0;
-        const totalB = b.totalScore || 0;
-        return totalB - totalA;
+        // CQ 기준 정렬
+        const valueA = showTScore ? (a.tcq || 0) : (a.cq || 0);
+        const valueB = showTScore ? (b.tcq || 0) : (b.cq || 0);
+        return valueB - valueA;
       }
     });
 

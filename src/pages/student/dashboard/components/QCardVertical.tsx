@@ -6,10 +6,23 @@ interface QCardVerticalProps {
   category: "LQ" | "RQ" | "CQ";
   description: string;
   score: number;
-  percentage: number;
+  tScore: number; // T-점수 (상위 퍼센티지 계산용, 토글과 무관)
   average: number;
   onViewAll?: () => void;
 }
+
+// T-점수 기반 백분위 계산 함수 (IndividualDistribution과 동일)
+const calculatePercentile = (value: number, mean: number, stdDev: number): number => {
+  const z = (value - mean) / stdDev;
+  const t = 1 / (1 + 0.2316419 * Math.abs(z));
+  const d = 0.3989423 * Math.exp((-z * z) / 2);
+  const probability =
+    d *
+    t *
+    (0.3193815 +
+      t * (-0.3565638 + t * (1.781478 + t * (-1.821256 + t * 1.330274))));
+  return z >= 0 ? (1 - probability) * 100 : probability * 100;
+};
 
 const cardStyle = css`
   border-radius: 12px;
@@ -122,10 +135,19 @@ const QCardVertical: React.FC<QCardVerticalProps> = ({
   category,
   description,
   score,
-  percentage,
+  tScore,
   average,
   onViewAll,
 }) => {
+  // T-점수 기반 상위 퍼센티지 계산 (토글과 무관하게 항상 T-점수 기준)
+  // T-점수는 3개 영역 합이 평균 50이 되도록 설계
+  // 따라서 각 영역의 평균은 50/3 ≈ 16.67
+  const mean = 50 / 3;
+  const stdDev = 10;
+  
+  const percentile = calculatePercentile(tScore, mean, stdDev);
+  const topPercentage = Math.max(0, Math.min(100, 100 - percentile));
+  
   return (
     <div css={cardStyle}>
       <div css={topSection}>
@@ -147,9 +169,9 @@ const QCardVertical: React.FC<QCardVerticalProps> = ({
       </div>
       <div css={barSection}>
         <div css={barContainerStyle}>
-          <div css={barStyle(100 - percentage)} />
+          <div css={barStyle(topPercentage)} />
         </div>
-        <span css={percentTextStyle}>상위 {percentage}%</span>
+        <span css={percentTextStyle}>상위 {topPercentage.toFixed(1)}%</span>
       </div>
       <div css={bottomSection}>학과 평균: {average}점</div>
     </div>
