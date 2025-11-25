@@ -38,16 +38,22 @@ const LineChart: React.FC<LineChartProps> = ({ data }) => {
             top: 5,
             right: 30,
             left: 20,
-            bottom: 5,
+            bottom: 25,
           }}
         >
           <CartesianGrid strokeDasharray="3 3" />
-          <XAxis dataKey="year" label={{ value: "연도", position: "bottom" }} />
+          <XAxis 
+            dataKey="year" 
+            label={{ value: "연도-월", position: "insideBottom", offset: -5 }} 
+          />
           <YAxis
             label={{ value: "점수", angle: -90, position: "insideLeft" }}
           />
           <Tooltip />
-          <Legend />
+          <Legend 
+            verticalAlign="bottom" 
+            wrapperStyle={{ paddingTop: "20px" }} 
+          />
           <Line
             type="monotone"
             dataKey="LQ"
