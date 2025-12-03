@@ -11,6 +11,7 @@ interface TeamStore {
   teams: Team[];
   addTeam: (team: Team) => void;
   removeTeam: (teamId: number) => void;
+  updateTeam: (team: Team) => void;
   clearTeams: () => void;
 }
 
@@ -25,6 +26,11 @@ export const useTeamStore = create<TeamStore>((set) => ({
   removeTeam: (teamId: number) =>
     set((state) => ({
       teams: state.teams.filter((team) => team.id !== teamId),
+    })),
+
+  updateTeam: (team: Team) =>
+    set((state) => ({
+      teams: state.teams.map((t) => (t.id === team.id ? team : t)),
     })),
 
   clearTeams: () => set({ teams: [] }),

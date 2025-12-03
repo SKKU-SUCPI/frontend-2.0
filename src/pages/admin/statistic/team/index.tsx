@@ -22,6 +22,8 @@ import IconButton from "@mui/material/IconButton";
 import ChevronLeftIcon from "@mui/icons-material/ChevronLeft";
 import ChevronRightIcon from "@mui/icons-material/ChevronRight";
 import RefreshIcon from "@mui/icons-material/Refresh";
+import EditIcon from "@mui/icons-material/Edit";
+import DeleteIcon from "@mui/icons-material/Delete";
 import SelectedUsersTable from "@/components/table/SelectedUsersTable";
 import type { AdminStudentResponseItem } from "@/apis/admin/getStudentsList";
 
@@ -211,12 +213,6 @@ const selectedTeamCardStyle = css`
   box-shadow: 0 0 0 1px rgba(74, 222, 128, 0.4);
 `;
 
-const infoTextStyle = css`
-  font-size: 0.8rem;
-  color: #888;
-  margin-bottom: 12px;
-`;
-
 const selectedMembersBoxStyle = css`
   margin-top: 8px;
   margin-bottom: 12px;
@@ -323,8 +319,9 @@ const TeamStatisticLayout = () => {
   const [modalOpen, setModalOpen] = useState(false);
   const [selectedStudent, setSelectedStudent] = useState<SelectedUser | null>(null);
   const studentListRef = useRef<HTMLDivElement>(null);
-  const { teams, addTeam, removeTeam } = useTeamStore();
+  const { teams, addTeam, removeTeam, updateTeam } = useTeamStore();
   const [teamModalOpen, setTeamModalOpen] = useState(false);
+  const [editingTeam, setEditingTeam] = useState<Team | null>(null);
   const [teamName, setTeamName] = useState("");
   const [teamMemberIds, setTeamMemberIds] = useState<number[]>([]);
   const [memberSearch, setMemberSearch] = useState("");
@@ -341,8 +338,11 @@ const TeamStatisticLayout = () => {
   } = useTeamSelectedUserStore();
 
   const pageable: Pageable = {
+    name: null,
+    department: null,
     page: currentPage - 1, // API는 0-based pagination을 사용
     size: pageSize,
+    sort: "",
   };
 
   const { data: studentsData, isLoading } = useStudentsList(pageable);
@@ -627,7 +627,6 @@ const TeamStatisticLayout = () => {
 
   const handleRemoveSelectedTeam = (teamId: number) => {
     removeUser(teamId);
-    removeTeam(teamId);
   };
 
   const handleModalClose = () => {
@@ -636,6 +635,7 @@ const TeamStatisticLayout = () => {
   };
 
   const handleOpenTeamModal = () => {
+    setEditingTeam(null);
     setTeamName("");
     setTeamMemberIds([]);
     setTeamModalOpen(true);
@@ -643,6 +643,7 @@ const TeamStatisticLayout = () => {
 
   const handleCloseTeamModal = () => {
     setTeamModalOpen(false);
+    setEditingTeam(null);
   };
 
   const toggleTeamMember = (studentId: number) => {
@@ -651,6 +652,23 @@ const TeamStatisticLayout = () => {
         ? prev.filter((id) => id !== studentId)
         : [...prev, studentId]
     );
+  };
+
+  const handleEditTeam = (team: Team) => {
+    setEditingTeam(team);
+    setTeamName(team.name);
+    setTeamMemberIds(team.members.map((member) => member.id));
+    setTeamModalOpen(true);
+  };
+
+  const handleDeleteTeam = (teamId: number) => {
+    removeTeam(teamId);
+    if (isUserSelected(teamId)) {
+      removeUser(teamId);
+    }
+    if (editingTeam && editingTeam.id === teamId) {
+      setEditingTeam(null);
+    }
   };
 
   const handleRegisterTeam = () => {
@@ -686,14 +704,33 @@ const TeamStatisticLayout = () => {
       return;
     }
 
-    const newTeam: Team = {
-      id: Date.now(),
-      name: teamName.trim(),
-      members: selectedMembers,
-    };
+    if (editingTeam) {
+      const updatedTeam: Team = {
+        ...editingTeam,
+        name: teamName.trim(),
+        members: selectedMembers,
+      };
 
-    addTeam(newTeam);
+      updateTeam(updatedTeam);
+
+      // 선택된 팀이면 요약 데이터도 갱신
+      if (isUserSelected(updatedTeam.id)) {
+        const summary = createTeamSummary(updatedTeam);
+        removeUser(updatedTeam.id);
+        addUser(summary);
+      }
+    } else {
+      const newTeam: Team = {
+        id: Date.now(),
+        name: teamName.trim(),
+        members: selectedMembers,
+      };
+
+      addTeam(newTeam);
+    }
+
     setTeamModalOpen(false);
+    setEditingTeam(null);
     setTeamName("");
     setTeamMemberIds([]);
   };
@@ -845,9 +882,7 @@ const TeamStatisticLayout = () => {
             ) : (
               teams.map((team) => {
                 const summary = team.members.length > 0 ? createTeamSummary(team) : null;
-                const firstTwoMembers = team.members.slice(0, 2);
-                const namesText = firstTwoMembers.map((m) => m.name).join(", ");
-                const extraCount = team.members.length - firstTwoMembers.length;
+                const namesText = team.members.map((m) => m.name).join(", ");
                 const isSelected = isUserSelected(team.id);
 
                 return (
@@ -856,15 +891,43 @@ const TeamStatisticLayout = () => {
                     css={[teamCardStyle, isSelected && selectedTeamCardStyle]}
                     onClick={() => handleSelectTeam(team)}
                   >
-                    <span css={teamNameStyle}>{team.name}</span>
+                    <div
+                      style={{
+                        display: "flex",
+                        alignItems: "center",
+                        justifyContent: "space-between",
+                        gap: 8,
+                      }}
+                    >
+                      <span css={teamNameStyle}>{team.name}</span>
+                      <span>
+                        <IconButton
+                          size="small"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            handleEditTeam(team);
+                          }}
+                          aria-label="팀 수정"
+                        >
+                          <EditIcon fontSize="small" />
+                        </IconButton>
+                        <IconButton
+                          size="small"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            handleDeleteTeam(team.id);
+                          }}
+                          aria-label="팀 삭제"
+                        >
+                          <DeleteIcon fontSize="small" />
+                        </IconButton>
+                      </span>
+                    </div>
                     <span css={teamMetaStyle}>
                       구성원 {team.members.length}명
                     </span>
                     {namesText && (
-                      <span css={teamMembersNamesStyle}>
-                        {namesText}
-                        {extraCount > 0 && ` 외 ${extraCount}명`}
-                      </span>
+                      <span css={teamMembersNamesStyle}>{namesText}</span>
                     )}
                     {summary && (
                       <span css={teamMetaStyle}>
