@@ -77,6 +77,7 @@ const adminRouteMap = {
     [
       { path: "/god/statistic/dashboard", label: "대시보드" },
       { path: "/god/statistic/individual", label: "개인별 통계" },
+      { path: "/god/statistic/team", label: "팀별 통계" },
     ],
     [
       { path: "/god/activity/dashboard", label: "대시보드" },
@@ -88,6 +89,7 @@ const adminRouteMap = {
     [
       { path: "/superGod/statistic/dashboard", label: "대시보드" },
       { path: "/superGod/statistic/individual", label: "개인별 통계" },
+      { path: "/superGod/statistic/team", label: "팀별 통계" },
     ],
     [
       { path: "/superGod/activity/dashboard", label: "대시보드" },
