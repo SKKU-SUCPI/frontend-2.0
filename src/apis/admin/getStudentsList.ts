@@ -35,7 +35,26 @@ export const getStudentsList = async (
   const response = await axiosInstance.get("/admin/students", {
     params: pageable,
   });
-  return response.data.data;
+  const raw = response.data.data as StudentsListResponse;
+
+  const safeNumberOrNull = (value: unknown): number | null => {
+    if (typeof value === "number" && Number.isFinite(value)) return value;
+    if (typeof value === "string") {
+      const parsed = parseFloat(value);
+      if (Number.isFinite(parsed)) return parsed;
+    }
+    return 0;
+  };
+
+  return {
+    ...raw,
+    content: raw.content.map((student) => ({
+      ...student,
+      tlq: safeNumberOrNull(student.tlq ?? null),
+      trq: safeNumberOrNull(student.trq ?? null),
+      tcq: safeNumberOrNull(student.tcq ?? null),
+    })),
+  };
 };
 
 export default getStudentsList;
