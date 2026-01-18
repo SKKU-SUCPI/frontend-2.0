@@ -1,7 +1,9 @@
 import { useQuery } from "@tanstack/react-query";
-import getStudentsList from "@/apis/admin/getStudentsList";
+import getStudentsList, {
+  StudentsListResponse,
+} from "@/apis/admin/getStudentsList";
 
-interface pageable {
+export interface Pageable {
   name: string | null;
   department: string | null;
   page: number;
@@ -9,8 +11,8 @@ interface pageable {
   sort: string;
 }
 
-const useStudentsList = (pageable: pageable) => {
-  return useQuery({
+const useStudentsList = (pageable: Pageable) => {
+  return useQuery<StudentsListResponse>({
     queryKey: ["studentsList", pageable],
     queryFn: () => getStudentsList(pageable),
     enabled: !!pageable,

@@ -1,10 +1,9 @@
 import axiosInstance from "@/apis/utils/axiosInterceptor";
 
-const postSubmitState = async (id: string, state: string, comment: string) => {
+const postSubmitState = async (id: string, state: string) => {
   const response = await axiosInstance.post(`/admin/submit/state`, {
-    id: id,
-    state: state,
-    comment: comment,
+    id,
+    state,
   });
   return response.data;
 };

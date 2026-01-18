@@ -7,15 +7,18 @@ const useStudentActivitySubmit = () => {
   return useMutation({
     mutationFn: async ({
       activityId,
+      title,
       content,
       files,
     }: {
       activityId: number;
+      title: string;
       content: string;
       files?: File[];
     }) => {
       const submitResponse = await postStudentActivity({
         activityId,
+        title,
         content,
       });
       if (files && files.length > 0) {

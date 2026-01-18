@@ -17,6 +17,7 @@ import AdminActivityList from "@/pages/admin/activiy/list";
 import AdminActivityDashboard from "@/pages/admin/activiy/dashboard";
 import AdminStatisticDashboard from "@/pages/admin/statistic/dashboard";
 import AdminStatisticIndividual from "@/pages/admin/statistic/individual";
+import AdminStatisticTeam from "@/pages/admin/statistic/team";
 
 // superAdmin
 import SuperAdminParameter from "@/pages/superAdmin";
@@ -85,6 +86,7 @@ const Router = createBrowserRouter([
             children: [
               { path: "dashboard", element: <AdminStatisticDashboard /> },
               { path: "individual", element: <AdminStatisticIndividual /> },
+              { path: "team", element: <AdminStatisticTeam /> },
             ],
           },
           {
@@ -119,7 +121,7 @@ const Router = createBrowserRouter([
             children: [
               { path: "dashboard", element: <AdminStatisticDashboard /> },
               { path: "individual", element: <AdminStatisticIndividual /> },
-              { path: "parameter", element: <SuperAdminParameter /> },
+              { path: "team", element: <AdminStatisticTeam /> },
             ],
           },
           {
@@ -130,6 +132,7 @@ const Router = createBrowserRouter([
                 path: "list",
                 element: <AdminActivityList />,
               },
+              { path: "parameter", element: <SuperAdminParameter /> },
             ],
           },
         ],

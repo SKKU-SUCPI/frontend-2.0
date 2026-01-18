@@ -11,6 +11,7 @@ interface StudentCardProps {
   cq?: number;
   onClick?: () => void;
   isSelected?: boolean;
+  showTScore?: boolean;
 }
 
 const cardWrapperStyle = (isSelected: boolean) => css`
@@ -80,7 +81,15 @@ const IndividualStudentCard: React.FC<StudentCardProps> = ({
   cq = 0,
   onClick,
   isSelected = false,
+  showTScore = false,
 }) => {
+  const formatScore = (value: number) => {
+    if (showTScore) {
+      return (Math.round(value * 100) / 100).toFixed(2);
+    }
+    return value.toString();
+  };
+
   return (
     <div css={cardWrapperStyle(isSelected)} onClick={onClick}>
       <div css={infoSectionStyle}>
@@ -90,9 +99,9 @@ const IndividualStudentCard: React.FC<StudentCardProps> = ({
         </span>
       </div>
       <div css={scoreSectionStyle}>
-        <span css={totalScoreStyle}>{totalScore}점</span>
+        <span css={totalScoreStyle}>{formatScore(totalScore)}점</span>
         <span css={qScoreStyle}>
-          LQ:{lq} RQ:{rq} CQ:{cq}
+          LQ:{formatScore(lq)} RQ:{formatScore(rq)} CQ:{formatScore(cq)}
         </span>
       </div>
     </div>

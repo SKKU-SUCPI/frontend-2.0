@@ -10,13 +10,12 @@ import {
 } from "recharts";
 import { css } from "@emotion/react";
 
+type ChartDataRecord = Record<string, number | undefined>;
+
 interface SimpleBarChartProps {
-  data: {
-    LQ: number;
-    RQ: number;
-    CQ: number;
-  };
+  data: ChartDataRecord;
   title: string;
+  showTScore?: boolean;
 }
 
 const tooltipContainerStyle = css`
@@ -41,43 +40,65 @@ const tooltipItemStyle = css`
 
 const chartContainerStyle = css`
   width: 100%;
-  height: 300px;
+  height: 350px;
 `;
 
 const titleStyle = css`
-  font-size: 1.2rem;
-  font-weight: bold;
-  margin-bottom: 15px;
+  font-size: 1.1rem;
+  font-weight: 600;
+  margin-bottom: 16px;
+  text-align: start;
   color: #333;
-  text-align: center;
 `;
 
-const SimpleBarChart: React.FC<SimpleBarChartProps> = ({ data, title }) => {
-  const chartData = [
-    { name: "LQ", value: data.LQ, fill: "#0088FE" },
-    { name: "RQ", value: data.RQ, fill: "#00C49F" },
-    { name: "CQ", value: data.CQ, fill: "#FFBB28" },
-  ];
+const barColorMap: Record<string, string> = {
+  LQ: "#0088FE",
+  RQ: "#00C49F",
+  CQ: "#FFBB28",
+  "T-합계": "#845EC2",
+};
+
+const SimpleBarChart: React.FC<SimpleBarChartProps> = ({
+  data,
+  title,
+  showTScore = false,
+}) => {
+  const chartData = Object.entries(data)
+    .filter(([, value]) => typeof value === "number" && !Number.isNaN(value))
+    .map(([name, value]) => ({
+      name,
+      value: value as number,
+      fill: barColorMap[name] ?? "#8884d8",
+    }));
 
   return (
-    <div>
-      <div css={titleStyle}>{title}</div>
+    <div style={{ width: "100%", height: "100%", display: "flex", flexDirection: "column" }}>
+      <h3 css={titleStyle}>{title}</h3>
       <div css={chartContainerStyle}>
         <ResponsiveContainer width="100%" height="100%">
           <BarChart
             data={chartData}
-            margin={{ top: 20, right: 30, left: 20, bottom: 5 }}
+            margin={{ top: 20, right: 30, left: 20, bottom: 20 }}
           >
             <CartesianGrid strokeDasharray="3 3" />
-            <XAxis dataKey="name" />
-            <YAxis domain={[0, 33]} />
+            <XAxis dataKey="name" tick={{ fontSize: 11 }} />
+            <YAxis 
+              domain={showTScore ? [0, 100] : [0, 33]} 
+              tick={{ fontSize: 11 }}
+            />
             <Tooltip
               content={({ active, payload, label }) => {
                 if (active && payload && payload.length) {
                   return (
                     <div css={tooltipContainerStyle}>
                       <p css={tooltipTitleStyle}>{label}</p>
-                      <p css={tooltipItemStyle}>점수: {payload[0]?.value}점</p>
+                      <p css={tooltipItemStyle}>
+                        점수:{" "}
+                        {showTScore
+                          ? Number(payload[0]?.value).toFixed(2)
+                          : payload[0]?.value}
+                        점
+                      </p>
                     </div>
                   );
                 }
