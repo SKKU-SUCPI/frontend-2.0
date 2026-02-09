@@ -9,7 +9,7 @@ const patchStudentActivity = async ({
   title: string;
   content: string;
 }) => {
-  const response = await axiosInstance.patch(`/student/submits/${submitId}`, {
+  const response = await axiosInstance.post(`/student/submits/patch/${submitId}`, {
     title,
     content,
   });

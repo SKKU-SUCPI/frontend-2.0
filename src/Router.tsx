@@ -23,7 +23,7 @@ import AdminStatisticTeam from "@/pages/admin/statistic/team";
 import SuperAdminParameter from "@/pages/superAdmin";
 
 // 임시 로그인
-// import Login from "@/pages/auth/Login";
+import Login from "@/pages/auth/Login";
 
 const Router = createBrowserRouter([
   // Public root (홈페이지)

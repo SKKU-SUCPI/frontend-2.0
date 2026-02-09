@@ -8,8 +8,8 @@ export interface DeleteActivityResponse {
 }
 
 const deleteActivity = async (activityId: number): Promise<DeleteActivityResponse> => {
-  const response = await axiosInstance.delete<DeleteActivityResponse>(
-    `/super-admin/activity/${activityId}`
+  const response = await axiosInstance.post<DeleteActivityResponse>(
+    `/super-admin/activity/delete/${activityId}`
   );
   return response.data;
 };
