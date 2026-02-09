@@ -14,7 +14,7 @@ export interface PutRatioResponse {
 }
 
 const putRatio = async (data: PutRatioRequest): Promise<PutRatioResponse> => {
-  const response = await axiosInstance.put<PutRatioResponse>(
+  const response = await axiosInstance.post<PutRatioResponse>(
     "/super-admin/ratio",
     data
   );

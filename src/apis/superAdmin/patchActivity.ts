@@ -19,8 +19,8 @@ export interface PatchActivityResponse {
 }
 
 const patchActivity = async (data: PatchActivityRequest): Promise<PatchActivityResponse> => {
-  const response = await axiosInstance.patch<PatchActivityResponse>(
-    "/super-admin/activity",
+  const response = await axiosInstance.post<PatchActivityResponse>(
+    "/super-admin/activity/patch",
     data
   );
   return response.data;
