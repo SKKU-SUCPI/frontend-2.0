@@ -140,11 +140,11 @@ const Router = createBrowserRouter([
     ],
   },
 
-  // {
-  //   // 개발용 로그인 창
-  //   path: "/test/login",
-  //   element: <Login />,
-  // },
+  {
+    // 개발용 로그인 창
+    path: "/test/login",
+    element: <Login />,
+  },
   // Catch-all for 404
   {
     path: "*",
