@@ -240,10 +240,10 @@ const selectedMembersListStyle = css`
 const selectedMemberChipStyle = css`
   padding: 4px 8px;
   border-radius: 999px;
-  background-color: #e3f2fd;
-  border: 1px solid #90caf9;
+  background-color: #e8f5e9;
+  border: 1px solid #a5d6a7;
   font-size: 0.8rem;
-  color: #1565c0;
+  color: #2e7d32;
 `;
 
 const noDataStyle = css`
@@ -1170,6 +1170,15 @@ const TeamStatisticLayout = () => {
               showFirstButton
               showLastButton
               size="medium"
+              sx={{
+              "& .MuiPaginationItem-root.Mui-selected": {
+                backgroundColor: "#4CAF50",
+                color: "white",
+                "&:hover": {
+                  backgroundColor: "#45a049",
+                },
+              },
+            }}
             />
           </Box>
         </DialogContent>
