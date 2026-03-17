@@ -4,7 +4,6 @@ import IndividualStudentCard from "./components/IndividualStudentCard";
 import AverageMetrics from "./components/AverageMetrics";
 import StudentDistributionModal from "./components/StudentDistributionModal";
 import useStudentsList, { Pageable } from "@/hooks/admin/useStudentsList";
-// import Loading from "@/components/layouts/Loading";
 import Pagination from "@mui/material/Pagination";
 import Box from "@mui/material/Box";
 import Dialog from "@mui/material/Dialog";
@@ -325,7 +324,6 @@ const TeamStatisticLayout = () => {
   const [teamModalOpen, setTeamModalOpen] = useState(false);
   const [editingTeam, setEditingTeam] = useState<Team | null>(null);
   const [teamName, setTeamName] = useState("");
-  // const [teamMemberIds, setTeamMemberIds] = useState<number[]>([]);
   const [selectedTeamMembers, setSelectedTeamMembers] = useState<AdminStudentResponseItem[]>([]);
   const [memberSearch, setMemberSearch] = useState("");
   const [searchInput, setSearchInput] = useState("");
@@ -335,7 +333,7 @@ const TeamStatisticLayout = () => {
     const handler = setTimeout(() => {
       setMemberSearch(searchInput);
       setCurrentPage(1);
-    }, 0);
+    }, 300);
     return () => clearTimeout(handler);
   }, [searchInput]);
 
@@ -353,16 +351,13 @@ const TeamStatisticLayout = () => {
   // update soon
   const pageable: Pageable = {
     name:  memberSearch ||  null,
-    department: /* memberSearch || */ null,
-    // studentId: memberSearch || null,
+    department: null,
     page: memberSearch ? 0 : currentPage - 1, // API는 0-based pagination을 사용
     size: memberSearch ? 10000 : pageSize,
     sort: "",
   };
 
   const { data: studentsData, isLoading } = useStudentsList(pageable);
-
-  // if (isLoading) return <Loading />;
 
   const totalPages = studentsData?.totalPage || 1;
 
@@ -386,26 +381,7 @@ const TeamStatisticLayout = () => {
   ): number => {
     return parseTScore(tlq) + parseTScore(trq) + parseTScore(tcq);
   };
-  /*
-  const modalStudents = studentsData?.content ?? [];
-  /*
-  const filteredModalStudents = modalStudents.filter((student) => {
-    if (!searchInput.trim()) return true;
-    const q = searchInput.trim().toLowerCase();
-    /*return (
-      student.name.toLowerCase().includes(q) ||
-      student.studentId.toLowerCase().includes(q) ||
-      (student.department ?? "").toLowerCase().includes(q)
-    );
-
-    const nameMatch = (student.name ?? "").toLowerCase().includes(q);
-  const idMatch = (student.studentId ?? "").toLowerCase().includes(q);
-  const deptMatch = (student.department ?? "").toLowerCase().includes(q);
-
-  // Return true if ANY of the three match
-  return nameMatch || idMatch || deptMatch;
-  });
-  */
+  
   type ChartUser = AdminStudentResponseItem | SelectedUser;
 
   const createBarChartData = (user: ChartUser) => {
@@ -671,15 +647,6 @@ const TeamStatisticLayout = () => {
     setSelectedTeamMembers([]);
   };
 
-  /*
-  const toggleTeamMember = (studentId: number) => {
-    setTeamMemberIds((prev) =>
-      prev.includes(studentId)
-        ? prev.filter((id) => id !== studentId)
-        : [...prev, studentId]
-    );
-  };
-  */
  const toggleTeamMember = (student: AdminStudentResponseItem) => {
   setSelectedTeamMembers((prev) => {
     const isAlreadySelected = prev.some((students) => students.id === student.id);
@@ -694,7 +661,6 @@ const TeamStatisticLayout = () => {
   const handleEditTeam = (team: Team) => {
     setEditingTeam(team);
     setTeamName(team.name);
-    //setTeamMemberIds(team.members.map((member) => member.id));
     setSelectedTeamMembers(team.members.map((member) => ({
       id: Number(member.id),
       name: member.name,
@@ -729,9 +695,7 @@ const TeamStatisticLayout = () => {
       return;
     }
 
-    //const allStudents = studentsData?.content ?? [];
-    const selectedMembers: SelectedUser[] = selectedTeamMembers //allStudents
-      //.filter((s) => teamMemberIds.includes(s.id))
+    const selectedMembers: SelectedUser[] = selectedTeamMembers
       .map((student) => ({
         id: student.id,
         name: student.name,
@@ -784,7 +748,6 @@ const TeamStatisticLayout = () => {
     setTeamModalOpen(false);
     setEditingTeam(null);
     setTeamName("");
-    //setTeamMemberIds([]);
     setSelectedTeamMembers([]);
   };
 
@@ -1068,25 +1031,17 @@ const TeamStatisticLayout = () => {
             margin="normal"
           />
           {/* 현재 선택된 학생 요약 */}
-          {/*((studentsData?.content ?? []).filter((s) =>
-            teamMemberIds.includes(s.id)
-          ).length > 0)*/
-          selectedTeamMembers.length > 0 && (
+          {selectedTeamMembers.length > 0 && (
             <div css={selectedMembersBoxStyle}>
               <div css={selectedMembersTitleStyle}>
                 현재 선택된 학생 (
                 {
-                  /*(studentsData?.content ?? []).filter((s) =>
-                    teamMemberIds.includes(s.id)
-                  ).length*/
                   selectedTeamMembers.length
                 }
                 명)
               </div>
               <div css={selectedMembersListStyle}>
-                {/*(studentsData?.content ?? [])
-                  .filter((s) => teamMemberIds.includes(s.id))*/
-                  selectedTeamMembers
+                {selectedTeamMembers
                   .map((student) => (
                     <span key={student.id} css={selectedMemberChipStyle}>
                       {student.name} ({student.studentId})
@@ -1113,9 +1068,8 @@ const TeamStatisticLayout = () => {
                 <div css={noDataStyle}>선택할 수 있는 학생이 없습니다.</div>
               ) : (
                 <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px', marginTop: '8px' }}>
-                  { /*filteredModalStudents*/(studentsData?.content ?? []).map((student) => {
-                    const isSelected = /*teamMemberIds.includes(student.id);*/
-                    selectedTeamMembers.some((students) => students.id === student.id);
+                  { (studentsData?.content ?? []).map((student) => {
+                    const isSelected = selectedTeamMembers.some((students) => students.id === student.id);
                     return (
                       <IndividualStudentCard
                         key={student.id}
