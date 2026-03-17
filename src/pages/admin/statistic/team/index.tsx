@@ -335,7 +335,7 @@ const TeamStatisticLayout = () => {
     const handler = setTimeout(() => {
       setMemberSearch(searchInput);
       setCurrentPage(1);
-    }, 300);
+    }, 0);
     return () => clearTimeout(handler);
   }, [searchInput]);
 
@@ -352,7 +352,7 @@ const TeamStatisticLayout = () => {
 
   // update soon
   const pageable: Pageable = {
-    name: /* memberSearch || */ null,
+    name:  memberSearch ||  null,
     department: /* memberSearch || */ null,
     // studentId: memberSearch || null,
     page: memberSearch ? 0 : currentPage - 1, // API는 0-based pagination을 사용
@@ -386,8 +386,9 @@ const TeamStatisticLayout = () => {
   ): number => {
     return parseTScore(tlq) + parseTScore(trq) + parseTScore(tcq);
   };
-
+  /*
   const modalStudents = studentsData?.content ?? [];
+  /*
   const filteredModalStudents = modalStudents.filter((student) => {
     if (!searchInput.trim()) return true;
     const q = searchInput.trim().toLowerCase();
@@ -395,7 +396,7 @@ const TeamStatisticLayout = () => {
       student.name.toLowerCase().includes(q) ||
       student.studentId.toLowerCase().includes(q) ||
       (student.department ?? "").toLowerCase().includes(q)
-    );*/
+    );
 
     const nameMatch = (student.name ?? "").toLowerCase().includes(q);
   const idMatch = (student.studentId ?? "").toLowerCase().includes(q);
@@ -404,7 +405,7 @@ const TeamStatisticLayout = () => {
   // Return true if ANY of the three match
   return nameMatch || idMatch || deptMatch;
   });
-
+  */
   type ChartUser = AdminStudentResponseItem | SelectedUser;
 
   const createBarChartData = (user: ChartUser) => {
@@ -1112,7 +1113,7 @@ const TeamStatisticLayout = () => {
                 <div css={noDataStyle}>선택할 수 있는 학생이 없습니다.</div>
               ) : (
                 <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px', marginTop: '8px' }}>
-                  { filteredModalStudents.map((student) => {
+                  { /*filteredModalStudents*/(studentsData?.content ?? []).map((student) => {
                     const isSelected = /*teamMemberIds.includes(student.id);*/
                     selectedTeamMembers.some((students) => students.id === student.id);
                     return (
