@@ -6,7 +6,6 @@ import getStudentsList, {
 export interface Pageable {
   name: string | null;
   department: string | null;
-  // studentId: string | null;
   page: number;
   size: number;
   sort: string;
