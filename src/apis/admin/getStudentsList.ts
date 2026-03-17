@@ -3,7 +3,6 @@ import axiosInstance from "@/apis/utils/axiosInterceptor";
 interface Pageable {
   name: string | null;
   department: string | null;
-  // studentId: string | null;
   page: number;
   size: number;
   sort: string;
