@@ -503,7 +503,7 @@ const TeamStatisticLayout = () => {
       const user = selectedUsers[chartPage - 1];
       return {
         data: createBarChartData(user),
-        title: `${user.name} (${user.studentId})`,
+        title: `${user.name}`,
       };
     }
   };
