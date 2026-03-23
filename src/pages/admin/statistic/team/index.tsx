@@ -1127,14 +1127,14 @@ const TeamStatisticLayout = () => {
               showLastButton
               size="medium"
               sx={{
-              "& .MuiPaginationItem-root.Mui-selected": {
-                backgroundColor: "#4CAF50",
-                color: "white",
-                "&:hover": {
-                  backgroundColor: "#45a049",
+                "& .MuiPaginationItem-root.Mui-selected": {
+                  backgroundColor: "#4CAF50",
+                  color: "white",
+                  "&:hover": {
+                    backgroundColor: "#45a049",
+                  },
                 },
-              },
-            }}
+              }}
             />
           </Box>
         </DialogContent>
