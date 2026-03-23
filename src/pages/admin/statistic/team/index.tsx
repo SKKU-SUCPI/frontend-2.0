@@ -1122,7 +1122,6 @@ const TeamStatisticLayout = () => {
               count={totalPages}
               page={currentPage}
               onChange={(_, value) => handlePageChange(value)}
-              color="primary"
               showFirstButton
               showLastButton
               size="medium"
