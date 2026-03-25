@@ -352,8 +352,8 @@ const TeamStatisticLayout = () => {
   const pageable: Pageable = {
     name:  memberSearch ||  null,
     department: null,
-    page: memberSearch ? 0 : currentPage - 1, // API는 0-based pagination을 사용
-    size: memberSearch ? 10000 : pageSize,
+    page: currentPage - 1, // API는 0-based pagination을 사용
+    size: pageSize,
     sort: "",
   };
 
