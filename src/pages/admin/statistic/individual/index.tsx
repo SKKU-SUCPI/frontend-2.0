@@ -247,6 +247,7 @@ const IndividualStatisticLayout = () => {
   const pageable: Pageable = {
     name: appliedFilter.name,
     department: appliedFilter.department,
+    keyword: null,
     page: currentPage - 1, // API는 0-based pagination을 사용
     size: pageSize,
     sort: appliedFilter.sort,
