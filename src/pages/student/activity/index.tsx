@@ -132,10 +132,18 @@ const StudentActivityList: React.FC = () => {
               return prev;
             });
           }}
-          color="primary"
           showFirstButton
           showLastButton
           size="large"
+          sx={{
+                "& .MuiPaginationItem-root.Mui-selected": {
+                  backgroundColor: "#4CAF50",
+                  color: "white",
+                  "&:hover": {
+                    backgroundColor: "#45a049",
+                  },
+                },
+              }}
         />
       </Box>
 
