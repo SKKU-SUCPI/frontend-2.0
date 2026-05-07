@@ -1,6 +1,6 @@
 name: Close Linked Issues on Merge
 
-on:
+"on":
   pull_request:
     types:
       - closed
