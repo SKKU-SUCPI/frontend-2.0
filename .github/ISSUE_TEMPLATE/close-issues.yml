@@ -1,6 +1,7 @@
 name: Close Linked Issues on Merge
- 
-"on":
+
+# yamllint disable-line rule:truthy
+on:
   pull_request:
     types: [closed]
     branches:
