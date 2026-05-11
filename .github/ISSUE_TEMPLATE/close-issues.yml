@@ -1,6 +1,6 @@
 name: Close Linked Issues on Merge
  
-on:
+"on":
   pull_request:
     types: [closed]
     branches:
@@ -44,3 +44,4 @@ jobs:
                 console.error(`Failed to close issue #${issueNumber}: ${error.message}`);
               }
             }
+ 
