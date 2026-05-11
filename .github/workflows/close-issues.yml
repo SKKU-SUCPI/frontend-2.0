@@ -4,7 +4,6 @@ on:
     types: [closed]
     branches:
       - develop
-      - gdl
 jobs:
   close-issues:
     if: github.event.pull_request.merged == true
