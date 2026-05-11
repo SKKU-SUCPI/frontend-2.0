@@ -1,12 +1,9 @@
 name: Close Linked Issues on Merge
-
-# yamllint disable-line rule:truthy
-on:
+"on":
   pull_request:
     types: [closed]
     branches:
       - develop
- 
 jobs:
   close-issues:
     if: github.event.pull_request.merged == true
@@ -23,14 +20,12 @@ jobs:
               console.log("No PR description found. Skipping.");
               return;
             }
- 
             const regex = /(?:close|closes|closed|fix|fixes|fixed|resolve|resolves|resolved)\s+#(\d+)/ig;
             const issueNumbers = new Set();
             let match;
             while ((match = regex.exec(prBody)) !== null) {
               issueNumbers.add(parseInt(match[1], 10));
             }
- 
             for (const issueNumber of issueNumbers) {
               console.log(`Found issue #${issueNumber}, attempting to close...`);
               try {
