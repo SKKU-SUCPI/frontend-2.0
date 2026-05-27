@@ -3,7 +3,7 @@ import { css } from "@emotion/react";
 import Modal from "@/components/overlays/Modal";
 import useActivities from "@/hooks/common/useActivities";
 // import FlexBox from "@/styles/components/Flexbox";
-import { useMemo, useRef, useCallback } from "react";
+import { useMemo, useRef, useCallback, useState } from "react";
 
 interface CriteriaModalProps {
   open: boolean;
@@ -85,6 +85,17 @@ const chipStyle = css`
   &:hover { border-color: #4caf50; color: #2e7d32; }
 `;
 
+// ADD THIS NEW STYLE HERE
+const activeChipStyle = css`
+  background-color: #4caf50;
+  color: white;
+  border-color: #4caf50;
+  font-weight: 600;
+  &:hover {
+    color: white; /* Keep text white even on hover when active */
+  }
+`;
+
 const lineCellStyle = css`
   display: flex;
   gap: 8px;
@@ -122,7 +133,17 @@ const refreshButtonStyle = css`
 
 export default function CriteriaModal({ open, onClose }: CriteriaModalProps) {
   const { grouped, isLoading, isFetching, refetch, dataUpdatedAt } = useActivities();
+  
+  const [selectedFilter, setSelectedFilter] = useState<{
+    type: 'cat' | 'class';
+    key: string;
+  } | null>(null);
 
+  const handleFilterClick = (type: 'cat' | 'class', key: string) => {
+    setSelectedFilter({ type, key });
+  };
+
+  const [selectedKey, setSelectedKey] = useState<string | null>(null);
   const sectionRefs = useRef<Record<string, HTMLDivElement | null>>({});
   const setSectionRef = useCallback((key: string) => (el: HTMLDivElement | null) => {
     sectionRefs.current[key] = el;
@@ -163,7 +184,7 @@ export default function CriteriaModal({ open, onClose }: CriteriaModalProps) {
       </div>
 
       {/* 목차 */}
-      <div css={tocWrapStyle}>
+      {/*<div css={tocWrapStyle}>
         <div css={tocGroupStyle}>
           <strong>영역별 평가 기준</strong>
           {grouped?.byCategory &&
@@ -182,8 +203,101 @@ export default function CriteriaModal({ open, onClose }: CriteriaModalProps) {
               </button>
             ))}
         </div>
+      </div>*/}
+      <div css={tocWrapStyle}>
+        <div css={tocGroupStyle}>
+          <strong>영역별:</strong>
+          {grouped?.byCategory && Object.keys(grouped.byCategory).map((c) => (
+            <button 
+              key={c} 
+              // We add an 'active' style if this chip is selected
+              css={[chipStyle, selectedKey === `cat-${c}` && activeChipStyle]} 
+              onClick={() => setSelectedKey(`cat-${c}`)}
+            >
+              {categoryLabelMap[c] ?? c}
+            </button>
+          ))}
+        </div>
+        <div css={tocGroupStyle}>
+          <strong>활동별:</strong>
+          {grouped?.byClass && Object.keys(grouped.byClass).map((k) => (
+            <button 
+              key={k} 
+              css={[chipStyle, selectedKey === `class-${k}` && activeChipStyle]} 
+              onClick={() => setSelectedKey(`class-${k}`)}
+            >
+              {k}
+            </button>
+          ))}
+        </div>
       </div>
 
+      <div css={tableWrapStyle}>
+        {!selectedKey ? (
+          // Section A: Show this when nothing is clicked
+          <div style={{ textAlign: "center", padding: "40px", color: "#888" }}>
+            위의 메뉴에서 보고 싶은 평가 기준을 선택해 주세요.
+          </div>
+        ) : (
+          <>
+            {/* Section B: Show ONLY the selected Category table */}
+            {selectedKey.startsWith("cat-") && (() => {
+              const catKey = selectedKey.replace("cat-", "");
+              const rows = grouped?.byCategory?.[catKey];
+              if (!rows) return null;
+              return (
+                <div css={cardStyle}>
+                  <div css={cardHeader}>{categoryLabelMap[catKey] ?? catKey}</div>
+                  <table css={tableStyle}>
+                    <tbody>
+                      {rows.map((r) => (
+                        <tr key={r.activityId}>
+                          <td>
+                            <div css={lineCellStyle}>
+                              <span css={badgeStyle}>{r.activityClass}</span>
+                              <span>{r.activityDetail}</span>
+                              <span css={scorePill}>+{r.activityWeight}</span>
+                            </div>
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              );
+            })()}
+
+            {/* Section C: Show ONLY the selected Activity Class table */}
+            {selectedKey.startsWith("class-") && (() => {
+              const classKey = selectedKey.replace("class-", "");
+              const rows = grouped?.byClass?.[classKey];
+              if (!rows) return null;
+              return (
+                <div css={cardStyle}>
+                  <div css={cardHeader}>{classKey}</div>
+                  <table css={tableStyle}>
+                    <tbody>
+                      {rows.map((r) => (
+                        <tr key={r.activityId}>
+                          <td>
+                            <div css={lineCellStyle}>
+                              <span css={badgeStyle}>{r.categoryName}</span>
+                              <span>{r.activityDetail}</span>
+                              <span css={scorePill}>+{r.activityWeight}</span>
+                            </div>
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              );
+            })()}
+          </>
+        )}
+      </div>
+
+      {/*
       <div css={tableWrapStyle}>
         {grouped?.byCategory &&
           Object.entries(grouped.byCategory).map(([category, rows]) => (
@@ -229,7 +343,7 @@ export default function CriteriaModal({ open, onClose }: CriteriaModalProps) {
             </table>
           </div>
         ))}
-      </div>
+      </div>*/}
     </Modal>
   );
 }
