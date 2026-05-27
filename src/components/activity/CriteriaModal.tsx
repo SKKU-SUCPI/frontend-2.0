@@ -143,8 +143,19 @@ export default function CriteriaModal({ open, onClose }: CriteriaModalProps) {
     setSelectedFilter({ type, key });
   };
 
-  const [selectedKey, setSelectedKey] = useState<string | null>(null);
+  
+
+  const [selectedKey, setSelectedKey] = useState<string[]>([]);
   const sectionRefs = useRef<Record<string, HTMLDivElement | null>>({});
+
+  const toggleKey = (key: string) => {
+    setSelectedKey((prev) => 
+      prev.includes(key)
+        ? prev.filter((k) => k !== key)
+        : [...prev, key]
+    );
+  };
+  
   const setSectionRef = useCallback((key: string) => (el: HTMLDivElement | null) => {
     sectionRefs.current[key] = el;
   }, []);
@@ -210,9 +221,10 @@ export default function CriteriaModal({ open, onClose }: CriteriaModalProps) {
           {grouped?.byCategory && Object.keys(grouped.byCategory).map((c) => (
             <button 
               key={c} 
-              // We add an 'active' style if this chip is selected
-              css={[chipStyle, selectedKey === `cat-${c}` && activeChipStyle]} 
-              onClick={() => setSelectedKey(`cat-${c}`)}
+              // 1. Highlight chip if it exists in the array
+              css={[chipStyle, selectedKey.includes(`cat-${c}`) && activeChipStyle]} 
+              // 2. Use the toggleKey function instead of setSelectedKey
+              onClick={() => toggleKey(`cat-${c}`)}
             >
               {categoryLabelMap[c] ?? c}
             </button>
@@ -223,8 +235,10 @@ export default function CriteriaModal({ open, onClose }: CriteriaModalProps) {
           {grouped?.byClass && Object.keys(grouped.byClass).map((k) => (
             <button 
               key={k} 
-              css={[chipStyle, selectedKey === `class-${k}` && activeChipStyle]} 
-              onClick={() => setSelectedKey(`class-${k}`)}
+              // 1. Highlight chip if it exists in the array
+              css={[chipStyle, selectedKey.includes(`class-${k}`) && activeChipStyle]} 
+              // 2. Use the toggleKey function instead of setSelectedKey
+              onClick={() => toggleKey(`class-${k}`)}
             >
               {k}
             </button>
@@ -233,67 +247,45 @@ export default function CriteriaModal({ open, onClose }: CriteriaModalProps) {
       </div>
 
       <div css={tableWrapStyle}>
-        {!selectedKey ? (
-          // Section A: Show this when nothing is clicked
-          <div style={{ textAlign: "center", padding: "40px", color: "#888" }}>
-            위의 메뉴에서 보고 싶은 평가 기준을 선택해 주세요.
+        {/* 1. Show this message if no chips are selected */}
+        {selectedKey.length === 0 ? (
+          <div style={{ textAlign: "center", padding: "60px 0", color: "#aaa" }}>
+            보고 싶은 평가 기준들을 위의 메뉴에서 선택해 주세요.
           </div>
         ) : (
-          <>
-            {/* Section B: Show ONLY the selected Category table */}
-            {selectedKey.startsWith("cat-") && (() => {
-              const catKey = selectedKey.replace("cat-", "");
-              const rows = grouped?.byCategory?.[catKey];
-              if (!rows) return null;
-              return (
-                <div css={cardStyle}>
-                  <div css={cardHeader}>{categoryLabelMap[catKey] ?? catKey}</div>
-                  <table css={tableStyle}>
-                    <tbody>
-                      {rows.map((r) => (
-                        <tr key={r.activityId}>
-                          <td>
-                            <div css={lineCellStyle}>
-                              <span css={badgeStyle}>{r.activityClass}</span>
-                              <span>{r.activityDetail}</span>
-                              <span css={scorePill}>+{r.activityWeight}</span>
-                            </div>
-                          </td>
-                        </tr>
-                      ))}
-                    </tbody>
-                  </table>
-                </div>
-              );
-            })()}
+          /* 2. Map through the selectedKeys array to show only chosen tables */
+          selectedKey.map((key) => {
+            const isCat = key.startsWith("cat-");
+            const actualKey = key.replace(isCat ? "cat-" : "class-", "");
+            const rows = isCat ? grouped?.byCategory?.[actualKey] : grouped?.byClass?.[actualKey];
 
-            {/* Section C: Show ONLY the selected Activity Class table */}
-            {selectedKey.startsWith("class-") && (() => {
-              const classKey = selectedKey.replace("class-", "");
-              const rows = grouped?.byClass?.[classKey];
-              if (!rows) return null;
-              return (
-                <div css={cardStyle}>
-                  <div css={cardHeader}>{classKey}</div>
-                  <table css={tableStyle}>
-                    <tbody>
-                      {rows.map((r) => (
-                        <tr key={r.activityId}>
-                          <td>
-                            <div css={lineCellStyle}>
-                              <span css={badgeStyle}>{r.categoryName}</span>
-                              <span>{r.activityDetail}</span>
-                              <span css={scorePill}>+{r.activityWeight}</span>
-                            </div>
-                          </td>
-                        </tr>
-                      ))}
-                    </tbody>
-                  </table>
+            if (!rows) return null;
+
+            return (
+              <div key={key} css={cardStyle}>
+                <div css={cardHeader}>
+                  {isCat ? (categoryLabelMap[actualKey] ?? actualKey) : actualKey}
                 </div>
-              );
-            })()}
-          </>
+                <table css={tableStyle}>
+                  <tbody>
+                    {rows.map((r: any) => (
+                      <tr key={r.activityId}>
+                        <td>
+                          <div css={lineCellStyle}>
+                            <span css={badgeStyle}>
+                              {isCat ? r.activityClass : r.categoryName}
+                            </span>
+                            <span style={{ fontWeight: 500 }}>{r.activityDetail}</span>
+                            <span css={scorePill}>+{r.activityWeight}</span>
+                          </div>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            );
+          })
         )}
       </div>
 
