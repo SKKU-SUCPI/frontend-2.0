@@ -134,19 +134,7 @@ const refreshButtonStyle = css`
 export default function CriteriaModal({ open, onClose }: CriteriaModalProps) {
   const { grouped, isLoading, isFetching, refetch, dataUpdatedAt } = useActivities();
   
-  const [selectedFilter, setSelectedFilter] = useState<{
-    type: 'cat' | 'class';
-    key: string;
-  } | null>(null);
-
-  const handleFilterClick = (type: 'cat' | 'class', key: string) => {
-    setSelectedFilter({ type, key });
-  };
-
-  
-
   const [selectedKey, setSelectedKey] = useState<string[]>([]);
-  const sectionRefs = useRef<Record<string, HTMLDivElement | null>>({});
 
   const toggleKey = (key: string) => {
     setSelectedKey((prev) => 
@@ -155,14 +143,6 @@ export default function CriteriaModal({ open, onClose }: CriteriaModalProps) {
         : [...prev, key]
     );
   };
-  
-  const setSectionRef = useCallback((key: string) => (el: HTMLDivElement | null) => {
-    sectionRefs.current[key] = el;
-  }, []);
-  const scrollTo = useCallback((key: string) => {
-    const el = sectionRefs.current[key];
-    if (el) el.scrollIntoView({ behavior: "smooth", block: "start" });
-  }, []);
 
   const updatedText = useMemo(() => {
     if (!dataUpdatedAt) return "";
@@ -195,26 +175,6 @@ export default function CriteriaModal({ open, onClose }: CriteriaModalProps) {
       </div>
 
       {/* 목차 */}
-      {/*<div css={tocWrapStyle}>
-        <div css={tocGroupStyle}>
-          <strong>영역별 평가 기준</strong>
-          {grouped?.byCategory &&
-            Object.keys(grouped.byCategory).map((c) => (
-              <button key={`toc-cat-${c}`} css={chipStyle} onClick={() => scrollTo(`cat-${c}`)}>
-                {categoryLabelMap[c] ?? c}
-              </button>
-            ))}
-        </div>
-        <div css={tocGroupStyle}>
-          <strong>활동별 평가 기준</strong>
-          {grouped?.byClass &&
-            Object.keys(grouped.byClass).map((k) => (
-              <button key={`toc-class-${k}`} css={chipStyle} onClick={() => scrollTo(`class-${k}`)}>
-                {k}
-              </button>
-            ))}
-        </div>
-      </div>*/}
       <div css={tocWrapStyle}>
         <div css={tocGroupStyle}>
           <strong>영역별:</strong>
@@ -288,54 +248,6 @@ export default function CriteriaModal({ open, onClose }: CriteriaModalProps) {
           })
         )}
       </div>
-
-      {/*
-      <div css={tableWrapStyle}>
-        {grouped?.byCategory &&
-          Object.entries(grouped.byCategory).map(([category, rows]) => (
-            <div key={category} css={cardStyle} ref={setSectionRef(`cat-${category}`)}>
-              <div css={cardHeader}>{categoryLabelMap[category] ?? `${category} 영역 기준표`}</div>
-              <table css={tableStyle}>
-                <tbody>
-                  {rows.map((r) => (
-                    <tr key={r.activityId}>
-                      <td>
-                        <div css={lineCellStyle}>
-                          <span css={badgeStyle}>{r.activityClass}</span>
-                          <span>{r.activityDetail}</span>
-                          <span css={scorePill}>+{r.activityWeight}</span>
-                        </div>
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
-          ))}
-      </div>
-
-      <div css={[tableWrapStyle, css`margin-top: 16px;`]}>
-        {grouped?.byClass && Object.entries(grouped.byClass).map(([klass, rows]) => (
-          <div key={klass} css={cardStyle} ref={setSectionRef(`class-${klass}`)}>
-            <div css={cardHeader}>{klass}</div>
-            <table css={tableStyle}>
-              <tbody>
-                {rows.map((r) => (
-                  <tr key={r.activityId}>
-                    <td>
-                      <div css={lineCellStyle}>
-                        <span css={badgeStyle}>{r.categoryName}</span>
-                        <span>{r.activityDetail}</span>
-                        <span css={scorePill}>+{r.activityWeight}</span>
-                      </div>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-        ))}
-      </div>*/}
     </Modal>
   );
 }
