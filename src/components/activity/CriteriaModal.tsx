@@ -3,7 +3,7 @@ import { css } from "@emotion/react";
 import Modal from "@/components/overlays/Modal";
 import useActivities from "@/hooks/common/useActivities";
 // import FlexBox from "@/styles/components/Flexbox";
-import { useMemo, useRef, useCallback, useState } from "react";
+import { useMemo, useState } from "react";
 
 interface CriteriaModalProps {
   open: boolean;
@@ -134,14 +134,10 @@ const refreshButtonStyle = css`
 export default function CriteriaModal({ open, onClose }: CriteriaModalProps) {
   const { grouped, isLoading, isFetching, refetch, dataUpdatedAt } = useActivities();
   
-  const [selectedKey, setSelectedKey] = useState<string[]>([]);
+  const [selectedKey, setSelectedKey] = useState<string | null>(null);
 
   const toggleKey = (key: string) => {
-    setSelectedKey((prev) => 
-      prev.includes(key)
-        ? prev.filter((k) => k !== key)
-        : [...prev, key]
-    );
+    setSelectedKey((prev) => (prev === key ? null : key));
   };
 
   const updatedText = useMemo(() => {
@@ -175,15 +171,13 @@ export default function CriteriaModal({ open, onClose }: CriteriaModalProps) {
       </div>
 
       {/* 목차 */}
-      <div css={tocWrapStyle}>
-        <div css={tocGroupStyle}>
-          <strong>영역별:</strong>
+      <div css={tocWrapStyle} style={{ border: 'none', background: 'transparent', padding: 0 }}>
+        <div css={tocGroupStyle} style={{ marginBottom: '16px' }}>
           {grouped?.byCategory && Object.keys(grouped.byCategory).map((c) => (
             <button 
-              key={c} 
-              // 1. Highlight chip if it exists in the array
-              css={[chipStyle, selectedKey.includes(`cat-${c}`) && activeChipStyle]} 
-              // 2. Use the toggleKey function instead of setSelectedKey
+              key={`nav-cat-${c}`} 
+              // Strict equality check for individual highlighting
+              css={[chipStyle, selectedKey === `cat-${c}` && activeChipStyle]} 
               onClick={() => toggleKey(`cat-${c}`)}
             >
               {categoryLabelMap[c] ?? c}
@@ -191,13 +185,11 @@ export default function CriteriaModal({ open, onClose }: CriteriaModalProps) {
           ))}
         </div>
         <div css={tocGroupStyle}>
-          <strong>활동별:</strong>
           {grouped?.byClass && Object.keys(grouped.byClass).map((k) => (
             <button 
-              key={k} 
-              // 1. Highlight chip if it exists in the array
-              css={[chipStyle, selectedKey.includes(`class-${k}`) && activeChipStyle]} 
-              // 2. Use the toggleKey function instead of setSelectedKey
+              key={`nav-class-${k}`} 
+              // Strict equality check for individual highlighting
+              css={[chipStyle, selectedKey === `class-${k}` && activeChipStyle]} 
               onClick={() => toggleKey(`class-${k}`)}
             >
               {k}
@@ -207,22 +199,20 @@ export default function CriteriaModal({ open, onClose }: CriteriaModalProps) {
       </div>
 
       <div css={tableWrapStyle}>
-        {/* 1. Show this message if no chips are selected */}
-        {selectedKey.length === 0 ? (
-          <div style={{ textAlign: "center", padding: "60px 0", color: "#aaa" }}>
-            보고 싶은 평가 기준들을 위의 메뉴에서 선택해 주세요.
+        {!selectedKey ? (
+          <div style={{ textAlign: "center", padding: "80px 0", border: '1px dashed #d2d2d7', borderRadius: '16px' }}>
+            <p style={{ color: '#86868b', fontSize: '14px' }}>Select a data point to expand details</p>
           </div>
         ) : (
-          /* 2. Map through the selectedKeys array to show only chosen tables */
-          selectedKey.map((key) => {
-            const isCat = key.startsWith("cat-");
-            const actualKey = key.replace(isCat ? "cat-" : "class-", "");
+          (() => {
+            const isCat = selectedKey.startsWith("cat-");
+            const actualKey = selectedKey.replace(isCat ? "cat-" : "class-", "");
             const rows = isCat ? grouped?.byCategory?.[actualKey] : grouped?.byClass?.[actualKey];
 
             if (!rows) return null;
 
             return (
-              <div key={key} css={cardStyle}>
+              <div css={cardStyle}>
                 <div css={cardHeader}>
                   {isCat ? (categoryLabelMap[actualKey] ?? actualKey) : actualKey}
                 </div>
@@ -245,7 +235,7 @@ export default function CriteriaModal({ open, onClose }: CriteriaModalProps) {
                 </table>
               </div>
             );
-          })
+          })()
         )}
       </div>
     </Modal>
