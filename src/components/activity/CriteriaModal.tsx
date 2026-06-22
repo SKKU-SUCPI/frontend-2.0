@@ -201,7 +201,7 @@ export default function CriteriaModal({ open, onClose }: CriteriaModalProps) {
       <div css={tableWrapStyle}>
         {!selectedKey ? (
           <div style={{ textAlign: "center", padding: "80px 0", border: '1px dashed #d2d2d7', borderRadius: '16px' }}>
-            <p style={{ color: '#86868b', fontSize: '14px' }}>Select a data point to expand details</p>
+            <p style={{ color: '#86868b', fontSize: '14px' }}>보고 싶은 평가 기준을 위의 메뉴에서 선택해 주세요.</p>
           </div>
         ) : (
           (() => {
