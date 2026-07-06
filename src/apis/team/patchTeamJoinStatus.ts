@@ -2,7 +2,7 @@ import axiosInstance from "@/apis/utils/axiosInterceptor";
 
 export interface PatchJoinStatusRequest {
   teamId: number;
-  joinStatus: "JOINED" | "REJECTED";
+  joinStatus: number; // (0 = JOINED, 1 = PENDING, 2 = REJECTED)
 }
 
 const patchTeamJoinStatus = async (data: PatchJoinStatusRequest) => {
