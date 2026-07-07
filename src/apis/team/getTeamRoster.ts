@@ -1,10 +1,10 @@
 import axiosInstance from "@/apis/utils/axiosInterceptor";
 
 export interface TeamMember {
-  userId: string;
+  userId: number;
   userName: string;
   memberRole: "LEADER" | "MEMBER";
-  joinStatus: "PENDING" | "JOINED";
+  joinStatus: number;
 }
 
 export const getTeamRoster = async (teamId: number): Promise<TeamMember[]> => {
