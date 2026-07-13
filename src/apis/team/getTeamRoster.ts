@@ -7,7 +7,15 @@ export interface TeamMember {
   joinStatus: number;
 }
 
-export const getTeamRoster = async (teamId: number): Promise<TeamMember[]> => {
+export interface TeamRosterResponse {
+  teamId: number;
+  roster: TeamMember[];
+}
+
+export const getTeamRoster = async (teamId: number) => {
   const response = await axiosInstance.get(`/team/${teamId}/roster`);
-  return response.data.data;
+  
+  const responseData = response.data.data;
+
+  return responseData.members || responseData.roster || [];
 };

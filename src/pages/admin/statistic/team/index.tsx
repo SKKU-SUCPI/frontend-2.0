@@ -15,6 +15,9 @@ import Button from "@mui/material/Button";
 import { useTeamSelectedUserStore } from "@/stores/teamSelectedUserStore";
 import type { SelectedUser } from "@/stores/teamSelectedUserStore";
 import { useTeamStore, type Team } from "@/stores/teamStore";
+import postTeam from "@/apis/team/postTeam";
+import postTeamMember from "@/apis/team/postTeamMember";
+import deleteTeam from "@/apis/team/deleteTeam";
 import SimpleBarChart from "@/components/graphs/SimpleBarChart";
 import HorizontalBarChart from "@/components/graphs/HorizontalBarChart";
 import IconButton from "@mui/material/IconButton";
@@ -320,13 +323,19 @@ const TeamStatisticLayout = () => {
   const [modalOpen, setModalOpen] = useState(false);
   const [selectedStudent, setSelectedStudent] = useState<SelectedUser | null>(null);
   const studentListRef = useRef<HTMLDivElement>(null);
-  const { teams, addTeam, removeTeam, updateTeam } = useTeamStore();
+  const { teams, addTeam, removeTeam, updateTeam, fetchProjectTeams } = useTeamStore();
   const [teamModalOpen, setTeamModalOpen] = useState(false);
   const [editingTeam, setEditingTeam] = useState<Team | null>(null);
   const [teamName, setTeamName] = useState("");
   const [selectedTeamMembers, setSelectedTeamMembers] = useState<AdminStudentResponseItem[]>([]);
   const [memberSearch, setMemberSearch] = useState("");
   const [searchInput, setSearchInput] = useState("");
+
+  // 팀 목록 불러오기
+  useEffect(() => {
+    const CURRENT_PROJECT_ID = 1;
+    fetchProjectTeams(CURRENT_PROJECT_ID);
+  }, [fetchProjectTeams]);
 
   // 자연스러운 검색 기능
   useEffect(() => {
@@ -428,10 +437,10 @@ const TeamStatisticLayout = () => {
     const sum = members.reduce(
       (acc, user) => {
         return {
-          lq: acc.lq + user.lq,
-          rq: acc.rq + user.rq,
-          cq: acc.cq + user.cq,
-          total: acc.total + user.totalScore,
+          lq: acc.lq + (user.lq || 0),
+          rq: acc.rq + (user.rq || 0),
+          cq: acc.cq + (user.cq || 0 ),
+          total: acc.total + (user.totalScore || 0),
           tlq: acc.tlq + (user.tlq || 0),
           trq: acc.trq + (user.trq || 0),
           tcq: acc.tcq + (user.tcq || 0),
@@ -665,38 +674,48 @@ const TeamStatisticLayout = () => {
     setSelectedTeamMembers(team.members.map((member) => ({
       id: Number(member.id),
       name: member.name,
-      studentId: member.studentId,
-      department: member.department,
-      lq: member.lq,
-      rq: member.rq,
-      cq: member.cq,
-      totalScore: member.totalScore,
-      tlq: member.tlq,
-      trq: member.trq,
-      tcq: member.tcq,
+      studentId: member.studentId || "",
+      department: member.department || "",
+      lq: member.lq || 0,
+      rq: member.rq || 0,
+      cq: member.cq || 0,
+      totalScore: member.totalScore || 0,
+      tlq: member.tlq || 0,
+      trq: member.trq || 0,
+      tcq: member.tcq || 0,
 
       grade: 0 
-    })));
+    } as AdminStudentResponseItem)));
     setTeamModalOpen(true);
   };
 
-  const handleDeleteTeam = (teamId: number) => {
-    removeTeam(teamId);
-    if (isUserSelected(teamId)) {
-      removeUser(teamId);
-    }
-    if (editingTeam && editingTeam.id === teamId) {
-      setEditingTeam(null);
+  const handleDeleteTeam = async (teamId: number) => {
+    if(!window.confirm("정말로 이 팀을 삭제하시겠습니까?")) return;
+
+    try {
+      await deleteTeam(teamId);
+
+      removeTeam(teamId);
+
+      if (isUserSelected(teamId)) {
+        removeUser(teamId);
+      }
+      if (editingTeam && editingTeam.id === teamId) {
+        setEditingTeam(null);
+      }
+    } catch (error) {
+      console.error("팀 삭제 실패:", error);
+      alert("팀 삭제 중 서버에 오류가 발생했습니다.");
     }
   };
 
-  const handleRegisterTeam = () => {
+  const handleRegisterTeam = async () => {
     if (!teamName.trim()) {
       alert("팀명을 입력해 주세요.");
       return;
     }
 
-    const selectedMembers: SelectedUser[] = selectedTeamMembers
+    const selectedMembers = selectedTeamMembers
       .map((student) => ({
         id: student.id,
         name: student.name,
@@ -714,6 +733,8 @@ const TeamStatisticLayout = () => {
           student.trq,
           student.tcq
         ),
+        memberRole: "MEMBER" as const,
+        joinStatus: 0
       }));
 
     if (selectedMembers.length === 0) {
@@ -721,35 +742,62 @@ const TeamStatisticLayout = () => {
       return;
     }
 
-    if (editingTeam) {
-      const updatedTeam: Team = {
-        ...editingTeam,
-        name: teamName.trim(),
-        members: selectedMembers,
-      };
+    const CURRENT_PROJECT_ID = 1;
 
-      updateTeam(updatedTeam);
+    try{
+      if (editingTeam) {
+        const updatedTeam: Team = {
+          ...editingTeam,
+          name: teamName.trim(),
+          members: selectedMembers,
+        };
 
-      // 선택된 팀이면 요약 데이터도 갱신
-      if (isUserSelected(updatedTeam.id)) {
-        const summary = createTeamSummary(updatedTeam);
-        removeUser(updatedTeam.id);
-        addUser(summary);
+        updateTeam(updatedTeam);
+
+        // 선택된 팀이면 요약 데이터도 갱신
+        if (isUserSelected(updatedTeam.id)) {
+          const summary = createTeamSummary(updatedTeam);
+          removeUser(updatedTeam.id);
+          addUser(summary);
+        }
+      } else {
+
+        const teamResponse = await postTeam({
+          projectId: CURRENT_PROJECT_ID,
+          teamName: teamName.trim(),
+        });
+
+        const newTeamId = teamResponse?.data?.teamId || teamResponse?.data;
+
+        if(!newTeamId) throw new Error("팀 ID를 응답받지 못했습니다.");
+
+        await Promise.all(
+          selectedMembers.map((member) => {
+            postTeamMember(newTeamId, {
+              userId: member.id,
+              memberRole: member.memberRole,
+            })
+          })
+        );
+
+        const newTeam: Team = {
+          id: Date.now(),
+          name: teamName.trim(),
+          projectId: 0,
+          members: selectedMembers,
+        };
+
+        addTeam(newTeam);
       }
-    } else {
-      const newTeam: Team = {
-        id: Date.now(),
-        name: teamName.trim(),
-        members: selectedMembers,
-      };
 
-      addTeam(newTeam);
+      setTeamModalOpen(false);
+      setEditingTeam(null);
+      setTeamName("");
+      setSelectedTeamMembers([]);
+    } catch (error) {
+      console.error("팀 등록 실패:", error);
+      alert("팀 등록 중 서버에 오류가 발생했습니다.");
     }
-
-    setTeamModalOpen(false);
-    setEditingTeam(null);
-    setTeamName("");
-    setSelectedTeamMembers([]);
   };
 
   return (
