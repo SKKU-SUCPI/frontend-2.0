@@ -17,6 +17,7 @@ import type { SelectedUser } from "@/stores/teamSelectedUserStore";
 import { useTeamStore, type Team } from "@/stores/teamStore";
 import postTeam from "@/apis/team/postTeam";
 import postTeamMember from "@/apis/team/postTeamMember";
+import putTeam from "@/apis/team/putTeam";
 import deleteTeam from "@/apis/team/deleteTeam";
 import SimpleBarChart from "@/components/graphs/SimpleBarChart";
 import HorizontalBarChart from "@/components/graphs/HorizontalBarChart";
@@ -746,6 +747,14 @@ const TeamStatisticLayout = () => {
 
     try{
       if (editingTeam) {
+        await putTeam(editingTeam.id, {
+          teamName: teamName.trim(),
+          members: selectedMembers.map((member) => ({
+            userId: member.id,
+            memberRole: member.memberRole,
+          })),
+        });
+
         const updatedTeam: Team = {
           ...editingTeam,
           name: teamName.trim(),
@@ -781,7 +790,7 @@ const TeamStatisticLayout = () => {
         );
 
         const newTeam: Team = {
-          id: Date.now(),
+          id: newTeamId,
           name: teamName.trim(),
           projectId: 0,
           members: selectedMembers,
