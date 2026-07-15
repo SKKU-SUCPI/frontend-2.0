@@ -792,7 +792,7 @@ const TeamStatisticLayout = () => {
         const newTeam: Team = {
           id: newTeamId,
           name: teamName.trim(),
-          projectId: 0,
+          projectId: CURRENT_PROJECT_ID,
           members: selectedMembers,
         };
 
