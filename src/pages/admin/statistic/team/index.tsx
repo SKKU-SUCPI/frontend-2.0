@@ -1,4 +1,5 @@
 import { useState, useRef, useEffect } from "react";
+import axiosInstance from "@/apis/utils/axiosInterceptor";
 import { css } from "@emotion/react";
 import IndividualStudentCard from "./components/IndividualStudentCard";
 import AverageMetrics from "./components/AverageMetrics";
@@ -331,12 +332,34 @@ const TeamStatisticLayout = () => {
   const [selectedTeamMembers, setSelectedTeamMembers] = useState<AdminStudentResponseItem[]>([]);
   const [memberSearch, setMemberSearch] = useState("");
   const [searchInput, setSearchInput] = useState("");
+  const [projects, setProjects] = useState<{projectId: number, projectName: string}[]>([]);
+  const [selectedProjectId, setSelectedProjectId] = useState<number | undefined> (undefined);
+  const [modalProjectId, setModalProjectId] = useState<number | undefined>(undefined);
+  const [leaderId, setLeaderId] = useState<number | null>(null);
 
   // 팀 목록 불러오기
   useEffect(() => {
-    const CURRENT_PROJECT_ID = 1;
-    fetchProjectTeams(CURRENT_PROJECT_ID);
-  }, [fetchProjectTeams]);
+    const fetchProjects = async () => {
+      try {
+        const response = await axiosInstance.get('/projects');
+        setProjects(response.data);
+      } catch (error) {
+        console.error("Failed to fetch projects", error);
+      }
+    };
+
+    fetchProjects();
+  }, []);
+
+  useEffect(() => {
+    if (selectedProjectId) {
+      fetchProjectTeams(selectedProjectId);
+      
+      clearUsers();
+      setChartPage(0);
+      setRightChartPage(0);
+    }
+  }, [fetchProjectTeams, selectedProjectId]);
 
   // 자연스러운 검색 기능
   useEffect(() => {
@@ -647,8 +670,9 @@ const TeamStatisticLayout = () => {
   const handleOpenTeamModal = () => {
     setEditingTeam(null);
     setTeamName("");
-    //setTeamMemberIds([]);
     setSelectedTeamMembers([]);
+    setLeaderId(null);
+    setModalProjectId(undefined);
     setTeamModalOpen(true);
   };
 
@@ -656,12 +680,16 @@ const TeamStatisticLayout = () => {
     setTeamModalOpen(false);
     setEditingTeam(null);
     setSelectedTeamMembers([]);
+    setModalProjectId(undefined);
   };
 
  const toggleTeamMember = (student: AdminStudentResponseItem) => {
   setSelectedTeamMembers((prev) => {
     const isAlreadySelected = prev.some((students) => students.id === student.id);
     if (isAlreadySelected) {
+      if(leaderId === student.id) {
+        setLeaderId(null);
+      }
       return prev.filter((students) => students.id !== student.id);
     } else {
       return [...prev, student];
@@ -672,6 +700,11 @@ const TeamStatisticLayout = () => {
   const handleEditTeam = (team: Team) => {
     setEditingTeam(team);
     setTeamName(team.name);
+    setModalProjectId(team.projectId || selectedProjectId);
+    
+    const leader = team.members.find((m: any) => m.memberRole === 'LEADER');
+    if (leader) setLeaderId(Number(leader.id));
+
     setSelectedTeamMembers(team.members.map((member) => ({
       id: Number(member.id),
       name: member.name,
@@ -716,6 +749,16 @@ const TeamStatisticLayout = () => {
       return;
     }
 
+    if (!modalProjectId) {
+      alert("프로젝트를 선택해 주세요.");
+      return;
+    }
+
+    if (!leaderId) {
+      alert("팀장을 선택해 주세요.");
+      return;
+    }
+
     const selectedMembers = selectedTeamMembers
       .map((student) => ({
         id: student.id,
@@ -734,7 +777,7 @@ const TeamStatisticLayout = () => {
           student.trq,
           student.tcq
         ),
-        memberRole: "MEMBER" as const,
+        memberRole: (student.id === leaderId ? "LEADER" : "MEMBER") as "LEADER" | "MEMBER",
         joinStatus: 0
       }));
 
@@ -742,8 +785,6 @@ const TeamStatisticLayout = () => {
       alert("팀에 포함할 학생을 한 명 이상 선택해 주세요.");
       return;
     }
-
-    const CURRENT_PROJECT_ID = 1;
 
     try{
       if (editingTeam) {
@@ -772,7 +813,7 @@ const TeamStatisticLayout = () => {
       } else {
 
         const teamResponse = await postTeam({
-          projectId: CURRENT_PROJECT_ID,
+          projectId: modalProjectId,
           teamName: teamName.trim(),
         });
 
@@ -792,11 +833,13 @@ const TeamStatisticLayout = () => {
         const newTeam: Team = {
           id: newTeamId,
           name: teamName.trim(),
-          projectId: CURRENT_PROJECT_ID,
+          projectId: modalProjectId,
           members: selectedMembers,
         };
-
-        addTeam(newTeam);
+        
+        if(selectedProjectId === modalProjectId) {
+          addTeam(newTeam);
+        }
       }
 
       setTeamModalOpen(false);
@@ -945,16 +988,33 @@ const TeamStatisticLayout = () => {
         <div css={leftBoxStyle}>
           <div css={teamHeaderStyle}>
             <h2 style={{ margin: 0, fontSize: "1.3rem" }}>전체 팀 목록</h2>
-            <Button variant="contained" size="small" onClick={handleOpenTeamModal} sx={{ 
-              backgroundColor: "#4CAF50",
-              "&:hover": {
-                backgroundColor: "#45a049",
-              },
-              borderRadius: "8px", 
-              fontWeight: 600 
-            }}>
-              팀 등록
-            </Button>
+            <div style={{ display: 'flex', gap: '12px', alignItems: 'center' }}>
+              <TextField
+                select
+                size="small"
+                value={selectedProjectId || ""}
+                onChange={(e) => setSelectedProjectId(Number(e.target.value))}
+                SelectProps={{ native: true }}
+                sx={{ minWidth: 150 }}
+              >
+                <option value="" disabled>프로젝트 선택</option>
+                {projects.map(p => (
+                  <option key={p.projectId} value={p.projectId}>
+                    {p.projectName}
+                  </option>
+                ))}
+              </TextField>
+              <Button variant="contained" size="small" onClick={handleOpenTeamModal} sx={{ 
+                backgroundColor: "#4CAF50",
+                "&:hover": {
+                  backgroundColor: "#45a049",
+                },
+                borderRadius: "8px", 
+                fontWeight: 600 
+              }}>
+                팀 등록
+              </Button>
+            </div>
           </div>
 
           <div css={teamListStyle}>
@@ -1081,6 +1141,7 @@ const TeamStatisticLayout = () => {
           dividers
           sx={{ display: "flex", flexDirection: "column", gap: 2, pt: 2 }}
         >
+          {/*
           <TextField
             label="팀 이름"
             fullWidth
@@ -1088,7 +1149,7 @@ const TeamStatisticLayout = () => {
             onChange={(e) => setTeamName(e.target.value)}
             margin="normal"
           />
-          {/* 현재 선택된 학생 요약 */}
+          {/* 현재 선택된 학생 요약 }
           {selectedTeamMembers.length > 0 && (
             <div css={selectedMembersBoxStyle}>
               <div css={selectedMembersTitleStyle}>
@@ -1108,6 +1169,80 @@ const TeamStatisticLayout = () => {
               </div>
             </div>
           )}
+          */}
+          {/* 1. 추가된 프로젝트 선택 드롭다운 */}
+          <TextField
+            select
+            label="프로젝트 선택"
+            fullWidth
+            value={modalProjectId || ""}
+            onChange={(e) => setModalProjectId(Number(e.target.value))}
+            margin="normal"
+            SelectProps={{ native: true }}
+            InputLabelProps={{ shrink: true }}
+            disabled={!!editingTeam}
+          >
+            <option value="" disabled>프로젝트를 선택하세요</option>
+            {projects.map(p => (
+              <option key={p.projectId} value={p.projectId}>{p.projectName}</option>
+            ))}
+          </TextField>
+
+          {/* 2. 기존 팀 이름 입력 */}
+          <TextField
+            label="팀 이름"
+            fullWidth
+            value={teamName}
+            onChange={(e) => setTeamName(e.target.value)}
+            margin="normal"
+          />
+
+          {/* 3. 팀장 선택 기능이 추가된 학생 요약 */}
+          {selectedTeamMembers.length > 0 && (
+            <div css={selectedMembersBoxStyle}>
+              <div css={selectedMembersTitleStyle}>
+                현재 선택된 학생 ({selectedTeamMembers.length}명)
+              </div>
+              <div css={selectedMembersListStyle}>
+                {selectedTeamMembers.map((student) => (
+                  <span 
+                    key={student.id} 
+                    css={selectedMemberChipStyle} 
+                  >
+                    {student.name} ({student.studentId})
+                  </span>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {selectedTeamMembers.length > 0 && (
+            <div 
+              css={selectedMembersBoxStyle} 
+              style={{ backgroundColor: '#e8f5e9', borderColor: '#4CAF50' }}
+            >
+              <div css={selectedMembersTitleStyle} style={{ color: '#2e7d32' }}>
+                팀장 (Leader)
+              </div>
+              <TextField
+                select
+                size="small"
+                fullWidth
+                value={leaderId || ""}
+                onChange={(e) => setLeaderId(Number(e.target.value))}
+                SelectProps={{ native: true }}
+                sx={{ backgroundColor: 'white', borderRadius: '4px' }}
+              >
+                <option value="" disabled>팀장을 선택해주세요</option>
+                {selectedTeamMembers.map(student => (
+                  <option key={student.id} value={student.id}>
+                    {student.name} ({student.studentId})
+                  </option>
+                ))}
+              </TextField>
+            </div>
+          )}
+
           <div css={userListStyle} ref={studentListRef}>
             <h2>팀 구성원 선택</h2>
             <TextField
