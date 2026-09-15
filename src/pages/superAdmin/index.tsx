@@ -1,5 +1,6 @@
 /** @jsxImportSource @emotion/react */
 import React, { useState, useMemo, useEffect } from "react";
+import axiosInstance from "@/apis/utils/axiosInterceptor";
 import { css } from "@emotion/react";
 import useActivities from "@/hooks/common/useActivities";
 import type { ActivityCriterion } from "@/apis/common/getActivities";
@@ -17,6 +18,8 @@ import {
   ModalButtonContainer,
   ModalButton,
 } from "@/styles/components/Modal";
+import { ProjectCreateModal } from './ProjectCreateModal';
+import { ProjectEditModal } from "./ProjectEditModal";
 
 const pageContainer = css`
   padding: 32px;
@@ -260,7 +263,42 @@ const AdminStatisticParameter: React.FC = () => {
       });
     }
   }, [ratioData]);
-  
+
+  const [isProjectModalOpen, setProjectModalOpen] = useState(false);
+  const [projects, setProjects] = useState<any[]>([]);
+  const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+  const [selectedProject, setSelectedProject] = useState<any | null>(null);
+
+  const fetchProjects = async () => {
+    try {
+      // Ensure this matches your exact backend Controller path mapping
+      const response = await axiosInstance.get('/projects'); 
+
+      setProjects(response.data);
+    } catch (error) {
+      console.error("Failed to fetch projects", error);
+    }
+  };
+
+  useEffect(() => {
+    fetchProjects();
+  }, []);
+
+  const handleEditClick = (project: any) => {
+    setSelectedProject(project);
+    setIsEditModalOpen(true);
+  };
+
+  const handleDeleteClick = async (projectId: number) => {
+    if (!window.confirm("정말 이 프로젝트를 삭제하시겠습니까?")) return;
+    try {
+      await axiosInstance.delete(`/super-admin/projects/${projectId}`);
+      alert("프로젝트가 삭제되었습니다.");
+      fetchProjects();
+    } catch (error) {
+      alert("프로젝트 삭제에 실패했습니다.");
+    }
+  };
   // 3Q 가중치 변경 핸들러
   const handle3QWeightChange = (category: string, value: string) => {
     const numValue = parseFloat(value);
@@ -420,6 +458,10 @@ const AdminStatisticParameter: React.FC = () => {
     setDeletingActivity(formData);
     setShowDeleteConfirm(true);
   };
+
+  const handleProjectSuccess = () => {
+    setProjectModalOpen(false);
+  }
   
   // 활동 삭제 확인
   const handleConfirmDelete = async () => {
@@ -498,6 +540,77 @@ const AdminStatisticParameter: React.FC = () => {
               가중치 저장
             </button>
           </div>
+        </div>
+      </div>
+
+      <div css={sectionWrapper}>
+        <div css={css`display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;`}>
+          <h2 css={sectionTitle} style={{ marginBottom: 0 }}>프로젝트 관리</h2>
+          <button css={primaryButton} onClick={() => setProjectModalOpen(true)}>
+            + 새 프로젝트 생성
+          </button>
+        </div>
+        
+        <div css={cardStyle}>
+          <table css={tableStyle}>
+            <thead>
+              <tr>
+                <th>프로젝트 이름</th>
+                <th style={{ width: '150px', textAlign: 'center' }}>배수 (Multiplier)</th>
+                <th style={{ width: '160px', textAlign: 'center' }}>관리</th>
+              </tr>
+            </thead>
+            <tbody>
+              {projects.length === 0 ? (
+                <tr>
+                  <td colSpan={3} style={{ textAlign: 'center', color: '#999', padding: '24px' }}>
+                    등록된 프로젝트가 없습니다.
+                  </td>
+                </tr>
+              ) : (
+                projects.map((proj) => (
+                  <tr key={proj.projectId || proj.id}>
+                    <td style={{ fontWeight: 600 }}>{proj.projectName}</td>
+                    <td style={{ textAlign: 'center' }}>{proj.multiplier !== undefined ? proj.multiplier : proj.customWeight ?? 1.0}</td>
+                    <td>
+                      <div css={css`display: flex; gap: 8px; justify-content: center;`}>
+                        <button 
+                          css={css`
+                            padding: 6px 12px;
+                            border: 1px solid #4caf50;
+                            background: white;
+                            color: #4caf50;
+                            border-radius: 4px;
+                            font-size: 13px;
+                            cursor: pointer;
+                            &:hover { background: #f1f8f4; }
+                          `}
+                          onClick={() => handleEditClick(proj)}
+                        >
+                          수정
+                        </button>
+                        <button 
+                          css={css`
+                            padding: 6px 12px;
+                            border: 1px solid #dc2626;
+                            background: white;
+                            color: #dc2626;
+                            border-radius: 4px;
+                            font-size: 13px;
+                            cursor: pointer;
+                            &:hover { background: #fef2f2; }
+                          `}
+                          onClick={() => handleDeleteClick(proj.projectId || proj.id)}
+                        >
+                          삭제
+                        </button>
+                      </div>
+                    </td>
+                  </tr>
+                ))
+              )}
+            </tbody>
+          </table>
         </div>
       </div>
       
@@ -857,6 +970,20 @@ const AdminStatisticParameter: React.FC = () => {
           </ModalContent>
         </ModalOverlay>
       )}
+
+      {/* 프로젝트 생성 모달 */}
+      <ProjectCreateModal 
+        open={isProjectModalOpen} 
+        onClose={() => setProjectModalOpen(false)} 
+        onSuccess={handleProjectSuccess}
+      />
+
+      <ProjectEditModal
+        open={isEditModalOpen}
+        onClose={() => setIsEditModalOpen(false)}
+        onSuccess={fetchProjects}
+        project={selectedProject}
+      />
     </div>
   );
 };

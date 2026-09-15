@@ -1141,36 +1141,6 @@ const TeamStatisticLayout = () => {
           dividers
           sx={{ display: "flex", flexDirection: "column", gap: 2, pt: 2 }}
         >
-          {/*
-          <TextField
-            label="팀 이름"
-            fullWidth
-            value={teamName}
-            onChange={(e) => setTeamName(e.target.value)}
-            margin="normal"
-          />
-          {/* 현재 선택된 학생 요약 }
-          {selectedTeamMembers.length > 0 && (
-            <div css={selectedMembersBoxStyle}>
-              <div css={selectedMembersTitleStyle}>
-                현재 선택된 학생 (
-                {
-                  selectedTeamMembers.length
-                }
-                명)
-              </div>
-              <div css={selectedMembersListStyle}>
-                {selectedTeamMembers
-                  .map((student) => (
-                    <span key={student.id} css={selectedMemberChipStyle}>
-                      {student.name} ({student.studentId})
-                    </span>
-                  ))}
-              </div>
-            </div>
-          )}
-          */}
-          {/* 1. 추가된 프로젝트 선택 드롭다운 */}
           <TextField
             select
             label="프로젝트 선택"
