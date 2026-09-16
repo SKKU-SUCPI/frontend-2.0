@@ -10,6 +10,8 @@ interface Project {
   projectId?: number;
   projectName: string;
   multiplier: number;
+  startDate?: string;
+  endDate?: string;
 }
 
 interface ProjectEditModalProps {
@@ -22,13 +24,17 @@ interface ProjectEditModalProps {
 export const ProjectEditModal: React.FC<ProjectEditModalProps> = ({ open, onClose, onSuccess, project }) => {
   const [projectName, setProjectName] = useState(project?.projectName || "");
   const [multiplier, setMultiplier] = useState<number | "">(1.0);
+  const [startDate, setStartDate] = useState(project?.startDate || "");
+  const [endDate, setEndDate] = useState(project?.endDate || "");
 
   useEffect(() => {
-    if (project) {
+    if (open && project) {
       setProjectName(project.projectName || "");
       setMultiplier(project.multiplier ?? 1.0);
+      setStartDate(project.startDate || "");
+      setEndDate(project.endDate || "");
     }
-  }, [project]);
+  }, [project, open]);
 
   const handleSubmit = async () => {
     if (!project) return;
@@ -50,10 +56,22 @@ export const ProjectEditModal: React.FC<ProjectEditModalProps> = ({ open, onClos
       return;
     }
 
+    if (startDate && endDate) {
+      const start = new Date(startDate);
+      const end = new Date(endDate);
+
+      if (start > end) {
+        alert("종료일은 시작일보다 빠를 수 없습니다.");
+        return;
+      }
+    }
+
     try {
       const payload = {
         projectName: projectName.trim(),
-        multiplier: finalMultiplier
+        multiplier: finalMultiplier,
+        startDate: startDate || null,
+        endDate: endDate || null
       };
 
       await axiosInstance.put(`/super-admin/projects/${targetId}`, payload); 
@@ -78,6 +96,25 @@ export const ProjectEditModal: React.FC<ProjectEditModalProps> = ({ open, onClos
             value={projectName}
             onChange={(e) => setProjectName(e.target.value)}
           />
+
+          <Box sx={{ display: 'flex', gap: 2 }}>
+            <TextField
+              label="시작일"
+              type="date"
+              fullWidth
+              value={startDate}
+              onChange={(e) => setStartDate(e.target.value)}
+              InputLabelProps={{ shrink: true }}
+            />
+            <TextField
+              label="종료일"
+              type="date"
+              fullWidth
+              value={endDate}
+              onChange={(e) => setEndDate(e.target.value)}
+              InputLabelProps={{ shrink: true }}
+            />
+          </Box>
           
           <Box sx={{ p: 2, backgroundColor: '#f5f5f5', borderRadius: 1 }}>
             <Typography variant="subtitle2" sx={{ mb: 1 }}>

@@ -14,6 +14,8 @@ interface ProjectCreateModalProps {
 export const ProjectCreateModal: React.FC<ProjectCreateModalProps> = ({ open, onClose, onSuccess }) => {
   const [projectName, setProjectName] = useState("");
   const [multiplier, setMultiplier] = useState<number | "">(1.0);
+  const [startDate, setStartDate] = useState("");
+  const [endDate, setEndDate] = useState("");
 
   const handleSubmit = async () => {
     if (!projectName.trim()) {
@@ -27,10 +29,22 @@ export const ProjectCreateModal: React.FC<ProjectCreateModalProps> = ({ open, on
       return;
     }
 
+    if (startDate && endDate) {
+      const start = new Date(startDate);
+      const end = new Date(endDate);
+
+      if (start > end) {
+        alert("종료일은 시작일보다 빠를 수 없습니다.");
+        return;
+      }
+    }
+
     try {
       const payload = {
         projectName: projectName.trim(),
-        multiplier: finalMultiplier
+        multiplier: finalMultiplier,
+        startDate: startDate || null,
+        endDate: endDate || null
       };
 
       await axiosInstance.post('/super-admin/projects', payload);
@@ -61,6 +75,25 @@ export const ProjectCreateModal: React.FC<ProjectCreateModalProps> = ({ open, on
             value={projectName}
             onChange={(e) => setProjectName(e.target.value)}
           />
+
+          <Box sx={{ display: 'flex', gap: 2 }}>
+            <TextField
+              label="시작일"
+              type="date"
+              fullWidth
+              value={startDate}
+              onChange={(e) => setStartDate(e.target.value)}
+              InputLabelProps={{ shrink: true }}
+            />
+            <TextField
+              label="종료일"
+              type="date"
+              fullWidth
+              value={endDate}
+              onChange={(e) => setEndDate(e.target.value)}
+              InputLabelProps={{ shrink: true }}
+            />
+          </Box>
           
           <Box sx={{ p: 2, backgroundColor: '#f5f5f5', borderRadius: 1 }}>
             <Typography variant="subtitle2" sx={{ mb: 1 }}>

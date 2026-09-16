@@ -556,6 +556,7 @@ const AdminStatisticParameter: React.FC = () => {
             <thead>
               <tr>
                 <th>프로젝트 이름</th>
+                <th style={{ width: '200px', textAlign: 'center' }}>기간 (Period)</th>
                 <th style={{ width: '150px', textAlign: 'center' }}>배수 (Multiplier)</th>
                 <th style={{ width: '160px', textAlign: 'center' }}>관리</th>
               </tr>
@@ -571,6 +572,9 @@ const AdminStatisticParameter: React.FC = () => {
                 projects.map((proj) => (
                   <tr key={proj.projectId || proj.id}>
                     <td style={{ fontWeight: 600 }}>{proj.projectName}</td>
+                    <td style={{ textAlign: 'center', fontSize: '13px' }}>
+                      {proj.startDate ? proj.startDate : '-'} ~ {proj.endDate ? proj.endDate : '-'}
+                    </td>
                     <td style={{ textAlign: 'center' }}>{proj.multiplier !== undefined ? proj.multiplier : proj.customWeight ?? 1.0}</td>
                     <td>
                       <div css={css`display: flex; gap: 8px; justify-content: center;`}>
