@@ -2,7 +2,14 @@
 import { createTheme } from "@mui/material";
 
 const customTheme = {
-  customColors: {},
+  customColors: {
+    border: "#eceff1",
+    surface: "#ffffff",
+  },
+  customShadows: {
+    card: "0 2px 8px rgba(0, 0, 0, 0.05)",
+    hover: "0 5px 15px rgba(0, 0, 0, 0.1)",
+  },
   customSpacing: {
     small: "8px",
     medium: "16px",

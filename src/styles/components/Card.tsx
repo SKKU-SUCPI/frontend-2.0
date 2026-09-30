@@ -12,17 +12,28 @@ interface CardProps {
 const BaseCard = styled.div<CardProps>`
   width: ${({ width = "auto" }) => width};
   height: ${({ height = "auto" }) => height};
-  padding: ${({ padding = "16px" }) => padding};
-  border: 0.1px solid rgba(0, 0, 0, 0.2);
-  border-radius: 4px;
+  padding: ${({ padding = "24px" }) => padding};
+  background-color: #fff;
+  border: 1px solid #f0f0f0;
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
 `;
 
 const FlexCard = styled(FlexBox)<CardProps>`
   width: ${({ width = "auto" }) => width};
   height: ${({ height = "auto" }) => height};
   padding: ${({ padding = "16px" }) => padding};
-  border: 0.1px solid rgba(0, 0, 0, 0.2);
-  border-radius: 4px;
+  background-color: #fff;
+  border: 1px solid #f0f0f0;
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+
+  &:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+  }
 `;
 
 const Card = (props: CardProps & { children?: React.ReactNode }) => {
