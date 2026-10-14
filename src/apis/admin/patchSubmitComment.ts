@@ -7,7 +7,7 @@ const patchSubmitComment = async ({
   id: number;
   content: string;
 }) => {
-  const response = await axiosInstance.patch("/admin/submit/comment", {
+  const response = await axiosInstance.post("/admin/submit/comment/patch", {
     id,
     content,
   });
