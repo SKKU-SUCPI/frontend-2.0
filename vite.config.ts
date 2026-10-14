@@ -28,14 +28,9 @@ export default defineConfig({
 
           proxy: {
             "/api": {
-<<<<<<< HEAD
               // target: "http://127.0.0.1:8080",
               // target: "http://siop-dev.skku.edu:8080",
               target: "http://sucpi-backend:8080",
-=======
-              target: "http://127.0.0.1:8080",
-              // target: "http://siop-dev.skku.edu:8080",
->>>>>>> develop
               changeOrigin: true,
               secure: false,
             },
