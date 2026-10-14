@@ -247,6 +247,7 @@ const IndividualStatisticLayout = () => {
   const pageable: Pageable = {
     name: appliedFilter.name,
     department: appliedFilter.department,
+    keyword: null,
     page: currentPage - 1, // API는 0-based pagination을 사용
     size: pageSize,
     sort: appliedFilter.sort,
@@ -657,10 +658,18 @@ const IndividualStatisticLayout = () => {
               count={totalPages}
               page={currentPage}
               onChange={(_, value) => handlePageChange(value)}
-              color="primary"
               showFirstButton
               showLastButton
               size="medium"
+              sx={{
+                "& .MuiPaginationItem-root.Mui-selected": {
+                  backgroundColor: "#4CAF50",
+                  color: "white",
+                  "&:hover": {
+                    backgroundColor: "#45a049",
+                  },
+                },
+              }}
             />
           </Box>
         </div>

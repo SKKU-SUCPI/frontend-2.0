@@ -1,10 +1,10 @@
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
+import axiosInstance from "@/apis/utils/axiosInterceptor";
 import { css } from "@emotion/react";
 import IndividualStudentCard from "./components/IndividualStudentCard";
 import AverageMetrics from "./components/AverageMetrics";
 import StudentDistributionModal from "./components/StudentDistributionModal";
 import useStudentsList, { Pageable } from "@/hooks/admin/useStudentsList";
-import Loading from "@/components/layouts/Loading";
 import Pagination from "@mui/material/Pagination";
 import Box from "@mui/material/Box";
 import Dialog from "@mui/material/Dialog";
@@ -16,6 +16,10 @@ import Button from "@mui/material/Button";
 import { useTeamSelectedUserStore } from "@/stores/teamSelectedUserStore";
 import type { SelectedUser } from "@/stores/teamSelectedUserStore";
 import { useTeamStore, type Team } from "@/stores/teamStore";
+import postTeam from "@/apis/team/postTeam";
+import postTeamMember from "@/apis/team/postTeamMember";
+import putTeam from "@/apis/team/putTeam";
+import deleteTeam from "@/apis/team/deleteTeam";
 import SimpleBarChart from "@/components/graphs/SimpleBarChart";
 import HorizontalBarChart from "@/components/graphs/HorizontalBarChart";
 import IconButton from "@mui/material/IconButton";
@@ -158,7 +162,9 @@ const teamHeaderStyle = css`
   display: flex;
   align-items: center;
   justify-content: space-between;
-  margin-bottom: 12px;
+  margin-bottom: 20px;
+  padding-bottom: 12px;
+  border-bottom: 1px solid #f0f0f0;
 `;
 
 const teamListStyle = css`
@@ -238,10 +244,10 @@ const selectedMembersListStyle = css`
 const selectedMemberChipStyle = css`
   padding: 4px 8px;
   border-radius: 999px;
-  background-color: #e3f2fd;
-  border: 1px solid #90caf9;
+  background-color: #e8f5e9;
+  border: 1px solid #a5d6a7;
   font-size: 0.8rem;
-  color: #1565c0;
+  color: #2e7d32;
 `;
 
 const noDataStyle = css`
@@ -319,12 +325,50 @@ const TeamStatisticLayout = () => {
   const [modalOpen, setModalOpen] = useState(false);
   const [selectedStudent, setSelectedStudent] = useState<SelectedUser | null>(null);
   const studentListRef = useRef<HTMLDivElement>(null);
-  const { teams, addTeam, removeTeam, updateTeam } = useTeamStore();
+  const { teams, addTeam, removeTeam, updateTeam, fetchProjectTeams } = useTeamStore();
   const [teamModalOpen, setTeamModalOpen] = useState(false);
   const [editingTeam, setEditingTeam] = useState<Team | null>(null);
   const [teamName, setTeamName] = useState("");
-  const [teamMemberIds, setTeamMemberIds] = useState<number[]>([]);
+  const [selectedTeamMembers, setSelectedTeamMembers] = useState<AdminStudentResponseItem[]>([]);
   const [memberSearch, setMemberSearch] = useState("");
+  const [searchInput, setSearchInput] = useState("");
+  const [projects, setProjects] = useState<{projectId: number, projectName: string}[]>([]);
+  const [selectedProjectId, setSelectedProjectId] = useState<number | undefined> (undefined);
+  const [modalProjectId, setModalProjectId] = useState<number | undefined>(undefined);
+  const [leaderId, setLeaderId] = useState<number | null>(null);
+
+  // 팀 목록 불러오기
+  useEffect(() => {
+    const fetchProjects = async () => {
+      try {
+        const response = await axiosInstance.get('/projects');
+        setProjects(response.data);
+      } catch (error) {
+        console.error("Failed to fetch projects", error);
+      }
+    };
+
+    fetchProjects();
+  }, []);
+
+  useEffect(() => {
+    if (selectedProjectId) {
+      fetchProjectTeams(selectedProjectId);
+      
+      clearUsers();
+      setChartPage(0);
+      setRightChartPage(0);
+    }
+  }, [fetchProjectTeams, selectedProjectId]);
+
+  // 자연스러운 검색 기능
+  useEffect(() => {
+    const handler = setTimeout(() => {
+      setMemberSearch(searchInput);
+      setCurrentPage(1);
+    }, 300);
+    return () => clearTimeout(handler);
+  }, [searchInput]);
 
   const pageSize = 10;
 
@@ -337,7 +381,9 @@ const TeamStatisticLayout = () => {
     clearUsers,
   } = useTeamSelectedUserStore();
 
+  // update soon
   const pageable: Pageable = {
+    keyword: memberSearch || null,
     name: null,
     department: null,
     page: currentPage - 1, // API는 0-based pagination을 사용
@@ -346,8 +392,6 @@ const TeamStatisticLayout = () => {
   };
 
   const { data: studentsData, isLoading } = useStudentsList(pageable);
-
-  if (isLoading) return <Loading />;
 
   const totalPages = studentsData?.totalPage || 1;
 
@@ -371,18 +415,7 @@ const TeamStatisticLayout = () => {
   ): number => {
     return parseTScore(tlq) + parseTScore(trq) + parseTScore(tcq);
   };
-
-  const modalStudents = studentsData?.content ?? [];
-  const filteredModalStudents = modalStudents.filter((student) => {
-    if (!memberSearch.trim()) return true;
-    const q = memberSearch.trim().toLowerCase();
-    return (
-      student.name.toLowerCase().includes(q) ||
-      student.studentId.toLowerCase().includes(q) ||
-      (student.department ?? "").toLowerCase().includes(q)
-    );
-  });
-
+  
   type ChartUser = AdminStudentResponseItem | SelectedUser;
 
   const createBarChartData = (user: ChartUser) => {
@@ -428,10 +461,10 @@ const TeamStatisticLayout = () => {
     const sum = members.reduce(
       (acc, user) => {
         return {
-          lq: acc.lq + user.lq,
-          rq: acc.rq + user.rq,
-          cq: acc.cq + user.cq,
-          total: acc.total + user.totalScore,
+          lq: acc.lq + (user.lq || 0),
+          rq: acc.rq + (user.rq || 0),
+          cq: acc.cq + (user.cq || 0 ),
+          total: acc.total + (user.totalScore || 0),
           tlq: acc.tlq + (user.tlq || 0),
           trq: acc.trq + (user.trq || 0),
           tcq: acc.tcq + (user.tcq || 0),
@@ -504,7 +537,7 @@ const TeamStatisticLayout = () => {
       const user = selectedUsers[chartPage - 1];
       return {
         data: createBarChartData(user),
-        title: `${user.name} (${user.studentId})`,
+        title: `${user.name}`,
       };
     }
   };
@@ -637,49 +670,96 @@ const TeamStatisticLayout = () => {
   const handleOpenTeamModal = () => {
     setEditingTeam(null);
     setTeamName("");
-    setTeamMemberIds([]);
+    setSelectedTeamMembers([]);
+    setLeaderId(null);
+    setModalProjectId(undefined);
     setTeamModalOpen(true);
   };
 
   const handleCloseTeamModal = () => {
     setTeamModalOpen(false);
     setEditingTeam(null);
+    setSelectedTeamMembers([]);
+    setModalProjectId(undefined);
   };
 
-  const toggleTeamMember = (studentId: number) => {
-    setTeamMemberIds((prev) =>
-      prev.includes(studentId)
-        ? prev.filter((id) => id !== studentId)
-        : [...prev, studentId]
-    );
-  };
+ const toggleTeamMember = (student: AdminStudentResponseItem) => {
+  setSelectedTeamMembers((prev) => {
+    const isAlreadySelected = prev.some((students) => students.id === student.id);
+    if (isAlreadySelected) {
+      if(leaderId === student.id) {
+        setLeaderId(null);
+      }
+      return prev.filter((students) => students.id !== student.id);
+    } else {
+      return [...prev, student];
+    }
+  });
+ };
 
   const handleEditTeam = (team: Team) => {
     setEditingTeam(team);
     setTeamName(team.name);
-    setTeamMemberIds(team.members.map((member) => member.id));
+    setModalProjectId(team.projectId || selectedProjectId);
+    
+    const leader = team.members.find((m: any) => m.memberRole === 'LEADER');
+    if (leader) setLeaderId(Number(leader.id));
+
+    setSelectedTeamMembers(team.members.map((member) => ({
+      id: Number(member.id),
+      name: member.name,
+      studentId: member.studentId || "",
+      department: member.department || "",
+      lq: member.lq || 0,
+      rq: member.rq || 0,
+      cq: member.cq || 0,
+      totalScore: member.totalScore || 0,
+      tlq: member.tlq || 0,
+      trq: member.trq || 0,
+      tcq: member.tcq || 0,
+
+      grade: 0 
+    } as AdminStudentResponseItem)));
     setTeamModalOpen(true);
   };
 
-  const handleDeleteTeam = (teamId: number) => {
-    removeTeam(teamId);
-    if (isUserSelected(teamId)) {
-      removeUser(teamId);
-    }
-    if (editingTeam && editingTeam.id === teamId) {
-      setEditingTeam(null);
+  const handleDeleteTeam = async (teamId: number) => {
+    if(!window.confirm("정말로 이 팀을 삭제하시겠습니까?")) return;
+
+    try {
+      await deleteTeam(teamId);
+
+      removeTeam(teamId);
+
+      if (isUserSelected(teamId)) {
+        removeUser(teamId);
+      }
+      if (editingTeam && editingTeam.id === teamId) {
+        setEditingTeam(null);
+      }
+    } catch (error) {
+      console.error("팀 삭제 실패:", error);
+      alert("팀 삭제 중 서버에 오류가 발생했습니다.");
     }
   };
 
-  const handleRegisterTeam = () => {
+  const handleRegisterTeam = async () => {
     if (!teamName.trim()) {
       alert("팀명을 입력해 주세요.");
       return;
     }
 
-    const allStudents = studentsData?.content ?? [];
-    const selectedMembers: SelectedUser[] = allStudents
-      .filter((s) => teamMemberIds.includes(s.id))
+    if (!modalProjectId) {
+      alert("프로젝트를 선택해 주세요.");
+      return;
+    }
+
+    if (!leaderId) {
+      alert("팀장을 선택해 주세요.");
+      return;
+    }
+
+    const selectedMembers = selectedTeamMembers
       .map((student) => ({
         id: student.id,
         name: student.name,
@@ -697,6 +777,8 @@ const TeamStatisticLayout = () => {
           student.trq,
           student.tcq
         ),
+        memberRole: (student.id === leaderId ? "LEADER" : "MEMBER") as "LEADER" | "MEMBER",
+        joinStatus: 0
       }));
 
     if (selectedMembers.length === 0) {
@@ -704,35 +786,70 @@ const TeamStatisticLayout = () => {
       return;
     }
 
-    if (editingTeam) {
-      const updatedTeam: Team = {
-        ...editingTeam,
-        name: teamName.trim(),
-        members: selectedMembers,
-      };
+    try{
+      if (editingTeam) {
+        await putTeam(editingTeam.id, {
+          teamName: teamName.trim(),
+          members: selectedMembers.map((member) => ({
+            userId: member.id,
+            memberRole: member.memberRole,
+          })),
+        });
 
-      updateTeam(updatedTeam);
+        const updatedTeam: Team = {
+          ...editingTeam,
+          name: teamName.trim(),
+          members: selectedMembers,
+        };
 
-      // 선택된 팀이면 요약 데이터도 갱신
-      if (isUserSelected(updatedTeam.id)) {
-        const summary = createTeamSummary(updatedTeam);
-        removeUser(updatedTeam.id);
-        addUser(summary);
+        updateTeam(updatedTeam);
+
+        // 선택된 팀이면 요약 데이터도 갱신
+        if (isUserSelected(updatedTeam.id)) {
+          const summary = createTeamSummary(updatedTeam);
+          removeUser(updatedTeam.id);
+          addUser(summary);
+        }
+      } else {
+
+        const teamResponse = await postTeam({
+          projectId: modalProjectId,
+          teamName: teamName.trim(),
+        });
+
+        const newTeamId = teamResponse?.data?.teamId || teamResponse?.data;
+
+        if(!newTeamId) throw new Error("팀 ID를 응답받지 못했습니다.");
+
+        await Promise.all(
+          selectedMembers.map((member) => {
+            postTeamMember(newTeamId, {
+              userId: member.id,
+              memberRole: member.memberRole,
+            })
+          })
+        );
+
+        const newTeam: Team = {
+          id: newTeamId,
+          name: teamName.trim(),
+          projectId: modalProjectId,
+          members: selectedMembers,
+        };
+        
+        if(selectedProjectId === modalProjectId) {
+          addTeam(newTeam);
+        }
       }
-    } else {
-      const newTeam: Team = {
-        id: Date.now(),
-        name: teamName.trim(),
-        members: selectedMembers,
-      };
 
-      addTeam(newTeam);
+      setTeamModalOpen(false);
+      setEditingTeam(null);
+      setTeamName("");
+      setSelectedTeamMembers([]);
+    } catch (error) {
+      console.error("팀 등록 실패:", error);
+      alert("팀 등록 중 서버에 오류가 발생했습니다.");
     }
-
-    setTeamModalOpen(false);
-    setEditingTeam(null);
-    setTeamName("");
-    setTeamMemberIds([]);
   };
 
   return (
@@ -871,9 +988,33 @@ const TeamStatisticLayout = () => {
         <div css={leftBoxStyle}>
           <div css={teamHeaderStyle}>
             <h2 style={{ margin: 0, fontSize: "1.3rem" }}>전체 팀 목록</h2>
-            <Button variant="contained" size="small" onClick={handleOpenTeamModal}>
-              팀 등록
-            </Button>
+            <div style={{ display: 'flex', gap: '12px', alignItems: 'center' }}>
+              <TextField
+                select
+                size="small"
+                value={selectedProjectId || ""}
+                onChange={(e) => setSelectedProjectId(Number(e.target.value))}
+                SelectProps={{ native: true }}
+                sx={{ minWidth: 150 }}
+              >
+                <option value="" disabled>프로젝트 선택</option>
+                {projects.map(p => (
+                  <option key={p.projectId} value={p.projectId}>
+                    {p.projectName}
+                  </option>
+                ))}
+              </TextField>
+              <Button variant="contained" size="small" onClick={handleOpenTeamModal} sx={{ 
+                backgroundColor: "#4CAF50",
+                "&:hover": {
+                  backgroundColor: "#45a049",
+                },
+                borderRadius: "8px", 
+                fontWeight: 600 
+              }}>
+                팀 등록
+              </Button>
+            </div>
           </div>
 
           <div css={teamListStyle}>
@@ -1001,89 +1142,136 @@ const TeamStatisticLayout = () => {
           sx={{ display: "flex", flexDirection: "column", gap: 2, pt: 2 }}
         >
           <TextField
+            select
+            label="프로젝트 선택"
+            fullWidth
+            value={modalProjectId || ""}
+            onChange={(e) => setModalProjectId(Number(e.target.value))}
+            margin="normal"
+            SelectProps={{ native: true }}
+            InputLabelProps={{ shrink: true }}
+            disabled={!!editingTeam}
+          >
+            <option value="" disabled>프로젝트를 선택하세요</option>
+            {projects.map(p => (
+              <option key={p.projectId} value={p.projectId}>{p.projectName}</option>
+            ))}
+          </TextField>
+
+          {/* 2. 기존 팀 이름 입력 */}
+          <TextField
             label="팀 이름"
             fullWidth
             value={teamName}
             onChange={(e) => setTeamName(e.target.value)}
             margin="normal"
           />
-          {/* 현재 선택된 학생 요약 */}
-          {((studentsData?.content ?? []).filter((s) =>
-            teamMemberIds.includes(s.id)
-          ).length > 0) && (
+
+          {/* 3. 팀장 선택 기능이 추가된 학생 요약 */}
+          {selectedTeamMembers.length > 0 && (
             <div css={selectedMembersBoxStyle}>
               <div css={selectedMembersTitleStyle}>
-                현재 선택된 학생 (
-                {
-                  (studentsData?.content ?? []).filter((s) =>
-                    teamMemberIds.includes(s.id)
-                  ).length
-                }
-                명)
+                현재 선택된 학생 ({selectedTeamMembers.length}명)
               </div>
               <div css={selectedMembersListStyle}>
-                {(studentsData?.content ?? [])
-                  .filter((s) => teamMemberIds.includes(s.id))
-                  .map((student) => (
-                    <span key={student.id} css={selectedMemberChipStyle}>
-                      {student.name} ({student.studentId})
-                    </span>
-                  ))}
+                {selectedTeamMembers.map((student) => (
+                  <span 
+                    key={student.id} 
+                    css={selectedMemberChipStyle} 
+                  >
+                    {student.name} ({student.studentId})
+                  </span>
+                ))}
               </div>
             </div>
           )}
+
+          {selectedTeamMembers.length > 0 && (
+            <div 
+              css={selectedMembersBoxStyle} 
+              style={{ backgroundColor: '#e8f5e9', borderColor: '#4CAF50' }}
+            >
+              <div css={selectedMembersTitleStyle} style={{ color: '#2e7d32' }}>
+                팀장 (Leader)
+              </div>
+              <TextField
+                select
+                size="small"
+                fullWidth
+                value={leaderId || ""}
+                onChange={(e) => setLeaderId(Number(e.target.value))}
+                SelectProps={{ native: true }}
+                sx={{ backgroundColor: 'white', borderRadius: '4px' }}
+              >
+                <option value="" disabled>팀장을 선택해주세요</option>
+                {selectedTeamMembers.map(student => (
+                  <option key={student.id} value={student.id}>
+                    {student.name} ({student.studentId})
+                  </option>
+                ))}
+              </TextField>
+            </div>
+          )}
+
           <div css={userListStyle} ref={studentListRef}>
             <h2>팀 구성원 선택</h2>
             <TextField
               label="학생 검색 (이름/학번/학과)"
               fullWidth
-              value={memberSearch}
-              onChange={(e) => setMemberSearch(e.target.value)}
+              value={searchInput}
+              onChange={(e) => setSearchInput(e.target.value)}
               margin="dense"
             />
-
-            {(studentsData?.content?.length ?? 0) === 0 ? (
-              <div css={noDataStyle}>선택할 수 있는 학생이 없습니다.</div>
-            ) : (
-              filteredModalStudents.map((student) => {
-                const isSelected = teamMemberIds.includes(student.id);
-                return (
-                  <IndividualStudentCard
-                    key={student.id}
-                    name={student.name}
-                    studentId={student.studentId}
-                    department={student.department}
-                    totalScore={
-                      showTScore
-                        ? calculateTotalTScore(
-                            student.tlq,
-                            student.trq,
-                            student.tcq
-                          )
-                        : student.totalScore || 0
-                    }
-                    lq={
-                      showTScore
-                        ? parseTScore(student.tlq)
-                        : student.lq || 0
-                    }
-                    rq={
-                      showTScore
-                        ? parseTScore(student.trq)
-                        : student.rq || 0
-                    }
-                    cq={
-                      showTScore
-                        ? parseTScore(student.tcq)
-                        : student.cq || 0
-                    }
-                    onClick={() => toggleTeamMember(student.id)}
-                    isSelected={isSelected}
-                    showTScore={showTScore}
-                  />
-                );
-              })
-            )}
+            <div style={{ 
+              position: 'relative', 
+              opacity: isLoading ? 0.6 : 1, // Dim the list while loading
+              transition: 'opacity 0.2s ease' // Smooth fade
+            }}>
+              {(studentsData?.content?.length ?? 0) === 0 ? (
+                <div css={noDataStyle}>선택할 수 있는 학생이 없습니다.</div>
+              ) : (
+                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px', marginTop: '8px' }}>
+                  { (studentsData?.content ?? []).map((student) => {
+                    const isSelected = selectedTeamMembers.some((students) => students.id === student.id);
+                    return (
+                      <IndividualStudentCard
+                        key={student.id}
+                        name={student.name}
+                        studentId={student.studentId}
+                        department={student.department}
+                        totalScore={
+                          showTScore
+                            ? calculateTotalTScore(
+                                student.tlq,
+                                student.trq,
+                                student.tcq
+                              )
+                            : student.totalScore || 0
+                        }
+                        lq={
+                          showTScore
+                            ? parseTScore(student.tlq)
+                            : student.lq || 0
+                        }
+                        rq={
+                          showTScore
+                            ? parseTScore(student.trq)
+                            : student.rq || 0
+                        }
+                        cq={
+                          showTScore
+                            ? parseTScore(student.tcq)
+                            : student.cq || 0
+                        }
+                        onClick={() => toggleTeamMember(student/*.id*/)}
+                        isSelected={isSelected}
+                        showTScore={showTScore}
+                      />
+                    );
+                  })}
+                </div>
+              )}
+            </div>
           </div>
           <Box
             sx={{
@@ -1097,16 +1285,31 @@ const TeamStatisticLayout = () => {
               count={totalPages}
               page={currentPage}
               onChange={(_, value) => handlePageChange(value)}
-              color="primary"
               showFirstButton
               showLastButton
               size="medium"
+              sx={{
+                "& .MuiPaginationItem-root.Mui-selected": {
+                  backgroundColor: "#4CAF50",
+                  color: "white",
+                  "&:hover": {
+                    backgroundColor: "#45a049",
+                  },
+                },
+              }}
             />
           </Box>
         </DialogContent>
         <DialogActions>
-          <Button onClick={handleCloseTeamModal}>취소</Button>
-          <Button variant="contained" onClick={handleRegisterTeam}>
+          <Button onClick={handleCloseTeamModal} sx={{color: "#4CAF50"}}>취소</Button>
+          <Button variant="contained" onClick={handleRegisterTeam} sx={{ 
+            backgroundColor: "#4CAF50",
+            "&:hover": {
+              backgroundColor: "#45a049",
+            },
+            borderRadius: "8px", 
+            fontWeight: 600 
+          }}>
             팀 등록
           </Button>
         </DialogActions>
@@ -1116,5 +1319,3 @@ const TeamStatisticLayout = () => {
 };
 
 export default TeamStatisticLayout;
-
-

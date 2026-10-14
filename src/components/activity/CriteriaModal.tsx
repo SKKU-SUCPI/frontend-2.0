@@ -3,7 +3,7 @@ import { css } from "@emotion/react";
 import Modal from "@/components/overlays/Modal";
 import useActivities from "@/hooks/common/useActivities";
 // import FlexBox from "@/styles/components/Flexbox";
-import { useMemo, useRef, useCallback } from "react";
+import { useMemo, useState } from "react";
 
 interface CriteriaModalProps {
   open: boolean;
@@ -85,6 +85,17 @@ const chipStyle = css`
   &:hover { border-color: #4caf50; color: #2e7d32; }
 `;
 
+// ADD THIS NEW STYLE HERE
+const activeChipStyle = css`
+  background-color: #4caf50;
+  color: white;
+  border-color: #4caf50;
+  font-weight: 600;
+  &:hover {
+    color: white; /* Keep text white even on hover when active */
+  }
+`;
+
 const lineCellStyle = css`
   display: flex;
   gap: 8px;
@@ -122,15 +133,12 @@ const refreshButtonStyle = css`
 
 export default function CriteriaModal({ open, onClose }: CriteriaModalProps) {
   const { grouped, isLoading, isFetching, refetch, dataUpdatedAt } = useActivities();
+  
+  const [selectedKey, setSelectedKey] = useState<string | null>(null);
 
-  const sectionRefs = useRef<Record<string, HTMLDivElement | null>>({});
-  const setSectionRef = useCallback((key: string) => (el: HTMLDivElement | null) => {
-    sectionRefs.current[key] = el;
-  }, []);
-  const scrollTo = useCallback((key: string) => {
-    const el = sectionRefs.current[key];
-    if (el) el.scrollIntoView({ behavior: "smooth", block: "start" });
-  }, []);
+  const toggleKey = (key: string) => {
+    setSelectedKey((prev) => (prev === key ? null : key));
+  };
 
   const updatedText = useMemo(() => {
     if (!dataUpdatedAt) return "";
@@ -163,72 +171,72 @@ export default function CriteriaModal({ open, onClose }: CriteriaModalProps) {
       </div>
 
       {/* 목차 */}
-      <div css={tocWrapStyle}>
-        <div css={tocGroupStyle}>
-          <strong>영역별 평가 기준</strong>
-          {grouped?.byCategory &&
-            Object.keys(grouped.byCategory).map((c) => (
-              <button key={`toc-cat-${c}`} css={chipStyle} onClick={() => scrollTo(`cat-${c}`)}>
-                {categoryLabelMap[c] ?? c}
-              </button>
-            ))}
+      <div css={tocWrapStyle} style={{ border: 'none', background: 'transparent', padding: 0 }}>
+        <div css={tocGroupStyle} style={{ marginBottom: '16px' }}>
+          {grouped?.byCategory && Object.keys(grouped.byCategory).map((c) => (
+            <button 
+              key={`nav-cat-${c}`} 
+              // Strict equality check for individual highlighting
+              css={[chipStyle, selectedKey === `cat-${c}` && activeChipStyle]} 
+              onClick={() => toggleKey(`cat-${c}`)}
+            >
+              {categoryLabelMap[c] ?? c}
+            </button>
+          ))}
         </div>
         <div css={tocGroupStyle}>
-          <strong>활동별 평가 기준</strong>
-          {grouped?.byClass &&
-            Object.keys(grouped.byClass).map((k) => (
-              <button key={`toc-class-${k}`} css={chipStyle} onClick={() => scrollTo(`class-${k}`)}>
-                {k}
-              </button>
-            ))}
+          {grouped?.byClass && Object.keys(grouped.byClass).map((k) => (
+            <button 
+              key={`nav-class-${k}`} 
+              // Strict equality check for individual highlighting
+              css={[chipStyle, selectedKey === `class-${k}` && activeChipStyle]} 
+              onClick={() => toggleKey(`class-${k}`)}
+            >
+              {k}
+            </button>
+          ))}
         </div>
       </div>
 
       <div css={tableWrapStyle}>
-        {grouped?.byCategory &&
-          Object.entries(grouped.byCategory).map(([category, rows]) => (
-            <div key={category} css={cardStyle} ref={setSectionRef(`cat-${category}`)}>
-              <div css={cardHeader}>{categoryLabelMap[category] ?? `${category} 영역 기준표`}</div>
-              <table css={tableStyle}>
-                <tbody>
-                  {rows.map((r) => (
-                    <tr key={r.activityId}>
-                      <td>
-                        <div css={lineCellStyle}>
-                          <span css={badgeStyle}>{r.activityClass}</span>
-                          <span>{r.activityDetail}</span>
-                          <span css={scorePill}>+{r.activityWeight}</span>
-                        </div>
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
-          ))}
-      </div>
-
-      <div css={[tableWrapStyle, css`margin-top: 16px;`]}>
-        {grouped?.byClass && Object.entries(grouped.byClass).map(([klass, rows]) => (
-          <div key={klass} css={cardStyle} ref={setSectionRef(`class-${klass}`)}>
-            <div css={cardHeader}>{klass}</div>
-            <table css={tableStyle}>
-              <tbody>
-                {rows.map((r) => (
-                  <tr key={r.activityId}>
-                    <td>
-                      <div css={lineCellStyle}>
-                        <span css={badgeStyle}>{r.categoryName}</span>
-                        <span>{r.activityDetail}</span>
-                        <span css={scorePill}>+{r.activityWeight}</span>
-                      </div>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
+        {!selectedKey ? (
+          <div style={{ textAlign: "center", padding: "80px 0", border: '1px dashed #d2d2d7', borderRadius: '16px' }}>
+            <p style={{ color: '#86868b', fontSize: '14px' }}>보고 싶은 평가 기준을 위의 메뉴에서 선택해 주세요.</p>
           </div>
-        ))}
+        ) : (
+          (() => {
+            const isCat = selectedKey.startsWith("cat-");
+            const actualKey = selectedKey.replace(isCat ? "cat-" : "class-", "");
+            const rows = isCat ? grouped?.byCategory?.[actualKey] : grouped?.byClass?.[actualKey];
+
+            if (!rows) return null;
+
+            return (
+              <div css={cardStyle}>
+                <div css={cardHeader}>
+                  {isCat ? (categoryLabelMap[actualKey] ?? actualKey) : actualKey}
+                </div>
+                <table css={tableStyle}>
+                  <tbody>
+                    {rows.map((r: any) => (
+                      <tr key={r.activityId}>
+                        <td>
+                          <div css={lineCellStyle}>
+                            <span css={badgeStyle}>
+                              {isCat ? r.activityClass : r.categoryName}
+                            </span>
+                            <span style={{ fontWeight: 500 }}>{r.activityDetail}</span>
+                            <span css={scorePill}>+{r.activityWeight}</span>
+                          </div>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            );
+          })()
+        )}
       </div>
     </Modal>
   );

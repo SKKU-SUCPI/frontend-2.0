@@ -14,10 +14,11 @@ const layoutStyle = css`
 const contentStyle = css`
   width: 100%;
   height: 100%;
-  max-width: 1100px;
+  max-width: 1400px;
   margin-top: 20px;
   position: relative; // 애니메이션 대상 요소가 겹치지 않도록
-  padding-bottom: 200px;
+  // padding-bottom: 200px;
+  padding 0 24px 200px 24px;
 `;
 
 const MainLayout: React.FC = () => {
