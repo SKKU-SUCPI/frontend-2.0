@@ -35,5 +35,14 @@ export default defineConfig({
               secure: false,
             },
           },
+    fs: {
+      deny: [
+        ".env",
+        ".env.*",
+        "*.{crt,pem}",
+        "**/.git/**",
+        "**/Dockerfile",
+        "**/Dockerfile.*",
+      ],
   },
 });
