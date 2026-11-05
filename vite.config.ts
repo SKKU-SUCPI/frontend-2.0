@@ -43,5 +43,6 @@ export default defineConfig({
         "**/Dockerfile",
         "**/Dockerfile.*",
       ],
+    },
   },
 });
