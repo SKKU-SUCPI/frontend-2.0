@@ -1,11 +1,17 @@
-import axiosInstance from "@/apis/utils/axiosInterceptor";
+import { useQuery } from "@tanstack/react-query";
+import getStudent3qInfo from "@/apis/student/getStudent3qInfo";
 
-const getStudent3qInfo = async (projectId?: number) => {
-  const response = await axiosInstance.get("/student/3q-info", {
-    params: projectId !== undefined ? { projectId } : {},
+const useStudent3qInfo = () => {
+  return useQuery({
+    queryKey: ["student3qInfo"],
+    // Call with no arguments: passing getStudent3qInfo directly would hand it
+    // React Query's context object as `projectId`.
+    queryFn: () => getStudent3qInfo(),
+    staleTime: 1000 * 60 * 5,
+    gcTime: 1000 * 60 * 5,
+    refetchOnWindowFocus: false,
+    refetchOnMount: false,
   });
-
-  return response.data.data;
 };
 
-export default getStudent3qInfo;
+export default useStudent3qInfo;
